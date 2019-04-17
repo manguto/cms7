@@ -1,14 +1,14 @@
 <?php
-namespace manguto\manguto\mvc\view;
+namespace manguto\cms5\mvc\view;
 
 
-use manguto\manguto\cms\CMSPageSite;
-use manguto\manguto\cms\CMSPageAdmin;
-use manguto\manguto\cms\CMSPageDev;
-use manguto\manguto\cms\CMSPageOther;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\lib\Arrays;
-use manguto\manguto\cms\CMSPageCRUD;
+use manguto\cms5\cms\CMSPageSite;
+use manguto\cms5\cms\CMSPageAdmin;
+use manguto\cms5\cms\CMSPageDev;
+use manguto\cms5\cms\CMSPageOther;
+use manguto\cms5\repository\Repository;
+use manguto\cms5\lib\Arrays;
+use manguto\cms5\cms\CMSPageCRUD;
 
 class View
 {    
@@ -49,12 +49,12 @@ class View
     //================================================================================================================ EXTRA / AUX
 
     
-    static function HTML_Combo($idSelected='',$modelname,$showFiels=[],$glue=' | '){
+    static function HTML_Combo($idSelected='',$tablename,$showFiels=[],$glue=' | '){
         $return = [];
-        $rep = Repository::getRepository($modelname,'',false,true,false,true);        
+        $rep = Repository::getRepository($tablename,'',false,true,false,true);        
         //deb($rep);
         
-        $return[] = "<select name='{$modelname}_id' id='{$modelname}_id' class='form-control'>";
+        $return[] = "<select name='{$tablename}_id' id='{$tablename}_id' class='form-control'>";
         $return[] = "<option value=''>Selecione uma opção...</option>";
         foreach ($rep as $r){
             $r = Arrays::arrayMultiNivelParaSimples($r);

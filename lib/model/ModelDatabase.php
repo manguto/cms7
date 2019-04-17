@@ -1,5 +1,5 @@
 <?php
-namespace manguto\manguto\mvc\model;
+namespace manguto\cms5\mvc\model;
 
 
 interface Registravel

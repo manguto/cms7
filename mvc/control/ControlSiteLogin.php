@@ -1,10 +1,10 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\mvc\view\ViewSiteLogin;
-use manguto\manguto\lib\Exception;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\mvc\view\ViewSiteLogin;
+use manguto\cms5\lib\Exception;
 
 class ControlSiteLogin extends ControlSite
 {

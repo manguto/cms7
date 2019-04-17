@@ -1,8 +1,5 @@
 <?php
-namespace manguto\manguto\lib\cms;
-
-use manguto\manguto\repository\Repository;
-use manguto\manguto\repository\RepositoryReferences;
+namespace manguto\cms5\lib\cms;
 
 class CMSPageCRUD extends CMSPage
 {
@@ -12,9 +9,9 @@ class CMSPageCRUD extends CMSPage
         parent::__construct($opts, $tpl_dir);
     }
 
-    static function List___get_register_array(string $modelname,string $conditions='',array $title_array)
+    static function List___get_register_array(string $tablename,string $conditions='',array $title_array)
     {
-        $ObjectClassname = Repository::getObjectClassname($modelname);
+        $ObjectClassname = Repository::getObjectClassname($tablename);
         
         { // full content
             $obj_array = $ObjectClassname::getList($conditions, $returnAsObject = true, $loadReferences = true);

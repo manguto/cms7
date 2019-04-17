@@ -1,9 +1,9 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\view\ViewDevDocs;
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Arquivos;
+use manguto\cms5\mvc\view\ViewDevDocs;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Arquivos;
 
 class ControlDevDocs extends ControlDev
 {

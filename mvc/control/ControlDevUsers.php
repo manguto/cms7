@@ -1,11 +1,10 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\mvc\view\ViewDevUsers;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\mvc\view\ViewDevUsers;
 
 class ControlDevUsers extends ControlDev
 {
@@ -50,7 +49,7 @@ class ControlDevUsers extends ControlDev
 
     static function get_dev_users()
     {   
-        $users = Repository::getRepository('user', '', false);
+        $users = User::getList('', false);
         ViewDevUsers::get_dev_users($users);
     }
 

@@ -1,10 +1,10 @@
 <?php
-namespace manguto\manguto\lib\cms;
+namespace manguto\cms5\lib\cms;
 
 use Rain\Tpl;
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\lib\Diretorios;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Diretorios;
 
 /**
  * Documentation for web designers:

@@ -1,12 +1,11 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\view\ViewDevModels;
-use manguto\manguto\mvc\model\Models;
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\lib\ProcessResult;
+use manguto\cms5\mvc\view\ViewDevModels;
+use manguto\cms5\mvc\model\Models;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\ProcessResult;
 
 class ControlDevModels extends ControlDev
 {

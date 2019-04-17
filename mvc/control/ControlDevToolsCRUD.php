@@ -1,8 +1,8 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\view\ViewDevCMSPageCRUDTools;
-use manguto\manguto\mvc\CMSPageCRUDTools;
+use manguto\cms5\mvc\view\ViewDevCMSPageCRUDTools;
+use manguto\cms5\mvc\CMSPageCRUDTools;
    
 
 class ControlDevCMSPageCRUDTools extends ControlDevTools
@@ -15,9 +15,9 @@ class ControlDevCMSPageCRUDTools extends ControlDevTools
             ViewDevCMSPageCRUDTools::crud();
         });        
         
-        $app->get('/dev/tools/crud/:modelname', function ($modelname) {
+        $app->get('/dev/tools/crud/:tablename', function ($tablename) {
             self::PrivativeDevZone();
-            $pars = CMSPageCRUDTools::set_structure($modelname);
+            $pars = CMSPageCRUDTools::set_structure($tablename);
             ViewDevCMSPageCRUDTools::crud_model($pars);
         });
     }    

@@ -5,10 +5,10 @@ require_once 'configurations.php';
 require_once 'functions.php';
 
 use Slim\Slim;
-use manguto\manguto\cms\CMSHelp;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\lib\Session;
-use manguto\manguto\mvc\control\Control;
+use manguto\cms5\cms\CMSHelp;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Session;
+use manguto\cms5\mvc\control\Control;
  
 
 try {

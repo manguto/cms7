@@ -1,31 +1,31 @@
 <?php
-namespace manguto\manguto\mvc;
+namespace manguto\cms5\mvc;
 
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\repository\RepositoryReferences;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\repository\Repository;
+use manguto\cms5\repository\RepositoryReferences;
 
 class CMSPageCRUDTools
 {
 
-    static function set_structure($modelname)
+    static function set_structure($tablename)
     {
         {
-            // deb($modelname);
-            $Modelname = ucfirst($modelname);
+            // deb($tablename);
+            $Modelname = ucfirst($tablename);
         }
 
         // controler
-        self::set_controler_structure($modelname, $Modelname);
+        self::set_controler_structure($tablename, $Modelname);
 
         // view
-        self::set_view_structure($modelname, $Modelname);
+        self::set_view_structure($tablename, $Modelname);
 
         // templates
-        self::set_tpl_structures($modelname, $Modelname);
-        self::set_tpl_edit_structures($modelname, $Modelname);
-        self::set_tpl_view_structures($modelname, $Modelname);
+        self::set_tpl_structures($tablename, $Modelname);
+        self::set_tpl_edit_structures($tablename, $Modelname);
+        self::set_tpl_view_structures($tablename, $Modelname);
 
         return get_defined_vars();
     }
@@ -33,7 +33,7 @@ class CMSPageCRUDTools
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
-    static private function set_controler_structure(string $modelname, string $Modelname)
+    static private function set_controler_structure(string $tablename, string $Modelname)
     {
         { // file - name & content
             $filename = 'sis/control/ControlCRUDZzz.php';
@@ -43,7 +43,7 @@ class CMSPageCRUDTools
         { // replaces
             { // basic
                 $content = str_replace('Zzz', $Modelname, $content);
-                $content = str_replace('zzz', $modelname, $content);
+                $content = str_replace('zzz', $tablename, $content);
             }
 
             {
@@ -51,14 +51,14 @@ class CMSPageCRUDTools
             }
         }
         { // save
-            self::save($modelname, $Modelname, $filename, $content);
+            self::save($tablename, $Modelname, $filename, $content);
         }
     }
 
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
-    static private function set_view_structure(string $modelname, string $Modelname)
+    static private function set_view_structure(string $tablename, string $Modelname)
     {
         { // file - name & content
             $filename = 'sis/view/ViewCRUDZzz.php';
@@ -70,39 +70,39 @@ class CMSPageCRUDTools
 
             { // basic
                 $content = str_replace('Zzz', $Modelname, $content);
-                $content = str_replace('zzz', $modelname, $content);
+                $content = str_replace('zzz', $tablename, $content);
             }
 
             { // filters
-                $content = str_replace('#FILTER_PARAMETERS#', self::set_view_structure___FILTERS($modelname), $content);
+                $content = str_replace('#FILTER_PARAMETERS#', self::set_view_structure___FILTERS($tablename), $content);
             }
             
             { // titles
-                $content = str_replace('#TITLE_ARRAY#', self::set_view_structure___TITLES($modelname), $content);
+                $content = str_replace('#TITLE_ARRAY#', self::set_view_structure___TITLES($tablename), $content);
             }
             
         }
 
         { // save
-            self::save($modelname, $Modelname, $filename, $content);
+            self::save($tablename, $Modelname, $filename, $content);
         }
     }
 
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
-    static private function set_view_structure___TITLES($modelname)
+    static private function set_view_structure___TITLES($tablename)
     {
         $return = [];
         
         { // parameters
-            $objectClassname = Repository::getObjectClassname($modelname);
+            $objectClassname = Repository::getObjectClassname($tablename);
             // deb($objectClassname);
         }
 
         { // titles
             
-            $titles = $objectClassname::get_titles($modelname);
+            $titles = $objectClassname::get_titles($tablename);
             // deb($titles);
         
             foreach ($titles as $fieldname => $Fieldname) {                
@@ -115,17 +115,17 @@ class CMSPageCRUDTools
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
-    static private function set_view_structure___FILTERS($modelname)
+    static private function set_view_structure___FILTERS($tablename)
     {
         $return = [];
         { // parameters
-            $objectClassname = Repository::getObjectClassname($modelname);
+            $objectClassname = Repository::getObjectClassname($tablename);
             // deb($objectClassname);
-            $Modelname = ucfirst($modelname);
+            $Modelname = ucfirst($tablename);
         }
 
         {
-            $filters = $objectClassname::get_filters($modelname);
+            $filters = $objectClassname::get_filters($tablename);
             // deb($filters);
         }
 
@@ -151,7 +151,7 @@ class CMSPageCRUDTools
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
-    static private function set_tpl_structures(string $modelname, string $Modelname)
+    static private function set_tpl_structures(string $tablename, string $Modelname)
     {
         { // file - name & content
             $filename = 'sis/tpl/crud_zzz.html';
@@ -162,35 +162,35 @@ class CMSPageCRUDTools
         { // replaces
             { // basic
                 $content = str_replace('Zzz', $Modelname, $content);
-                $content = str_replace('zzz', $modelname, $content);
+                $content = str_replace('zzz', $tablename, $content);
             }
             {
-                $content = str_replace('#FILTER_FIELDS#', self::set_tpl_structures___FILTER_FIELDS($modelname), $content);
+                $content = str_replace('#FILTER_FIELDS#', self::set_tpl_structures___FILTER_FIELDS($tablename), $content);
             }
             
             {
-                $content = str_replace('#FILTER_SCRIPTS#', self::set_tpl_structures___FILTER_SCRIPTS($modelname), $content);
+                $content = str_replace('#FILTER_SCRIPTS#', self::set_tpl_structures___FILTER_SCRIPTS($tablename), $content);
             }
             
         }
 
         { // save
-            self::save($modelname, $Modelname, $filename, $content);
+            self::save($tablename, $Modelname, $filename, $content);
         }
     }
 
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
-    static private function set_tpl_structures___FILTER_SCRIPTS($modelname)
+    static private function set_tpl_structures___FILTER_SCRIPTS($tablename)
     {
         $return = [];
         { // parameters
-            $objectClassname = Repository::getObjectClassname($modelname);
+            $objectClassname = Repository::getObjectClassname($tablename);
         }
 
         {
-            $filters = $objectClassname::get_filters($modelname);
+            $filters = $objectClassname::get_filters($tablename);
             // deb($filters);
             foreach ($filters as $fieldname => $value) {
                 
@@ -237,15 +237,15 @@ class CMSPageCRUDTools
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
     // ============================================================================================================================================== PRIVATE
-    static private function set_tpl_structures___FILTER_FIELDS($modelname)
+    static private function set_tpl_structures___FILTER_FIELDS($tablename)
     {
         $return = [];
         { // parameters
-            $objectClassname = Repository::getObjectClassname($modelname);
+            $objectClassname = Repository::getObjectClassname($tablename);
         }
 
         {
-            $filters = $objectClassname::get_filters($modelname);
+            $filters = $objectClassname::get_filters($tablename);
             // deb($filters);
             foreach ($filters as $fieldname => $value) {
                 {
@@ -306,7 +306,7 @@ class CMSPageCRUDTools
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
-    static private function set_tpl_edit_structures(string $modelname, string $Modelname)
+    static private function set_tpl_edit_structures(string $tablename, string $Modelname)
     {
         { // file - name & content
             $filename = 'sis/tpl/crud_zzz_edit.html';
@@ -318,7 +318,7 @@ class CMSPageCRUDTools
 
             { // basic
                 $content = str_replace('Zzz', $Modelname, $content);
-                $content = str_replace('zzz', $modelname, $content);
+                $content = str_replace('zzz', $tablename, $content);
             }
 
             {
@@ -327,14 +327,14 @@ class CMSPageCRUDTools
         }
 
         { // save
-            self::save($modelname, $Modelname, $filename, $content);
+            self::save($tablename, $Modelname, $filename, $content);
         }
     }
 
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
     // ############################################################################################################################################# PRIVATE
-    static private function set_tpl_view_structures(string $modelname, string $Modelname)
+    static private function set_tpl_view_structures(string $tablename, string $Modelname)
     {
         { // file - name & content
             $filename = 'sis/tpl/crud_zzz_view.html';
@@ -346,7 +346,7 @@ class CMSPageCRUDTools
 
             { // basic
                 $content = str_replace('Zzz', $Modelname, $content);
-                $content = str_replace('zzz', $modelname, $content);
+                $content = str_replace('zzz', $tablename, $content);
             }
 
             {
@@ -355,7 +355,7 @@ class CMSPageCRUDTools
         }
 
         { // save
-            self::save($modelname, $Modelname, $filename, $content);
+            self::save($tablename, $Modelname, $filename, $content);
         }
     }
 
@@ -376,12 +376,12 @@ class CMSPageCRUDTools
     // ############################################################################################################################################# PRIVATE GENERAL
     // ############################################################################################################################################# PRIVATE GENERAL
     // ############################################################################################################################################# PRIVATE GENERAL
-    static private function save($modelname, $Modelname, $filename, $content)
+    static private function save($tablename, $Modelname, $filename, $content)
     {
         { // new content save
             $filename_module = $filename;
             $filename_module = str_replace('Zzz', $Modelname, $filename_module);
-            $filename_module = str_replace('zzz', $modelname, $filename_module);
+            $filename_module = str_replace('zzz', $tablename, $filename_module);
             // deb($filename_new);
         }
         {

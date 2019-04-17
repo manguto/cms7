@@ -1,11 +1,11 @@
 <?php
-namespace manguto\manguto\lib\cms;
+namespace manguto\cms5\lib\cms;
 
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\ServerHelp;
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\lib\Log;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\ServerHelp;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Log;
 
 class CMSHelp
 {

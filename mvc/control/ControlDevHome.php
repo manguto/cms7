@@ -1,7 +1,7 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\view\ViewDevHome;
+use manguto\cms5\mvc\view\ViewDevHome;
 
 class ControlDevHome extends ControlDev
 {

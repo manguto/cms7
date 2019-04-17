@@ -1,11 +1,11 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\mvc\view\ViewAdminProfile;
-use manguto\manguto\lib\Session;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\mvc\view\ViewAdminProfile;
+use manguto\cms5\lib\Session;
 
 class ControlAdminProfile extends ControlAdmin
 {

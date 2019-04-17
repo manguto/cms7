@@ -3,9 +3,9 @@ namespace sis\control;
 
 use sis\view\ViewCRUDZzz;
 use sis\model\Zzz;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\mvc\control\ControlCRUD;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\mvc\control\ControlCRUD;
 
 class ControlCRUDZzz extends ControlCRUD  
 {

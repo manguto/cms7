@@ -1,8 +1,6 @@
 <?php
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\cms\CMSPage;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\mvc\model\User;
 
 // =============================================================================================================================================
 // =============================================================================================================================================

@@ -1,7 +1,7 @@
 <?php
-namespace manguto\manguto\lib;
+namespace manguto\cms5\lib;
 
-use manguto\manguto\mvc\model\User; 
+use manguto\cms5\mvc\model\User; 
 
 class Log
 {

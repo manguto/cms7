@@ -1,9 +1,9 @@
 <?php
-namespace manguto\manguto\mvc\model;
+namespace manguto\cms5\mvc\model;
 
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\lib\Strings;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Strings;
 
 
 class Models
@@ -195,21 +195,21 @@ class Models
     }
     
     
-    static function get_repository_extended_modelnames(){
+    static function get_repository_extended_tablenames(){
         $model_array = Models::get();
         //deb($model_array);
-        foreach ($model_array as $modelname=>$model_information){
+        foreach ($model_array as $tablename=>$model_information){
             //deb($model);
             $er = $model_information['extends_repository'];
             //deb($er);
             if($er){
-                $modelname_show = explode('_',$modelname);
-                $modelname_show = array_map('ucfirst',$modelname_show);
-                $modelname_show = implode(' ', $modelname_show);
+                $tablename_show = explode('_',$tablename);
+                $tablename_show = array_map('ucfirst',$tablename_show);
+                $tablename_show = implode(' ', $tablename_show);
                 
-                $model_array[strtolower($modelname)] = $modelname_show;
+                $model_array[strtolower($tablename)] = $tablename_show;
             }
-            unset($model_array[$modelname]);
+            unset($model_array[$tablename]);
         }
         //deb($model_array);
         return $model_array;

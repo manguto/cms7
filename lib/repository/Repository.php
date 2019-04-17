@@ -1,16 +1,16 @@
 <?php
-namespace manguto\manguto\lib\repository;
+namespace manguto\cms5\lib\repository;
 
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Strings;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\lib\ServerHelp;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\Datas;
-use manguto\manguto\mvc\model\Model;
-use manguto\manguto\lib\Arrays;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Strings;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\ServerHelp;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\Datas;
+use manguto\cms5\mvc\model\Model;
+use manguto\cms5\lib\Arrays;
 
 
 class Repository extends Model
@@ -91,7 +91,7 @@ class Repository extends Model
         parent::__construct($id);
         
         // set repository name
-        $this->repositoryname = strtolower($this->modelname);
+        $this->repositoryname = strtolower($this->tablename);
         
         // parametros de controle gerencial
         $this->CtrlParametersInitialize();
@@ -221,10 +221,10 @@ class Repository extends Model
         
     }
     
-    static function static_primary_keys_check(string $modelname, array $parameters):bool{
+    static function static_primary_keys_check(string $tablename, array $parameters):bool{
         {//obtencao lista chaves primarias
-            $modelnameFull = Repository::getObjectClassname($modelname);
-            $obj_sample = new $modelnameFull();
+            $tablenameFull = Repository::getObjectClassname($tablename);
+            $obj_sample = new $tablenameFull();
             $pk_array = $obj_sample->primary_keys;
             //deb($pk);
         }
@@ -243,7 +243,7 @@ class Repository extends Model
                     
                     //verifica se o parametro necessario foi informado
                     if(!isset($parameters[$pk])){
-                        throw new Exception("Um parâmetro necessários à análise de chaves primárias do repositório '$modelname' não foi encontrado dentre os parametros informados ('$pk').");
+                        throw new Exception("Um parâmetro necessários à análise de chaves primárias do repositório '$tablename' não foi encontrado dentre os parametros informados ('$pk').");
                     }
                     
                     $conditions[] = " \$$pk=='".$parameters[$pk]."' ";
@@ -251,7 +251,7 @@ class Repository extends Model
             }
             {//ajuste das condicoes com base em registros pre-existentes (edicao)
                 if(!isset($parameters['id'])){
-                    throw new Exception("O identificador necessário para análise de chaves primárias do repositório '$modelname' não foi encontrado dentre os parametros informados ('$pk').");
+                    throw new Exception("O identificador necessário para análise de chaves primárias do repositório '$tablename' não foi encontrado dentre os parametros informados ('$pk').");
                 }else{
                     $id = intval($parameters['id']);
                     if($id!=0){
@@ -263,7 +263,7 @@ class Repository extends Model
             //deb($conditions);
         }
         {//busca de registros já existentes
-            $registro_pre_existente_array = Repository::getRepository($modelname,$conditions,true,false,false,false);
+            $registro_pre_existente_array = Repository::getRepository($tablename,$conditions,true,false,false,false);
             //deb($registro_array);            
             if(sizeof($registro_pre_existente_array)>1){
                 throw new Exception("ATENÇÃO! Foram encontrados registros com chaves primárias iguais (".implode(',' , $pk_array)."). Contate o administrador!");
@@ -898,9 +898,9 @@ class Repository extends Model
                     // deb($setMethod,0);
                 }
                 {
-                    $modelname = substr($k, 0, strlen($k) - 3);
-                    // deb($modelname);
-                    $modelClassFullname = Repository::getObjectClassname($modelname);
+                    $tablename = substr($k, 0, strlen($k) - 3);
+                    // deb($tablename);
+                    $modelClassFullname = Repository::getObjectClassname($tablename);
                     // deb($modelClassFullname);
                     $obj = new $modelClassFullname($v);
                     $obj->loadReferences();
@@ -941,17 +941,17 @@ class Repository extends Model
         $parameters = $this->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
         foreach (array_keys($parameters) as $column) {
             if (substr($column, - 3) == '_id') {
-                $modelname = substr($column, 0, strlen($column) - 3);
-                $return[$modelname] = $modelname;
+                $tablename = substr($column, 0, strlen($column) - 3);
+                $return[$tablename] = $tablename;
             }
         }
         return $return;
     }
     
-    static function get_filters($modelname) {
+    static function get_filters($tablename) {
         $filters = [];
         {
-            $objectClassName = Repository::getObjectClassname($modelname);            
+            $objectClassName = Repository::getObjectClassname($tablename);            
             $sample = new $objectClassName();            
         }
         {
@@ -973,10 +973,10 @@ class Repository extends Model
         }
         return $filters;
     }
-    static function get_titles($modelname) {
+    static function get_titles($tablename) {
         $titles = [];
         {
-            $objectClassName = Repository::getObjectClassname($modelname);            
+            $objectClassName = Repository::getObjectClassname($tablename);            
             $sample = new $objectClassName();            
         }
         {

@@ -1,12 +1,10 @@
 <?php
-namespace manguto\manguto\mvc\model;
+namespace manguto\cms5\mvc\model;
 
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\lib\Safety;
-use manguto\manguto\repository\Repository;  
-use manguto\manguto\lib\Exception;
-use manguto\manguto\cms\CMSMailer;
-use manguto\manguto\lib\Session;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\lib\Safety;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Session;
 
 class User extends Repository
 {

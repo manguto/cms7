@@ -1,7 +1,7 @@
 <?php
-namespace manguto\manguto\lib\repository;
+namespace manguto\cms5\lib\repository;
 
-use manguto\manguto\lib\Exception;  
+use manguto\cms5\lib\Exception;  
 
 class RepositoryReferences
 {
@@ -29,7 +29,7 @@ class RepositoryReferences
     // ###########################################################################################################################################################################################################################################
     static function Load(Repository $repositoryObject): Repository
     {
-        //deb($modelname=$repositoryObject->getModelname(),0);
+        //deb($tablename=$repositoryObject->getModelname(),0);
                         
         $parameters = $repositoryObject->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
 
@@ -211,23 +211,7 @@ class RepositoryReferences
         return false;
     }
 
-    /**
-     * verifica se o parametro eh de controle
-     *
-     * @param string $parameterName
-     * @return bool
-     */
-    static function ehParametroDeControle(string $parameterName): bool
-    {
-        { // parametro eh de controle?
-            $parameterNameInitialPart = substr($parameterName, 0, strlen(self::ctrl_parameter_ini));
-            if ($parameterNameInitialPart == self::ctrl_parameter_ini) {
-                return true;
-            }
-        }
 
-        return false;
-    }
 }
 
 ?>

@@ -1,5 +1,5 @@
 <?php
-namespace manguto\manguto\lib\database\mysql;
+namespace manguto\cms5\lib\database\mysql;
 
 class Mysql
 {

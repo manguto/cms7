@@ -1,14 +1,14 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Arquivos; 
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Arquivos; 
 use Slim\Slim;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\Session;
-use manguto\manguto\cms\CMSHelp;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\Session;
+use manguto\cms5\lib\cms\CMSHelp;
 
 class Control
 {

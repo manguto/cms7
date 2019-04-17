@@ -2,7 +2,7 @@
 
 
 
-namespace manguto\manguto\lib;
+namespace manguto\cms5\lib;
 
 
 

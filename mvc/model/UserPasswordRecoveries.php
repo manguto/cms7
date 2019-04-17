@@ -1,8 +1,8 @@
 <?php
 
-namespace manguto\manguto\mvc\model;
+namespace manguto\cms5\mvc\model;
 
-use manguto\manguto\repository\Repository;
+use manguto\cms5\repository\Repository;
 
 class UserPasswordRecoveries extends Repository
 {   

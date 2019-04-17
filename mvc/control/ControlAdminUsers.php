@@ -1,11 +1,11 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\mvc\view\ViewAdminUsers;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\mvc\view\ViewAdminUsers;
+use manguto\cms5\lib\repository\Repository;
 
 class ControlAdminUsers extends ControlAdmin
 {
@@ -54,7 +54,8 @@ class ControlAdminUsers extends ControlAdmin
 
     static function get_admin_users()
     {   
-        $users = Repository::getRepository('user', '', false);
+        $users = User::getList('',false);        
+        
         ViewAdminUsers::get_admin_users($users);
     }
 

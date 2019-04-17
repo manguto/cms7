@@ -1,9 +1,8 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\view\ViewDevRepository;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\lib\ProcessResult;
+use manguto\cms5\mvc\view\ViewDevRepository;
+use manguto\cms5\lib\ProcessResult;
 
 class ControlDevRepository extends ControlDev
 {

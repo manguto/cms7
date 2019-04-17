@@ -1,10 +1,10 @@
 <?php
-namespace manguto\manguto\mvc\view;
+namespace manguto\cms5\mvc\view;
 
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\repository\RepositoryReferences;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\repository\Repository;
+use manguto\cms5\repository\RepositoryReferences;
 
 class ViewDevRepository extends ViewDev
 {
@@ -90,9 +90,9 @@ class ViewDevRepository extends ViewDev
         {
             foreach ($register as $k=>$id){
                 if(RepositoryReferences::ehParametroReferencial($k)){
-                    $modelname = substr($k, 0,-3);
-                    //deb($modelname,0);
-                    $register[$k] = self::HTML_Combo($id,$modelname);
+                    $tablename = substr($k, 0,-3);
+                    //deb($tablename,0);
+                    $register[$k] = self::HTML_Combo($id,$tablename);
                 }
             }
             //debc($register);

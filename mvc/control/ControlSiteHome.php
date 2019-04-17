@@ -1,7 +1,7 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\view\ViewSiteHome;
+use manguto\cms5\mvc\view\ViewSiteHome;
 
 class ControlSiteHome extends ControlSite   
 {

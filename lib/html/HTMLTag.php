@@ -1,5 +1,5 @@
 <?php
-namespace manguto\manguto\lib\html;
+namespace manguto\cms5\lib\html;
 
 class HTMLTag extends HTML
 {

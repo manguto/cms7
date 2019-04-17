@@ -1,7 +1,6 @@
 <?php
-namespace manguto\manguto\lib\html;
+namespace manguto\cms5\lib\html;
 
-use manguto\manguto\repository\Repository;
 
 class HTMLPagination extends HTML
 {
@@ -18,7 +17,7 @@ class HTMLPagination extends HTML
 
     public $max = false;
 
-    public $modelname = false;
+    public $tablename = false;
 
     public $objectClassName = false;
 
@@ -51,11 +50,11 @@ class HTMLPagination extends HTML
      * $this->load($GET);
      * }
      */
-    public function __construct(string $modelname, string $conditions_search = '', array $arguments, string $page_varname = 'p', string $length_varname = 'q')
+    public function __construct(string $tablename, string $conditions_search = '', array $arguments, string $page_varname = 'p', string $length_varname = 'q')
     {
-        $this->modelname = $modelname;
+        $this->tablename = $tablename;
         $this->arguments = $arguments;
-        $objectClassName = Repository::getObjectClassname($modelname);
+        $objectClassName = Repository::getObjectClassname($tablename);
         $this->objectClassName = $objectClassName;
 
         { // repositorio completo
@@ -228,7 +227,7 @@ class HTMLPagination extends HTML
 
     public function set_conditions_search()
     {
-        $filter_array = Repository::get_filters($this->modelname);
+        $filter_array = Repository::get_filters($this->tablename);
         //deb($filter_array);
 
         { // ======================================================================================================= CONDICOES

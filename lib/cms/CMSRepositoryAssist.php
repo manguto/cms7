@@ -1,11 +1,11 @@
 <?php
-namespace manguto\manguto\model;
+namespace manguto\cms5\model;
 
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\lib\CSV;
-use manguto\manguto\repository\Repository;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\lib\Exception;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\CSV;
+use manguto\cms5\repository\Repository;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\lib\Exception;
 
 class CMSRepositoryAssist
 {    

@@ -1,6 +1,6 @@
 <?php
 
-namespace manguto\manguto\lib\javascript;
+namespace manguto\cms5\lib\javascript;
 
 class Javascript
 {

@@ -1,7 +1,7 @@
 <?php    
 session_start();
 session_unset();    
-use manguto\manguto\cms\CMSHelp;
+use manguto\cms5\cms\CMSHelp;
 require_once "vendor/autoload.php";
 CMSHelp::Setup();    
 

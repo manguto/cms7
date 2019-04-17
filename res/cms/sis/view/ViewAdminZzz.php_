@@ -1,7 +1,7 @@
 <?php
 namespace sis\view;
 
-use manguto\manguto\mvc\view\ViewAdmin;
+use manguto\cms5\mvc\view\ViewAdmin;
 
 class ViewAdminZzz extends ViewAdmin
 {

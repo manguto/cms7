@@ -1,19 +1,26 @@
 <?php
-namespace manguto\manguto\mvc\model;
+namespace manguto\cms5\lib;
 
-use manguto\manguto\lib\ServerHelp;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\repository\RepositoryReferences;
-use manguto\manguto\lib\Arrays;
+use manguto\cms5\lib\ServerHelp;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Arrays;
+use manguto\cms5\mvc\model\ModelHelper;
 
+/**
+ * esta classe tera como intuito  representar os objetor que precisam ser salvos de alguma forma (banco de dados, xml, json, etc.)
+ * @author Marcos
+ *
+ */
 class Model
 {
 
     protected $values = [];
 
     protected $extra = [];
+    
+    protected $control = [];
 
     protected $references = [];
     
@@ -26,15 +33,34 @@ class Model
             }
         }
     }
+    
+    /**
+     * retorna o modelo em forma de string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $return = array();
+        
+        { // values
+            foreach ($this->values as $c => $v) {
+                if(ModelHelper::ehParametroDeControle($c)) continue;
+                $return[] = "<span title='$c'>$v</span>";
+            }
+        }
+        $return = implode(' | ', $return);
+        return $return;
+    }
 
     // magic methods GET & SET
     public function __call(string $name, $args)
     {
         // metodo aplicado (solicitado)
-        $method = strtolower(substr($name, 0, 3));
+        $method = substr($name, 0, 3);
 
         // garimpa o nome do parametro
-        $fieldname = strtolower(substr($name, 3, strlen($name)));
+        $fieldname = strtolower(substr($name, 3));
         
         
         if ($method == 'get') {
@@ -83,6 +109,12 @@ class Model
         
     }
     
+    /**
+     * SET
+     * @param string $fieldname
+     * @param array $args
+     * @throws Exception
+     */
     private function SET(string $fieldname, array $args){
         
         if (! isset($args[0]))
@@ -187,7 +219,7 @@ class Model
         
         if(!$ctrlParametersIncluded){
             foreach (array_keys($data) as $parameterName){
-                if(RepositoryReferences::ehParametroDeControle($parameterName)){
+                if(ModelHelper::ehParametroDeControle($parameterName)){
                     unset($data[$parameterName]);
                 }
             }
@@ -203,8 +235,8 @@ class Model
                 //deb($parameterNameToTheSet,0);
                 foreach ($referencedObject_array as $referencedObject){
                     if(!is_object($referencedObject)){
-                        $modelname = $this->getModelname();
-                        throw new Exception("Parâmetro deve estar como objeto. Array encontrado ($modelname).");
+                        $tablename = $this->getModelname();
+                        throw new Exception("Parâmetro deve estar como objeto. Array encontrado ($tablename).");
                     }
                     $references[$parameterNameToTheSet][$referencedObject->getId()] = $referencedObject->getData($extraIncluded, $ctrlParametersIncluded, $referencesIncluded, $singleLevelArray);
                 }                
@@ -219,39 +251,12 @@ class Model
         return $data;
     }
 
-    /**
-     * retorna o modelo em forma de string
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        $return = array();
-
-        { // values
-            foreach ($this->values as $c => $v) {
-                if(RepositoryReferences::ehParametroDeControle($c)) continue;
-                $return[] = "<span title='$c'>$v</span>";
-            }
-        }
-        $return = implode(' | ', $return);
-        return $return;
-    }
+   
 
     // --------------------------------------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------------------------------------
-    /**
-     * define o nome do modelo do objeto
-     */
-    private function setModelname(): void
-    {
-        $modelname = get_class($this);
-        $modelname = ServerHelp::fixds($modelname);
-        $modelname = explode(DIRECTORY_SEPARATOR, $modelname);
-        $modelname = array_pop($modelname);
-        $this->modelname = $modelname;
-    }
+    
 
     /**
      * obtem o nome da classe do repositorio informado
@@ -260,10 +265,10 @@ class Model
      * @param string $repositoryname
      * @return string
      */
-    static function getObjectClassname(string $modelname): string
+    static function getObjectClassname(string $tablename): string
     {
-        $modelname = ucfirst(strtolower($modelname));
-        //deb($modelname,0);
+        $tablename = ucfirst(strtolower($tablename));
+        //deb($tablename,0);
 
         foreach (self::model_class_folders as $model_class_folder) {
 
@@ -274,11 +279,11 @@ class Model
             foreach ($php_files as $php_file) {
                 $nomeClasse = Arquivos::obterNomeArquivo($php_file, false);
                 $path = Arquivos::obterCaminho($php_file);
-                // deb($nomeClasse,0); deb($modelname);
-                if ($nomeClasse == $modelname) {
+                // deb($nomeClasse,0); deb($tablename);
+                if ($nomeClasse == $tablename) {
 
                     // deb($path);
-                    $objectClassname = '\\' . $path . $modelname;
+                    $objectClassname = '\\' . $path . $tablename;
                     $objectClassname = str_replace('/', '\\', $objectClassname);
                     $objectClassname = str_replace('\vendor', '', $objectClassname);
                     // deb($objectClassname,0);
@@ -287,7 +292,7 @@ class Model
             }
         }
 
-        throw new Exception("Classe não encontrada ($modelname).");
+        throw new Exception("Classe não encontrada ($tablename).");
     }
 
     // ==================================================================================================================================================

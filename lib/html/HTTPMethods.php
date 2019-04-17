@@ -1,6 +1,6 @@
 <?php
-namespace manguto\manguto\lib\html;
-use manguto\manguto\lib\Exception;
+namespace manguto\cms5\lib\html;
+use manguto\cms5\lib\Exception;
 
 /**
  *

@@ -1,12 +1,12 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\model\User;
-use manguto\manguto\lib\ProcessResult;
-use manguto\manguto\cms\CMSPage;
-use manguto\manguto\lib\Exception;
-use manguto\manguto\mvc\view\ViewSiteForgot;
-use manguto\manguto\mvc\model\UserPasswordRecoveries;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\ProcessResult;
+use manguto\cms5\lib\Exception;
+use manguto\cms5\mvc\view\ViewSiteForgot;
+use manguto\cms5\mvc\model\UserPasswordRecoveries;
+use manguto\cms5\lib\cms\CMSPage;
 
 class ControlSiteForgot extends ControlSite
 {

@@ -1,14 +1,14 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
-use manguto\manguto\mvc\view\ViewDevLog;
-use manguto\manguto\lib\Log;
-use manguto\manguto\lib\Datas;
-use manguto\manguto\lib\Calendario;
-use manguto\manguto\lib\Diretorios;
-use manguto\manguto\lib\Arquivos;
-use manguto\manguto\lib\Numbers;
-use manguto\manguto\lib\CSV;
+use manguto\cms5\mvc\view\ViewDevLog;
+use manguto\cms5\lib\Log;
+use manguto\cms5\lib\Datas;
+use manguto\cms5\lib\Calendario;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Numbers;
+use manguto\cms5\lib\CSV;
 
 class ControlDevLog extends ControlDev
 {

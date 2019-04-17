@@ -1,5 +1,5 @@
 <?php
-namespace manguto\manguto\mvc\control;
+namespace manguto\cms5\mvc\control;
 
 
 class ControlDev extends Control 

@@ -1,5 +1,5 @@
 <?php
-namespace manguto\manguto\lib;
+namespace manguto\cms5\lib;
 
 /**
  * Classe de auxilio quando do tratamento de moedas

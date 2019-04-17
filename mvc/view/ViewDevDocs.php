@@ -1,5 +1,5 @@
 <?php
-namespace manguto\manguto\mvc\view;
+namespace manguto\cms5\mvc\view;
 
 class ViewDevDocs extends ViewDev
 {    
