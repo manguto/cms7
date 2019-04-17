@@ -1,0 +1,19 @@
+<?php
+namespace sis\control;
+
+use manguto\manguto\mvc\control\ControlAdmin;
+use sis\view\ViewAdminZzz;
+
+class ControlAdminZzz extends ControlAdmin  
+{
+
+    static function Executar($app)
+    {
+        $app->get('/admin/zzz', function () {
+            self::PrivativeAdminZone();
+            ViewAdminZzz::zzz();
+        });
+    }
+}
+
+?>

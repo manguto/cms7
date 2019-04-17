@@ -1,0 +1,28 @@
+{include="../general/__open"} {include="../general/_header"} 
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
+	<div class="log pl-5 pr-5">
+		<div class="row">
+			<div class="col-8">
+				<h1>LOGs do Sistema</h1>
+			</div>			
+		</div>
+				
+		<div class="row">
+			<div class="col-12">
+				{if="sizeof($logFiles)>0"}
+				<ul>
+				{loop="$logFiles"}
+					<li style="list-style-type: lower-roman;">
+						<a href='/dev/log/{$value.data}' target="_blank">{$value.desc}</a>
+					</li>
+				{/loop}
+				</ul>
+				{else}
+					Não existem arquivos de registro no momento.
+				{/if}
+			</div>
+		</div>
+	</div>
+</section>
+{include="../general/_footer"} {include="../general/__close"}

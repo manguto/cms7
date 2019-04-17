@@ -1,0 +1,27 @@
+<?php
+namespace sis\model;
+
+use manguto\manguto\repository\Repository;
+
+class Zzz extends Repository
+{
+    //chaves primarias
+    protected $primary_keys = [];
+    
+    public function __construct($id=0){
+        $this->preLoad();
+        parent::__construct($id);
+        $this->posLoad();
+    }
+    
+    private function preLoad()
+    {
+        {// definicao dos atributos do objeto
+            //$this->values['']='';            
+        }
+    }
+    
+}
+
+
+?>

@@ -1,0 +1,12 @@
+
+            @font-face{ 
+                font-family:"OpenSans"; 
+                src:url("../fonts/Open_Sans/OpenSans-Regular.ttf"); 
+                font-size:1em;
+            }
+
+            @font-face{ 
+                font-family:"OpenSansCondensedLight"; 
+                src:url("../fonts/Open_Sans_Condensed/OpenSansCondensed-Light.ttf"); 
+                font-size:1em;
+            }

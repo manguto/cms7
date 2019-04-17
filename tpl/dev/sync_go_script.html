@@ -1,0 +1,125 @@
+<script>
+	//=================================================================== FUNCTIONS
+	
+	function actionPanelStatus(){
+		var lv = 0;
+		$('.linha:visible').each(function(){
+			lv++;
+		});
+		//log(lv);
+		
+		$('#actionPanel #lines').html('Arquivo(s): '+lv);
+		
+		if(lv==0){
+			$('#actionPanel #lines').hide();			
+			$('#actionPanel #btn').hide();
+			$('#actionPanel #msg').html('Nenhum arquivo disponível para ajuste.').prop('colspan','3');
+		}else{
+			$('#actionPanel #lines').show();			
+			$('#actionPanel #btn').show();
+			$('#actionPanel #msg').html('').prop('colspan','1');
+		}
+	}
+	
+	function filtrar(div) {
+		
+		var exibir = '';
+		if (div.hasClass('off')) {
+			div.removeClass('off');
+			div.addClass('on');
+			exibir = true;
+		} else {
+			div.removeClass('on');
+			div.addClass('off');
+			exibir = false;
+		}
+
+		var status = div.prop('align');		
+		//log(status);
+		
+		if(status!='critico'){
+			var tr = $('tr[align="'+status+'"]');
+			if(exibir){
+				tr.find('select').prop('disabled',false);
+				tr.show();
+			}else{
+				tr.find('select').prop('disabled',true);
+				tr.hide();
+			}	
+			
+		}else{
+			var tr = $('tr.critico');
+			if(exibir){
+				tr.find('select').prop('disabled',false);
+				tr.show();
+			}else{
+				tr.find('select').prop('disabled',true);
+				tr.hide();
+			}		
+			
+		}
+		
+		actionPanelStatus();
+	}
+	
+	function analyse(paths){		
+		$('#paths').val(paths);
+		$('form#analyse').submit();
+	}
+	
+	function marcarSelectQuandoVisualizarComparacao(){
+		$('tr.linha td.btn-analisys a').click(function(){			
+			var linha = $(this).parent().parent().parent().parent().parent().parent();			
+			linha.find('td.select select').css({
+				'color':'#fff',
+				'background':'#f00',
+				'border':'solid 1px #fff'
+			});
+		});
+	}
+	
+	function marcarSelectAlterado(){
+		var css = {
+			'color':'#0f0',
+			'background':'#000',
+			'border':'solid 1px #0f0'
+		};
+		$('tr.linha td.select select').blur(function(){
+			$(this).css(css);
+		}).change(function(){
+			$(this).css(css);
+		}).focusin(function(){
+			$(this).mouseout(function(){
+				$(this).css(css);
+			});
+		});	
+		
+	}
+	
+
+	//=================================================================== READY
+	$(document).ready(function() {
+		
+		//ocultar linhas
+		$('.linha').hide();
+		
+		//armar gatilhos
+		$('#filtros .btn').click(function() {
+			filtrar($(this));
+		});
+		
+		//ativar determinados filtros
+		$('div.btn.verificar').each(function(){
+			$(this).click();
+		})		
+		
+		//demarca caixas de selacao quando "Analisar/!\" arquivos
+		marcarSelectQuandoVisualizarComparacao();
+		
+		//demarca caixas de selacao modificadas
+		marcarSelectAlterado();
+		
+		
+		
+	});
+</script>

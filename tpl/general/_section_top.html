@@ -1,0 +1,56 @@
+
+<div class="row">
+	<div class="col-11 process-results-area">
+		<a href='javascript:void(0)' onclick='prs_toggle()' class="toggle_btn" style=' display:none; font-size:10px; color:#aaa;' title='Exibir/Ocultar mensagens apresentadas.'><i>Exibir/Ocultar Mensagens</i></a>
+		<div class="process-results m-0 p-0">
+			<!-- ---------------------------------------------------------------------------------------- PROCESS RESULTS - START -->
+			{loop="getProcessResults(true)"}
+			<div class="process-result {$value.row_class} mb-0 mt-0" style="background:#fff;">
+				<div class="alert mb-1 {$value.col_class}">{autoescape="off"} {$value.msg} {/autoescape}</div>
+			</div>
+			{/loop}
+			<!-- ---------------------------------------------------------------------------------------- PROCESS RESULTS - END -->
+		</div>		
+	</div>
+	<div class="col-1 text-right no-print">				 
+		<a href="javascript:history.back(0);" class='btn-voltar mt-1' style="font-size:10px;" title="Acessar a página anterior.">Voltar</a>						
+	</div>
+</div>
+<style>
+.btn-voltar{	
+	color:#000;
+}
+.btn-voltar:hover{	
+	text-decoration: underline;
+}
+</style>
+<script>
+	{//configurations
+		var tempo_ocultar = 3 * 1000; //seg
+		var tempo_efeito = 1 * 1000; //seg	
+	}
+	
+	function prs_toggle(){
+		$('.process-result.hide').toggle();
+	}
+
+	$(document).ready(function() {
+		
+		var prsa = $('.process-results-area');		
+		var prs = $('.process-results');		
+		var pr = $('.process-result');
+		
+		//obtem a quantidade de mensagens existentes na iteracao
+		var pr_l = pr.length;
+		//log(pr_l);
+		
+		if (pr_l > 0) {
+			{//cria o botao de exibicao
+				prsa.find(".toggle_btn").show();
+			}
+			setTimeout(function() {
+				$('.process-result.hide').slideUp(tempo_efeito);
+			}, tempo_ocultar);
+		}
+	});
+</script>

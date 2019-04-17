@@ -1,0 +1,76 @@
+{include="../general/__open"} {include="../general/_header"} 
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
+	<div class="pl-4 pr-4 " id="sync">
+		<div class="row">
+			<div class="col-12 mb-2">
+				<h1 class=''>Sicronização</h1>
+				<a href='/dev/sync/go' class="btn btn-sm btn-success float-right">ATUALIZAR</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<table class='table' style='width: 100%;'>
+					<thead>
+						<tr>
+							<th colspan="3">
+								FILTROS por STATUS:
+								<br />
+								<div id='filtros'>
+									{loop="$filters"}
+									<div title='{$value.title}' class='btn off {$value.class}' align='{$key}'>{$value.show} ({$value.quant})</div>
+									{/loop}
+									<div title='ARQUIVOS CRÍTICOS' class='btn off critico verificar' align='critico'>CRÍTICOS</div>
+								</div>
+							</th>
+						</tr>
+						<tr>
+							<th style="width: 30%;">PRODUÇÃO</th>
+							<th>&nbsp;</th>
+							<th style="width: 30%">BASE</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!----------------------------------------------------------------------- ANALYSE FORM START -->
+						<form action='/dev/sync/analyse' method="post" target="_blank" id="analyse">
+							<input type="hidden" name="paths" id="paths" value="">
+						</form>
+						<!----------------------------------------------------------------------- ANALYSE FORM END -->
+						<form method="post">
+							{loop="$comparison"}
+							<tr class='linha {$value.class}' id='linha_{$key}' align='{$value.status}'>
+								<td>{$value.prod_show}</td>
+								<td class='opcoes'>
+									<table>
+										<tr>
+											<td class="status">
+												<span title="{$value.status_title}">{$value.status_show}</span>
+											</td>											
+											<td class="btn-analisys">
+												<a href='javascript:void(0);' onclick="analyse('{$value.paths}');" title='Analisar alterações do arquivo'>Analisar {if="$value.lookslike==false"}/!\{/if}</a>
+												
+											</td>
+											<td class="select">
+												<span>{autoescape="off"} {$value.opcoes} {/autoescape}</span>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td>{$value.base_show}</td>
+							</tr>
+							{/loop}
+							<tr id="actionPanel">
+								<td class="pt-5 text-left" id="lines">Arquivos:</td>
+								<td class="pt-5 text-center" id="msg"></td>
+								<td class="pt-5 text-right" id="action">
+									<input id="btn" type="submit" class="btn btn-success" value="REALIZAR MODIFICAÇÕES">
+								</td>
+							</tr>
+						</form>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</section>
+{include="../general/_footer"} {include="sync_go_style"} {include="sync_go_script"} {include="../general/__close"}

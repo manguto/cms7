@@ -1,0 +1,56 @@
+<?php
+namespace sis\control;
+
+use sis\view\ViewCRUDZzz;
+use sis\model\Zzz;
+use manguto\manguto\lib\Exception;
+use manguto\manguto\lib\ProcessResult;
+use manguto\manguto\mvc\control\ControlCRUD;
+
+class ControlCRUDZzz extends ControlCRUD  
+{
+
+    static function Executar($app)
+    {
+        $app->get('/zzz', function () {
+            self::PrivativeAdminZone();
+            ViewCRUDZzz::zzz();
+        });
+        
+        $app->get('/zzz/:id', function ($id) {
+            self::PrivativeAdminZone();
+            ViewCRUDZzz::zzz_view($id);
+        });
+        
+        $app->get('/zzz/:id/edit', function ($id) {
+            self::PrivativeAdminZone();
+            ViewCRUDZzz::zzz_edit($id);
+        });
+        
+        $app->post('/zzz/:id/save', function ($id) {
+            self::PrivativeAdminZone();            
+            try {
+                //save
+                $zzz = new Zzz($id);
+                $zzz->setData($_POST);
+                $zzz->save();                
+            } catch (Exception $e) {
+                ProcessResult::setError($e);
+                headerLocation('/zzz/:id/edit');
+            }
+            ProcessResult::setSuccess("Zzz ($zzz) salvo(a) com sucesso!");
+            headerLocation('/zzz/:id');            
+        });
+        
+        
+        $app->get('/zzz/:id/delete', function ($id) {
+            self::PrivativeAdminZone();
+            ViewCRUDZzz::zzz_delete($id);
+        });
+        
+        
+        
+    }
+}
+
+?>

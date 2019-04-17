@@ -1,0 +1,19 @@
+<?php
+namespace sis\control;
+
+use manguto\manguto\mvc\control\ControlSite;
+use sis\view\ViewSiteZzz;
+
+class ControlSiteZzz extends ControlSite  
+{
+
+    static function Executar($app)
+    {
+        $app->get('/zzz', function () {
+            self::PrivativeZone();
+            ViewSiteZzz::zzz();
+        });
+    }
+}
+
+?>

@@ -1,0 +1,57 @@
+{include="../general/__open"}
+<section>	
+	<div class="pl-4 pr-4 sync">
+		<div class="row mb-4">
+			<div class="col-12">
+				<h1 class=''>Sincronização - Analise</h1>
+				<h3>Alvo: <u>{$filename}</u></h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6 conteudo prod">
+				<h5>Produção</h5>
+				<pre>{autoescape="off"}{$prod_content}{/autoescape}</pre>
+			</div>			
+			<div class="col-6 conteudo base">
+				<h5>Base</h5>
+				<pre>{autoescape="off"}{$base_content}{/autoescape}</pre>
+			</div>
+		</div>
+	</div>
+</section>
+<style type="text/css">
+.conteudo{	
+	overflow:auto;
+	width:100%;
+	font-size: 12px;	
+}
+.conteudo .linha{
+	font-family:Courier New;
+	margin:0;
+	padding:0 10px;
+	float:left;
+	clear: right;
+	width: 100%;	
+}
+.conteudo .linha.encontrada{
+	background: #afa;
+}
+.conteudo .linha.nao-encontrada{
+	background: #ffa;
+}
+
+.conteudo .prod{
+}
+.conteudo .base{
+}
+
+</style>
+<script>
+	//=================================================================== FUNCTIONS
+
+	//=================================================================== READY
+	$(document).ready(function() {
+		
+	});
+</script>
+{include="../general/__close"}

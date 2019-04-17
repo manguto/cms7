@@ -1,0 +1,61 @@
+{include="../general/__open"} {include="../general/_header"}
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
+	<div class="container">
+		<div class="row mb-4">
+			<div class="col-12">
+				<a href="/dev/repository" title="Clique para visualizar os repositórios do sistema." class="clean"><h1>Repositório do Sistema</h1></a>
+				<a href="/dev/repository/{$repository}" title="Clique para visualizar o repositório completo." class="clean"><h2>{$repositoryNameShow}</h2></a>
+			</div>
+		</div>
+		<div class="row pl-1">
+			<div class="col-12">
+				<table class="table table-bordered table-striped table-hover">
+					<tbody>
+						{loop="$register"}
+						<tr>
+							<td scope="row" class="coluna">{function="strtoupper($key)"}:</td>
+							<td scope="row" class="valor">
+								{autoescape="off"}
+								{$value}
+								{/autoescape}
+							</td>
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+				<br />
+				<a href="/dev/repository/{$repository}/{$register.id}/delete" class="btn btn-outline-danger float-right ml-2" onclick="return confirm('Deseja realmente excluir este registro?')">EXCLUIR</a>
+				<a href="/dev/repository/{$repository}/{$register.id}/edit" class="btn btn-outline-warning float-right ml-2">EDITAR</a>				
+			</div>
+			
+		</div>
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+	</div>
+</section>
+<style>
+
+table.table td {
+	padding: 10px 30px 10px 20px;
+}
+
+table.table td.coluna {
+	font-weight: bold;
+	width: 100px;
+}
+
+table.table td.valor {
+	
+}
+</style>
+<script>
+	$(document).ready(function() {
+		$('table.table').bootstrapTable();
+	});
+</script>
+{include="../general/_footer"} {include="../general/__close"}

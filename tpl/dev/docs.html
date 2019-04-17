@@ -1,0 +1,30 @@
+{include="../general/__open"} {include="../general/_header"}
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
+	<div class="container">
+		<div class="row mb-4">
+			<div class="col-12">				
+				<h1>Documentações</h1>
+			</div>
+		</div>		
+		<div class="row">
+			<div class="col-12">
+				{if="sizeof($samples)>0"} 
+					{loop="$samples"}
+					<h4><a href="/dev/docs/{$key}">{$value}</a></h4>		
+					{/loop}
+				{else}
+					<b>Nenhuma documentação encontrada para exibição.</b><br/>
+					<br />
+					<i>
+					Para exibir documentações neste módulo, insira arquivos HTML na pasta "sis/docs". <br />
+					<br />
+					Cada arquivo será referenciado aqui e exibido quando clicado.
+					</i>			
+				{/if}
+			</div>
+		</div>
+	</div>
+	
+</section>
+{include="../general/_footer"} {include="../general/__close"}

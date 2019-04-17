@@ -1,0 +1,18 @@
+<?php
+namespace sis\view;
+
+use manguto\manguto\mvc\view\ViewSite;
+
+class ViewSiteZzz extends ViewSite
+{
+
+    static function zzz()
+    {
+        self::load('site_zzz');
+    }
+}
+
+
+
+
+

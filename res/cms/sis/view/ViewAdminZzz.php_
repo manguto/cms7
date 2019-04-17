@@ -1,0 +1,18 @@
+<?php
+namespace sis\view;
+
+use manguto\manguto\mvc\view\ViewAdmin;
+
+class ViewAdminZzz extends ViewAdmin
+{
+
+    static function zzz()
+    {
+        self::load('admin_zzz');
+    }
+}
+
+
+
+
+

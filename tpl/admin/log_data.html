@@ -1,0 +1,64 @@
+{include="../general/__open"} {include="../general/_header"} 
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
+	<div class="container logs pl-5 pr-5">
+		<div class="row">
+			<div class="col-8">
+				<h1>LOGs do Sistema</h1>
+			</div>
+			<div class="col-4 text-right">
+				<!-- Atualizar a cada [60 seg] -->
+				<br />
+				<a href="/dev/log/completo" class="btn btn-primary">Alterar Data</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<h2>{$data}</h2>
+			</div>
+		</div>
+		
+		{loop="$logs"}				
+		<!-- ------------------------------------------------------------------- {$key} INI -->		
+		<div class="log-wrap">
+			{$key}			
+			{autoescape="off"} {$value} {/autoescape}		
+		</div>
+		<!-- ------------------------------------------------------------------- {$key} END -->		
+		{/loop}
+	</div>
+</section>
+<script type="text/javascript">
+	$(document).ready(function() {		
+		$('div.logs table').bootstrapTable();		
+	});
+</script>
+<style>
+
+
+div.logs div.log-wrap{
+	margin-top:70px;
+	border-top:dashed 2px #eee;	
+	padding-top:25px;
+		
+}
+
+div.logs div.log-wrap *{
+	font-size:12px;	
+}
+
+
+
+div.logs table {
+	
+}
+
+div.logs table thead {
+	
+}
+
+div.logs table tbody {
+	
+}
+</style>
+{include="../general/_footer"} {include="../general/__close"}

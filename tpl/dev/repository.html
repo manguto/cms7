@@ -1,0 +1,52 @@
+{include="../general/__open"} {include="../general/_header"}
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
+	<div class="container">
+		<div class="row mb-4">
+			<div class="col-12">
+				<h1>Repositório do Sistema</h1>
+			</div>
+		</div>
+		<div class="row">
+			{loop="$repositorios"}
+			<div class="col-3 modelo">
+				<b>{$value.show}</b>
+				<hr />
+				<a href="/dev/repository/{$key}" class="btn btn-sm btn-outline-danger" target="_blank">Gerenciar</a>
+				<a href="/dev/repository/sheet/{$key}" class="btn btn-sm btn-outline-success" target="_blank">Visualizar</a>
+			</div>
+			{/loop}
+		</div>
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+	</div>
+</section>
+<style>
+.modelo {
+	box-shadow: 0px 4px 8px #aaa;
+	padding: 20px 20px 30px 20px;
+	margin: 10px 5px 20px 10px;
+	border-radius: 5px;
+	border: solid 1px #fff;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.modelo:hover {
+	border-color: #fdd;
+	box-shadow: 0px 4px 8px #888;
+}
+
+.modelo hr {
+	margin: 5px 0px 15px 0px;
+}
+
+.modelo .btn {
+	margin: 0px 0px 5px 0px;
+}
+</style>
+{include="../general/_footer"} {include="../general/__close"}

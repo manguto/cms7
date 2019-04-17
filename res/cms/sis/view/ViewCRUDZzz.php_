@@ -1,0 +1,60 @@
+<?php
+namespace sis\view;
+
+use manguto\manguto\mvc\view\ViewCRUD;
+use manguto\manguto\cms\CMSPageCRUD;
+use manguto\manguto\lib\HTMLPagination;
+use sis\model\Zzz;
+
+class ViewCRUDZzz extends ViewCRUD
+{
+
+    static function zzz()
+    {   
+        {//filters array
+            #FILTER_PARAMETERS#
+        }
+        
+        {
+            $title_array = [];
+            #TITLE_ARRAY#
+            //deb($title_array);
+        }
+        
+        {//pagination
+            $pagination = new HTMLPagination('zzz', '', $_GET);
+        }
+        
+        {//conditions
+            $conditions = $pagination->get_conditions_final();
+            //deb($conditions);
+        }
+        
+        {//row array (registers)    
+            $row_array = CMSPageCRUD::List___get_register_array('zzz',$conditions,$title_array);
+            //deb($row_array);            
+        }        
+        
+        self::load('crud_zzz',get_defined_vars());
+    }
+    
+    static function zzz_view($id)
+    {
+        self::load('crud_zzz_view');
+    }    
+    
+    static function zzz_edit($id)
+    {
+        self::load('crud_zzz_edit');
+    }
+    
+    
+    
+}
+
+
+
+
+
+
+

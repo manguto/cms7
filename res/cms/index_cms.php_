@@ -1,0 +1,35 @@
+<?php
+session_start();
+require_once ("vendor/autoload.php");
+require_once 'configurations.php';
+require_once 'functions.php';
+
+use Slim\Slim;
+use manguto\manguto\cms\CMSHelp;
+use manguto\manguto\lib\Exception;
+use manguto\manguto\lib\Session;
+use manguto\manguto\mvc\control\Control;
+ 
+
+try {
+
+    { // SESSION RESET REQUEST?
+        Session::checkResetRequest();        
+    }    
+    
+    { // PAGE STRUCTURAL DATA INITIALIZATION
+        CMSHelp::Initialization();
+    }
+    
+    { // SLIM FRAMEWORK CONTROL
+
+        $app = new Slim();
+        $app->config('debug', true);
+        Control::Executar($app);
+        $app->run();
+    }
+} catch (Exception $e) { // } catch (\Throwable | Exception | \Error $e) {
+    $e->show(true);
+}
+//deb($_SESSION,0);
+?>

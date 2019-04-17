@@ -1,0 +1,209 @@
+{include="../general/__open"} {include="../general/_header"} 
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
+	<div class="container">
+		<h1 class=''>Desenvolvimento - CMS</h1>
+		<h2>Verificação dos Arquivos do Sistema</h2>
+		<br />
+	</div>
+	<form method="post">
+		<div class="container">
+			<div class="row base">
+				<div class="col-12 tipo">
+					<h3>Base (Fundamentais)</h3>
+					<div class="col-12 sub-tipo">
+						<h5>
+							Modificados
+							<small>=> Arquivos que fazem parte da base a ser replicada durante um SETUP</small>
+						</h5>
+						{if="sizeof($comparison['base_modificados'])>0"} {loop="$comparison['base_modificados']"}
+						<div class="form-check">
+							<input class="form-check-input checked" type="checkbox" id="base_modificados_{$key}" name="base_modificados[]" value="{$value['fonte']};{$value['destino']}">
+							<label for="base_modificados_{$key}">
+								<div class="arquivo" title="ATIVAR/DESATIVAR ATUALIZAÇÃO">{$value['fonte']} => {$value['destino']}</div>
+							</label>
+							<input type="button" class="visualizar-conteudo" onclick="javascript: conteudoToggle('base_modificados_{$key}');" value="[]" title="VISUALIZAR CONTEÚDO dos ARQUIVOS">
+							<div class="row conteudo base_modificados_{$key}">
+								<div class="col-5 origem">
+									<pre>{$value['fonte_conteudo']}</pre>
+								</div>								
+								<div class="col-1"></div>
+								<div class="col-5 destino">
+									<pre>{$value['destino_conteudo']}</pre>
+								</div>
+							</div>
+						</div>
+						{/loop} {else}
+						<div class="form-check">Todos os arquivos base estão atualizados!</div>
+						{/if}
+					</div>
+					<div class="col-12 sub-tipo">
+						<h5>
+							Não Encontrados
+							<small>=> Não encontrados no projeto atual mas presentes na base (Um SETUP precisa ser reinicializado)</small>
+						</h5>
+						{if="sizeof($comparison['base_nao_encontrados'])>0"} {loop="$comparison['base_nao_encontrados']"}
+						<div class="form-check">
+							<input class="form-check-input checked" type="checkbox" id="base_nao_encontrados_{$key}" name="base_nao_encontrados[] " value="{$value['fonte']};{$value['destino']}">
+							<label for="base_nao_encontrados_{$key}">
+								<div class="row arquivo" title="ATIVAR/DESATIVAR ATUALIZAÇÃO">{$value['fonte']} => {$value['destino']}</div>
+							</label>
+							<input type="button" class="visualizar-conteudo" onclick="javascript: conteudoToggle('base_nao_encontrados_{$key}');" value="[]" title="VISUALIZAR CONTEÚDO dos ARQUIVOS">
+							<div class="row conteudo base_nao_encontrados_{$key}">
+								<div class="col-5 origem">
+									<pre>{$value['fonte_conteudo']}</pre>
+								</div>						
+								<div class="col-1"></div>		
+								<div class="col-5 destino">
+									<pre>{$value['destino_conteudo']}</pre>
+								</div>
+							</div>
+						</div>
+						{/loop} {else}
+						<div class="form-check">Todos os arquivos base foram encontrados!</div>
+						{/if}
+					</div>
+				</div>
+			</div>
+			<div class="row novos">
+				<div class="col-12 tipo">
+					<h3>Novos (Produção)</h3>
+					<div class="col-12 sub-tipo">
+						<h5>Novos</h5>
+						{if="sizeof($comparison['novos'])>0"} {loop="$comparison['novos']"}
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="novos_{$key}" name="novos[]" value="{$value['fonte']};{$value['destino']}">
+							&nbsp;
+							<label class="form-check-label" for="novos_{$key}">{$value['fonte']}</label>
+						</div>
+						{/loop} {else}
+						<div class="form-check">Não foram encontrados arquivos novos para inclusão.</div>
+						{/if}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<br />
+						<br />
+						<br />
+						{if="sizeof($comparison['base_modificados'])>0 || sizeof($comparison['base_nao_encontrados'])>0 || sizeof($comparison['novos'])>0 "}
+						<input type="submit" class="btn btn-danger" value="ATUALIZAR BASE">
+						<br />
+						<small style='color: #a00;'>Clique aqui para atualizar a base dos arquivos selecionados acima.</small>
+						{else}
+						<small style='color: #0a0;'>Nenhum atualização a ser realizada.</small>
+						<br />
+						<a class="btn btn-success" href="/admin/development/cms/checkbasefiles">ATUALIZAR (F5)</a>
+						{/if}
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</section>
+<style type="text/css">
+form .row .tipo {
+	border-top: solid 1px #aaa;
+	margin-bottom: 20px;
+	padding-top: 20px;
+	/*background: yellow; /**/
+}
+
+form .row .sub-tipo {
+	margin-bottom: 10px;
+	padding-top: 10px;
+	/*background: green; /**/
+}
+
+form .row .sub-tipo .form-check {
+	margin-top: 5px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	padding-left: 35px;
+	border-bottom: solid 1px #aaa;
+	margin-bottom: 30px;
+	font-size: 14px;
+}
+
+form .row .sub-tipo .form-check .conteudo {
+	margin-top: 15px;
+	font-size: 11px;
+	overflow: auto;
+}
+
+form .row .sub-tipo .form-check .conteudo div {
+	padding-top: 10px;
+}
+
+form .row .sub-tipo .form-check .conteudo div.origem {
+	background: #ffd;
+}
+
+form .row .sub-tipo .form-check .conteudo div.destino {
+	background: #fdd;
+}
+
+.arquivo {
+	padding: 5px 10px 5px 10px;
+	border-radius: 10px;
+	margin-left:10px;
+}
+
+.arquivo:hover {
+	cursor: pointer;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.base {
+	color: #c00;
+}
+
+.novos {
+	color: #0c0;
+}
+
+.form-check {
+	margin-left: 20px;
+}
+
+input.visualizar-conteudo{
+	margin-left:20px;
+}
+
+</style>
+<script>
+	function checkStatus(i) {
+		if (i.prop('checked') == true) {
+			i.parent().css('background', '#afa');
+		} else {
+			i.parent().css('background', '#ddd');
+		}
+	}
+
+	function conteudoToggle(selector) {		
+		var conteudo = $('.'+selector);
+		
+		if(conteudo.css('display')=='none'){
+			conteudo.slideDown(1000);
+		}else{
+			conteudo.slideUp(1000);
+		}
+	}
+
+	$(document).ready(function() {
+
+		$('input[type="checkbox"]').on('change', function() {
+			checkStatus($(this));
+		});
+
+		$('.checked').each(function() {
+			$(this).prop('checked', true);
+			checkStatus($(this));
+		});
+		
+		$('.conteudo').slideUp(100);
+
+	});
+</script>
+{include="../general/_footer"} {include="../general/__close"}
