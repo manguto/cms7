@@ -6,7 +6,7 @@ use manguto\cms5\cms\CMSPageSite;
 use manguto\cms5\cms\CMSPageAdmin;
 use manguto\cms5\cms\CMSPageDev;
 use manguto\cms5\cms\CMSPageOther;
-use manguto\cms5\repository\Repository;
+use manguto\cms5\lib\repository\Repository;
 use manguto\cms5\lib\Arrays;
 use manguto\cms5\cms\CMSPageCRUD;
 

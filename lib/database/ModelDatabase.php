@@ -1,6 +1,8 @@
 <?php
-namespace manguto\cms5\mvc\model;
+namespace manguto\cms5\lib\database;
 
+
+use manguto\cms5\lib\Model;
 
 interface Registravel
 {
@@ -8,7 +10,6 @@ interface Registravel
     
     public function preLoad();
 }
-
 
 class ModelDatabase extends Model implements Registravel
 {
@@ -18,7 +19,7 @@ class ModelDatabase extends Model implements Registravel
     }
     
     public function preLoad() {
-            
+        
     }
     
     

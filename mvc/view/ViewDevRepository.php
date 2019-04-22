@@ -3,8 +3,8 @@ namespace manguto\cms5\mvc\view;
 
 use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\Arquivos;
-use manguto\cms5\repository\Repository;
-use manguto\cms5\repository\RepositoryReferences;
+use manguto\cms5\lib\repository\Repository;
+use manguto\cms5\lib\repository\RepositoryReferences;
 
 class ViewDevRepository extends ViewDev
 {

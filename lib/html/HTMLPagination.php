@@ -2,6 +2,8 @@
 namespace manguto\cms5\lib\html;
 
 
+use manguto\cms5\lib\repository\Repository;
+
 class HTMLPagination extends HTML
 {
 

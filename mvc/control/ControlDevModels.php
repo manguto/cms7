@@ -8,7 +8,7 @@ use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\ProcessResult;
 
 class ControlDevModels extends ControlDev
-{
+{   
 
     static function Executar($app)
     {

@@ -1,11 +1,6 @@
 <?php
 namespace manguto\cms5\lib;
 
-use manguto\cms5\lib\ServerHelp;
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Diretorios;
-use manguto\cms5\lib\Arquivos;
-use manguto\cms5\lib\Arrays;
 use manguto\cms5\mvc\model\ModelHelper;
 
 /**

@@ -1,6 +1,9 @@
 <?php
 namespace manguto\cms5\lib\cms;
 
+use manguto\cms5\lib\repository\Repository;
+use manguto\cms5\lib\repository\RepositoryReferences;
+
 class CMSPageCRUD extends CMSPage
 {
 

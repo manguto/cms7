@@ -3,7 +3,7 @@ namespace manguto\cms5\model;
 
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\CSV;
-use manguto\cms5\repository\Repository;
+use manguto\cms5\lib\repository\Repository; 
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
 

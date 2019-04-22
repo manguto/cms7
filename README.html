@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MANGUTO / CMS5</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+	<h3>MANGUTO / CMS5</h3>
+	<br />
+	<br />
+	<br />
+	<ul>
+		<li class="platform">
+			<div class="title">FRONT-END</div>
+			<ul>
+				<li>
+					<div class="title">sis/</div>
+				</li>
+				<li>
+					<div class="title">index.php</div>
+				</li>
+				<li>
+					<div class="title">config.php</div>
+				</li>
+				<li>
+					<div class="title">composer.json</div>
+				</li>
+			</ul>
+		</li>
+		<li class="platform">
+			<div class="title">BACK-END</div>
+			<ul>
+				<li>
+					<div class="title">vendor/</div>
+					<ul>
+						<li>
+							<div class="title">manguto/</div>
+							<ul>
+								<li>
+									<div class="title">cms5/</div>
+									<ul>
+										<li>
+											<div class="title">functions/</div>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<div class="title">composer/</div>
+							<ul>
+								<li>
+									<div class="title">...</div>									
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</body>
+<style>
+body {
+	padding: 20px 50px;
+}
+
+body * {	
+	font-family: Arial;
+	margin:0;
+	padding:0;
+}
+
+ul {	
+	
+}
+
+ul li {	
+	border-left:solid 1px #555;
+	border-bottom:solid 1px #000;
+	list-style-type: none;
+	padding:0px 0px 0px 5px;
+	margin:5px 0px 10px 10px;
+	
+}
+
+ul li .title {
+	
+}
+
+/*-------------------------------------------------------- platform */
+ul li.platform{
+	margin-bottom:20px;
+}
+ul li.platform > .title{
+	font-weight: bold;
+	color:#500;
+}
+/*-------------------------------------------------------- folder */
+ul li.folder{
+	
+}
+ul li.folder > .title{
+	font-weight: bold;
+}
+
+/*-------------------------------------------------------- file */
+ul li.file{
+	
+}
+ul li.file > .title{
+	font-style: italic;
+}
+
+
+
+</style>
+<script>
+$(document).ready(function(){
+	
+	//--------------------------------------------- colocar classe 'folder'	
+	$( ".title:contains('/')" ).parent().addClass('folder');
+	
+	//--------------------------------------------- colocar classe 'file'	
+	$( ".title:contains('.')" ).parent().addClass('file');
+	
+	
+});
+</script>
+</html>

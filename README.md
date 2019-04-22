@@ -28,10 +28,7 @@ composer install
     CMSHelp::Setup();    
     ?>
 
-## Access through a browser!
-http://xxxxxxxx/setup.php
-
-## Ready! Go!
+## Done!
 
 
 [Markdown - Help](http://markdownlivepreview.com)

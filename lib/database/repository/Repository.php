@@ -9,8 +9,8 @@ use manguto\cms5\lib\ServerHelp;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\Datas;
-use manguto\cms5\mvc\model\Model;
 use manguto\cms5\lib\Arrays;
+use manguto\cms5\lib\Model;
 
 
 class Repository extends Model
@@ -325,8 +325,7 @@ class Repository extends Model
     /**
      * obtem o conteudo do modelo em forma de array
      *
-     * {@inheritdoc}
-     * @see \manguto\manguto\mvc\model\Model::getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
+     * {@inheritdoc}     
      */
     public function getData(bool $extraIncluded, bool $ctrlParametersIncluded, bool $referencesIncluded, bool $singleLevelArray): array
     {   
