@@ -6,7 +6,7 @@ use manguto\cms5\mvc\view\ViewSiteHome;
 class ControlSiteHome extends ControlSite   
 {
     
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         { // ROTAS            
             $app->get('/', function () {                

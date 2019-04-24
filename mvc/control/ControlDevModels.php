@@ -10,7 +10,7 @@ use manguto\cms5\lib\ProcessResult;
 class ControlDevModels extends ControlDev
 {   
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
 
         // ----------------------------------------------------------------------

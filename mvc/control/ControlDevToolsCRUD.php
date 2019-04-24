@@ -8,7 +8,7 @@ use manguto\cms5\mvc\CMSPageCRUDTools;
 class ControlDevCMSPageCRUDTools extends ControlDevTools
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {        
         $app->get('/dev/tools/crud', function () {
             self::PrivativeDevZone();

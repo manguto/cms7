@@ -7,7 +7,7 @@ use manguto\cms5\mvc\view\ViewAdminHome;
 class ControlAdminHome extends ControlAdmin 
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/admin', function () {
             self::PrivativeAdminZone();

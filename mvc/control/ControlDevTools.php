@@ -6,7 +6,7 @@ use manguto\cms5\mvc\view\ViewDevTools;
 class ControlDevTools extends ControlDev
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/dev/tools', function () {
             self::PrivativeDevZone();

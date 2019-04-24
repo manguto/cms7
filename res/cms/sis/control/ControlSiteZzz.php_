@@ -7,7 +7,7 @@ use sis\view\ViewSiteZzz;
 class ControlSiteZzz extends ControlSite  
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/zzz', function () {
             self::PrivativeZone();

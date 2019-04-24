@@ -13,7 +13,7 @@ use manguto\cms5\lib\CSV;
 class ControlDevLog extends ControlDev
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/dev/log', function () {
             Control::PrivativeDevZone();

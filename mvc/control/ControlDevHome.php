@@ -5,7 +5,7 @@ use manguto\cms5\mvc\view\ViewDevHome;
 
 class ControlDevHome extends ControlDev
 {
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {   
         
             $app->get('/dev', function () {

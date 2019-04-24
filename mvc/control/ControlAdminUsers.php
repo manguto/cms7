@@ -10,7 +10,7 @@ use manguto\cms5\lib\repository\Repository;
 class ControlAdminUsers extends ControlAdmin
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/admin/users', function () {
             Control::PrivativeAdminZone();

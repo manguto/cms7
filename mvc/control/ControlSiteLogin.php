@@ -9,7 +9,7 @@ use manguto\cms5\lib\Exception;
 class ControlSiteLogin extends ControlSite
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/login', function () {
             ControlSiteLogin::get_login();

@@ -10,7 +10,7 @@ use manguto\cms5\mvc\control\ControlCRUD;
 class ControlCRUDZzz extends ControlCRUD  
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/zzz', function () {
             self::PrivativeAdminZone();

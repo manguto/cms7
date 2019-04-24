@@ -11,7 +11,7 @@ use manguto\cms5\lib\cms\CMSPage;
 class ControlSiteForgot extends ControlSite
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/forgot', function () {
             ControlSiteForgot::get_forgot();

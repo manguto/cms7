@@ -9,7 +9,7 @@ use manguto\cms5\mvc\view\ViewDevUsers;
 class ControlDevUsers extends ControlDev
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/dev/users', function () {
             Control::PrivativeDevZone();

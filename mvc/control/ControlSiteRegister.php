@@ -10,7 +10,7 @@ use manguto\cms5\lib\Session;
 class ControlSiteRegister extends ControlSite
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/register', function () {
             ControlSiteRegister::get_register();

@@ -12,7 +12,7 @@ class ControlAdminProfile extends ControlAdmin
 
     const key = 'form_temp_values';
     
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {     
         $app->get('/admin/profile', function () {
             Control::PrivativeAdminZone();

@@ -7,63 +7,81 @@ use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Log;
 
-class CMSHelp
+class CMSStart
 {
 
-    static function Initialization()
+    static function Run()
     {
-        if (defined('VIRTUAL_HOST_ACTIVE')) {
-
-            define('ROOT', CMSHelp::ROOT());
-
-            define('ROOT_ACTION', CMSHelp::ROOT_ACTION());
-
-            define('ROOT_LOCATION', CMSHelp::ROOT_LOCATION());
-
-            define('ROOT_TPL', CMSHelp::ROOT_TPL());
-            
-            define('ROOT_SIS', CMSHelp::ROOT_SIS());
-            
-            //--------------------------------------
-            
-            self::SUBVERSION_CSS();
-            
-            self::FOLDERS_PERMISSIONS();
-
-            self::SERVER_PARAMETERS_TUNE();
-
-            self::EXTRA_PARAMETERS();
-            
-            self::HTML_AUX();
-            
-            self::LOG();
-            
-            self::DEBUG();
-            
-            
-        } else {
+        if (! defined('VIRTUAL_HOST_ACTIVE')) {
             throw new Exception("A constante 'VIRTUAL_HOST_ACTIVE' não foi definida. Defina-a no arquivo de CONFGURAÇÕES e tente novamente.");
         }
+
+        self::AUTO_DEFINED();
+
+        // --------------------------------------
+
+        define('ROOT', CMSStart::ROOT());   
+
+        define('ROOT_ACTION', CMSStart::ROOT_ACTION());
+
+        define('ROOT_LOCATION', CMSStart::ROOT_LOCATION());
+
+        define('ROOT_TPL', CMSStart::ROOT_TPL());
+
+        define('ROOT_SIS', CMSStart::ROOT_SIS());
+
+        // --------------------------------------
+
+        self::SUBVERSION_CSS();
+
+        self::FOLDERS_PERMISSIONS();
+
+        self::SERVER_PARAMETERS_TUNE();
+
+        self::EXTRA_PARAMETERS();
+
+        self::HTML_AUX();
+
+        self::LOG();
+
+        self::DEBUG();
     }
-    
-    private static function  SUBVERSION_CSS(){
-        //development flag (foldername has a digit at its end!)
-        define("SUBVERSION", is_numeric(substr(SIS_FOLDERNAME, -1,1)) ? true : false);
-        
-        if(SUBVERSION){
+
+    private function AUTO_DEFINED()
+    {
+
+        // ##################################################################################################
+        // ############################## CONFIGURATION AUTOMATIC DEFINED ###################################
+        // ##################################################################################################
+
+        // abrev. do sistema
+        define("SIS_FOLDERNAME", Arquivos::obterNomePasta(__FILE__));
+
+        // sistem url
+        define("SIS_URL", SERVER_URL . SIS_FOLDERNAME);
+    }
+
+    private static function SUBVERSION_CSS()
+    {
+        // development flag (foldername has a digit at its end!)
+        define("SUBVERSION", is_numeric(substr(SIS_FOLDERNAME, - 1, 1)) ? true : false);
+
+        if (SUBVERSION) {
             $SUBVERSION_CSS = "<style>header,section,footer {border-top:solid 5px #f00;}</style>";
-        }else{
+        } else {
             $SUBVERSION_CSS = '';
         }
-        define("SUBVERSION_CSS", $SUBVERSION_CSS);        
+        define("SUBVERSION_CSS", $SUBVERSION_CSS);
     }
-    
-    private static function DEBUG() {
+
+    private static function DEBUG()
+    {
         CMSDebug::Start();
     }
-    
-    private static function LOG(){        
-        Log::Go();        
+
+    private static function LOG()
+    {
+        Log::Go();
     }
 
     private static function EXTRA_PARAMETERS()
@@ -79,8 +97,8 @@ class CMSHelp
 
         $request_uri = $_SERVER['REQUEST_URI'];
         // deb($request_uri);
-        
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
         { // SIS_PLATFORM - actual platform
             $request_uri_ = explode('/', $request_uri);
@@ -103,8 +121,7 @@ class CMSHelp
             define('SIS_PLATFORM', $SIS_PLATFORM);
         }
     }
-    
-    
+
     private static function HTML_AUX()
     {
         define('HTML_BR', '<br/>');
@@ -116,17 +133,17 @@ class CMSHelp
         $folders777 = [];
         $folders777[] = 'cache';
         $folders777[] = 'data';
-        $folders777[] = 'log';        
+        $folders777[] = 'log';
         $folders777[] = 'repository';
-        
-        foreach ($folders777 as $folder) {            
+
+        foreach ($folders777 as $folder) {
             $fileperms = Arquivos::permissoesObter($folder, false);
-            //deb($fileperms,0);
+            // deb($fileperms,0);
             if ($fileperms != '777') {
-                if(Arquivos::permissoesAlterar($folder, 0777, false)==false){
+                if (Arquivos::permissoesAlterar($folder, 0777, false) == false) {
                     throw new Exception("Não foi possível alterar as permissões da pasta '$folder'. Contate o administrador.");
-                }else{
-                    deb("As permissões da pasta '$folder' foram alteradas com sucesso.",0);
+                } else {
+                    deb("As permissões da pasta '$folder' foram alteradas com sucesso.", 0);
                 }
             }
         }
@@ -246,7 +263,7 @@ class CMSHelp
                 }
                 $relat[] = "</li>";
             }
-            
+
             $relat[] = "</ol>";
             $relat[] = "<h3>Procedimento de SETUP finalizado com sucesso!</h3>";
             $relat[] = "<hr/>";
@@ -262,12 +279,12 @@ class CMSHelp
             $relat[] = "<br/>";
             $relat[] = "<br/>";
             $relat[] = "<br/>";
-            //$relat[] = Javascript::TimeoutDocumentLocation('index.php');
-            
-            {//RENAME/REPLACE INDEX
+            // $relat[] = Javascript::TimeoutDocumentLocation('index.php');
+
+            { // RENAME/REPLACE INDEX
                 self::SetupReplaceIndexes();
             }
-            
+
             { // relat
                 $relat = implode(chr(10), $relat);
                 if ($echo) {
@@ -280,42 +297,41 @@ class CMSHelp
             echo $e->show();
         }
     }
-    
-    private static function SetupReplaceIndexes(){
-        
+
+    private static function SetupReplaceIndexes()
+    {
         $index_old_filename = 'index.php';
         $index_old_bkp_filename = 'index_old.php';
         $index_cms_filename = 'index_cms.php';
         $index_new_filename = 'index.php';
-        
-        {//backup arquivo index atual
-            if(file_exists($index_old_filename)){
+
+        { // backup arquivo index atual
+            if (file_exists($index_old_filename)) {
                 $index_old_content = file_get_contents($index_old_filename);
-                if($index_old_content===false){
+                if ($index_old_content === false) {
                     throw new \Exception("Não foi possível obter o conteúdo do arquivo de indexação antigo (index). Contate o administrador!");
-                }else{
-                    if(!file_put_contents($index_old_bkp_filename, $index_old_content)){
+                } else {
+                    if (! file_put_contents($index_old_bkp_filename, $index_old_content)) {
                         throw new \Exception("Não foi possível copiar o conteúdo do arquivo de indexação antigo (index -> index_old). Contate o administrador!");
                     }
                 }
             }
         }
-        
-        {//atualizacao do arquivo de indexacao para acesso ao cms instalado
-            if(!file_exists($index_cms_filename)){
+
+        { // atualizacao do arquivo de indexacao para acesso ao cms instalado
+            if (! file_exists($index_cms_filename)) {
                 throw new \Exception("Arquivo de indexação do Content Management System (CMS) não encontrado (index_cms). Contate o administrador!");
-            }else{
-                $index_cms_content = file_get_contents($index_cms_filename);                
-                if($index_cms_content===false){
+            } else {
+                $index_cms_content = file_get_contents($index_cms_filename);
+                if ($index_cms_content === false) {
                     throw new \Exception("Não foi possível obter o conteúdo do arquivo de indexação do cms (index_cms). Contate o administrador!");
-                }else{
-                    if(!file_put_contents($index_new_filename, $index_cms_content)){
+                } else {
+                    if (! file_put_contents($index_new_filename, $index_cms_content)) {
                         throw new \Exception("Não foi possível atualizar o conteúdo do arquivo de indexação atual (index_cms -> index). Contate o administrador!");
                     }
-                }                
+                }
             }
         }
-        
     }
 
     // ##################################################################################################################################################################

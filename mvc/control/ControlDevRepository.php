@@ -7,7 +7,7 @@ use manguto\cms5\lib\ProcessResult;
 class ControlDevRepository extends ControlDev
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/dev/repository', function () {
             self::PrivativeDevZone();

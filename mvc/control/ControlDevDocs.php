@@ -9,7 +9,7 @@ class ControlDevDocs extends ControlDev
 {
     const folder = ROOT_SIS . 'docs';
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         
             $app->get('/dev/docs', function () {

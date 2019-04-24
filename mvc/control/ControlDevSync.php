@@ -10,7 +10,7 @@ use manguto\cms5\lib\ProcessResult;
 class ControlDevSync extends ControlDev
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/dev/sync', function () {
             Control::PrivativeDevZone();

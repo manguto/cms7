@@ -7,7 +7,7 @@ use sis\view\ViewAdminZzz;
 class ControlAdminZzz extends ControlAdmin  
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/admin/zzz', function () {
             self::PrivativeAdminZone();

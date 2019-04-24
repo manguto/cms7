@@ -120,7 +120,7 @@ class Session
      * sessao e caso afirmativo realiza-o
      */
     static function checkResetRequest(){
-        if(isset($_GET['reset'])){
+        if(isset($_GET['session']) && trim($_GET['session'])=='reset'){
             session_destroy();
             session_start();
             ProcessResult::setSuccess('Sessão reinicializada com sucesso!');

@@ -10,7 +10,7 @@ use manguto\cms5\lib\Session;
 class ControlSiteProfile extends ControlSite
 {
 
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {
         $app->get('/profile', function () {
             self::PrivativeZone();

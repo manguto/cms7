@@ -3,11 +3,11 @@ namespace manguto\cms5\mvc\control;
 
 class ControlCRUD extends Control 
 {
-    static function Executar($app)
+    static function RunRouteAnalisys($app)
     {   
         { // VERIFICA/EXECUTA CLASSES FILHAS
             $classObjectSample = new self();
-            self::ExecutarClassesFilhas($app, $classObjectSample);
+            self::RunChilds($app, $classObjectSample);
         }
     }
 }
