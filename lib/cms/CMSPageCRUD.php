@@ -28,8 +28,8 @@ class CMSPageCRUD extends CMSPage
                 foreach (array_keys($title_array) as $fieldname) {
 
                     { // caso seja um campo referencial
-                        if (RepositoryReferences::ehParametroReferencial($fieldname) || RepositoryReferences::ehParametroReferencialMultiplo($fieldname)) {
-                            $fieldame_call = RepositoryReferences::getPossibleRepositoryName($fieldname);
+                        if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
+                            $fieldame_call = RepositoryReferences::getReferencedModelName($fieldname);
                         } else {
                             $fieldame_call = $fieldname;
                         }

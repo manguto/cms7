@@ -31,17 +31,17 @@ class RepositoryReferences
     {
         //deb($tablename=$repositoryObject->getModelname(),0);
                         
-        $parameters = $repositoryObject->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+        $parameters = $repositoryObject->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
 
         //deb($parameters,0);
         foreach ($parameters as $parameterName => $parameterValue_possible_id_or_ids) {
 
             // caso o array nao possua nenhum conteudo FALSE, ou seja, é um parametro referencial (ex.: pessoa_id, responsavel__pessoa_id, categoria_id)
-            $ehParametroReferencial = self::ehParametroReferencial($parameterName);
-            $ehParametroReferencialMultiplo = self::ehParametroReferencialMultiplo($parameterName);
-            // deb($ehParametroReferencial,0); deb($ehParametroReferencialMultiplo,0);
+            $ehParametroReferencial = self::itsReferenceAttributeSimple($parameterName);
+            $itsReferenceAttributeMultiple = self::itsReferenceAttributeMultiple($parameterName);
+            // deb($ehParametroReferencial,0); deb($itsReferenceAttributeMultiple,0);
             
-            if ($ehParametroReferencial || $ehParametroReferencialMultiplo) {
+            if ($ehParametroReferencial || $itsReferenceAttributeMultiple) {
 
                 // obtem todos os objetos referenciados
                 $referencedObjec_array = self::getReferencedObjects($parameterName, $parameterValue_possible_id_or_ids);                
@@ -67,7 +67,7 @@ class RepositoryReferences
                     //deb(gettype(array_shift($referencedObjectTemp_array)),0);
                     
                     // METHOD NAME
-                    $set_method = "set" . ucfirst(strtolower(self::getPossibleRepositoryName($parameterName)));
+                    $set_method = "set" . ucfirst(strtolower(self::getReferencedModelName($parameterName)));
                     //deb($set_method,0);
                     
                     //SET VALUES
@@ -102,13 +102,13 @@ class RepositoryReferences
         $parameterName = self::removerApelidoSe($parameterName);
         // deb($parameterName,0);
 
-        $possibleRepositoryName = self::getPossibleRepositoryName($parameterName);
+        $possibleRepositoryName = self::getReferencedModelName($parameterName);
         //deb($possibleRepositoryName,0);
 
         $modelPossibleRepositoryName = Repository::getObjectClassname($possibleRepositoryName);
         // deb($modelPossibleRepositoryName,0);
 
-        if (self::ehParametroReferencialMultiplo($parameterName)) {
+        if (self::itsReferenceAttributeMultiple($parameterName)) {
             $parameterValue_id_array = explode(',', $parameterValue_possible_id_or_ids);
         } else {
             $parameterValue_id_array = [
@@ -137,12 +137,12 @@ class RepositoryReferences
      * @throws Exception
      * @return string
      */
-    static function getPossibleRepositoryName(string $parameterName):string{
-        if(self::ehParametroReferencial($parameterName)){
+    static function getReferencedModelName(string $parameterName):string{
+        if(self::itsReferenceAttributeSimple($parameterName)){
             // obtem o possivel nome do repositorio
-            $possibleRepositoryName = ucfirst(str_replace(self::reference_indicator_end, '', $parameterName));
+            $possibleRepositoryName = ucfirst(str_replace(self::simple_reference_indicator_end, '', $parameterName));
             // deb($possibleRepositoryName);
-        }else if(self::ehParametroReferencialMultiplo($parameterName)){
+        }else if(self::itsReferenceAttributeMultiple($parameterName)){
             // obtem o possivel nome do repositorio
             $possibleRepositoryName = ucfirst(str_replace(self::multiple_reference_indicator_end, '', $parameterName));
             // deb($possibleRepositoryName);
@@ -183,11 +183,11 @@ class RepositoryReferences
      * @param string $parameterName
      * @return bool
      */
-    static function ehParametroReferencial(string $parameterName): bool
+    static function itsReferenceAttributeSimple(string $parameterName): bool
     {
         { // parametro eh uma referencia?
-            $parameterNameFinalPart = substr($parameterName, (- 1) * strlen(self::reference_indicator_end));
-            if ($parameterNameFinalPart == self::reference_indicator_end) {
+            $parameterNameFinalPart = substr($parameterName, (- 1) * strlen(self::simple_reference_indicator_end));
+            if ($parameterNameFinalPart == self::simple_reference_indicator_end) {
                 return true;
             }
         }
@@ -200,7 +200,7 @@ class RepositoryReferences
      * @param string $parameterName
      * @return bool
      */
-    static function ehParametroReferencialMultiplo(string $parameterName): bool
+    static function itsReferenceAttributeMultiple(string $parameterName): bool
     {
         { // parametro eh uma referencia multiplo?
             $parameterNameFinalPart = substr($parameterName, (- 1) * strlen(self::multiple_reference_indicator_end));

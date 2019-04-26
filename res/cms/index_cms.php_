@@ -1,35 +1,19 @@
 <?php
+
 session_start();
 require_once ("vendor/autoload.php");
 require_once 'configurations.php';
-require_once 'functions.php';
 
-use Slim\Slim;
-use manguto\cms5\cms\CMSStart;
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Session;
 use manguto\cms5\mvc\control\Control;
- 
+use manguto\cms5\lib\Exception;
 
-try {
-
-    { // SESSION RESET REQUEST?
-        Session::checkResetRequest();        
-    }    
+try {   
     
-    { // PAGE STRUCTURAL DATA INITIALIZATION
-        CMSStart::Run();
-    }
+    Control::Start();
     
-    { // SLIM FRAMEWORK CONTROL
+} catch (\Throwable | Exception | \Error $e) {
 
-        $app = new Slim();
-        $app->config('debug', true);
-        Control::RunRouteAnalisys($app);
-        $app->run();
-    }
-} catch (Exception $e) { // } catch (\Throwable | Exception | \Error $e) {
-    $e->show(true);
+    Exception::static_show($e, true);
 }
-//deb($_SESSION,0);
+
 ?>

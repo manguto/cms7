@@ -5,6 +5,7 @@ use Rain\Tpl;
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\ServerHelp;
 
 /**
  * Documentation for web designers:
@@ -87,8 +88,9 @@ class CMSPage
         }
         
         { // verifica se o arquivo tpl esta na pasta padrao (tpl) ou na pasta dos modelos.
-            
+            //deb(ROOT_TPL);
             $filename_test = ROOT_TPL . $platform . '/' . $filename . '.html';
+            $filename_test = ServerHelp::fixds($filename_test);
             //deb($filename_test, 0);
             //deb(getcwd(),0); deb($filename_test,0);
             if (file_exists($filename_test)) {
@@ -106,7 +108,7 @@ class CMSPage
                     $sis_tpl_path_array = Diretorios::obterArquivosPastas(ROOT_SIS, true, true, false, [
                         'html'
                     ]);
-                    //deb($sis_tpl_path_array);
+                    //deb($sis_tpl_path_array,0);
                 }       
                 $return = [];
                 foreach ($sis_tpl_path_array as $sis_tpl_path) {
@@ -114,7 +116,9 @@ class CMSPage
                     if ($filename == Arquivos::obterNomeArquivo($sis_tpl_path, false)) {
                         
                         //tpl auto loading only on 'tpl' folder
-                        if(strpos($sis_tpl_path,'tpl')===false) continue;
+                        if(strpos($sis_tpl_path,'tpl')===false){
+                            continue;
+                        }
                         
                         //extension remove
                         $filename_full = str_replace('.html', '', $sis_tpl_path);

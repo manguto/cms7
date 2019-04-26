@@ -5,10 +5,12 @@ use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Safety;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Session;
+use manguto\cms5\lib\model\Model;
+use manguto\cms5\lib\database\mysql\DatabaseMysql;
 
-class User extends Repository
+
+class User extends Model
 {
-
     const SESSION = "User";
 
     const FORGOT_EMAIL = "UserEmail";
@@ -26,8 +28,7 @@ class User extends Repository
                 'devzoneaccess' => '0'
             ];
         }
-
-        parent::__construct($id);
+        
     }
 
     public function posLoad()
@@ -54,7 +55,7 @@ class User extends Repository
         if (User::checkUserLogged()) {
 
             $user = self::getSessionUser();
-            $user = $user->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
             if (isset($user['adminzoneaccess']) && ((bool) $user['adminzoneaccess'] == true)) {
                 $return = true;
             } else {
@@ -72,7 +73,7 @@ class User extends Repository
 
             $user = self::getSessionUser();
             // deb($user);
-            $user = $user->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
 
             if (isset($user['devzoneaccess']) && ((bool) $user['devzoneaccess'] == true)) {
                 $return = true;
@@ -87,7 +88,7 @@ class User extends Repository
 
     static public function initialize()
     {
-        $quantUsuarios = Repository::getRepositoryLength('user');
+        $quantUsuarios = DatabaseMysql::getTableLength('user');
         // deb($quantUsuarios);
         if ($quantUsuarios == 0) {
             // --------------------------------------------------- set user
@@ -131,7 +132,10 @@ class User extends Repository
             { // usuario existe
                 $conditions = " \$login=='$login'";
                 // deb($conditions,0);
-                $results = Repository::getRepository('user', $conditions);
+                
+                //$results = Repository::getRepository('user', $conditions);                
+                throw new Exception("");
+                
                 // deb($results);
                 if (count($results) === 0) {
                     throw new Exception("LOGIN não encontrado ou senha inválida.");
@@ -140,7 +144,10 @@ class User extends Repository
             { // usuario e senha existem
                 $conditions = " \$login=='$login' && \$password=='$password' ";
                 // deb($conditions,0);
-                $results = Repository::getRepository('user', $conditions);
+                
+                //$results = Repository::getRepository('user', $conditions);
+                throw new Exception("");
+                
                 // deb($results);
                 if (count($results) === 0) {
                     throw new Exception("Usuário não encontrado ou SENHA inválida.");
@@ -165,8 +172,8 @@ class User extends Repository
     static function setSessionUser(Model $user)
     {
         // deb($user);
-        // $__SESSION[SIS_ABREV][User::SESSION] = $user->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
-        $user = $user->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+        // $__SESSION[SIS_ABREV][User::SESSION] = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+        $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
         Session::set(User::SESSION, $user);
     }
 
@@ -218,7 +225,9 @@ class User extends Repository
     public function checkLoginExist(): bool
     {
         // $result = LocalDatabase::run(" SELECT * FROM user WHERE login='".$this->getlogin()."' ");
-        $result = Repository::getRepository('user', " \$login=='" . $this->getlogin() . "' ");
+        //$result = Repository::getRepository('user', " \$login=='" . $this->getlogin() . "' ");
+        throw new Exception("");
+        
         // deb($result);
         if (sizeof($result) == 1) {
             $user = array_shift($result);
@@ -237,7 +246,9 @@ class User extends Repository
     public function checkEmailExist(): bool
     {
         // $result = LocalDatabase::run(" SELECT * FROM user WHERE email='".$this->getemail()."' ");
-        $result = Repository::getRepository('user', " \$email=='" . $this->getemail() . "' ");
+        //$result = Repository::getRepository('user', " \$email=='" . $this->getemail() . "' ");
+        throw new Exception("");
+        
         // deb($result);
         if (sizeof($result) == 1) {
             $user = array_shift($result);
@@ -259,7 +270,8 @@ class User extends Repository
         User::setForgotEmail($email);
 
         // $results = LocalDatabase::run(" SELECT * FROM user WHERE email='$email' ");
-        $results = Repository::getRepository('user', " \$email=='$email' ");
+        //$results = Repository::getRepository('user', " \$email=='$email' ");
+        throw new Exception("");
         // deb($results);
 
         if (count($results) == 0) {
@@ -297,16 +309,17 @@ class User extends Repository
             $link = SIS_URL . "/forgot/reset?code=" . $recoveryid_encrypted;
             // deb($link);
 
-            $mailer = new CMSMailer($user->getemail(), $user->getname(), "Redefinição de senha do(a) " . SIS_NAME, "forgot", array(
+            /*$mailer = new CMSMailer($user->getemail(), $user->getname(), "Redefinição de senha do(a) " . SIS_NAME, "forgot", array(
                 "name" => $user->getname(),
                 "link" => $link
-            ));
+            ));*/
+            throw new Exception("");
 
             if (! $mailer->send()) {
                 throw new Exception("Não foi possível enviar o e-mail de recuperação.<br/>Aguarde alguns instantes e tente novamente.<br/>Caso o problema persista, contate o administrador.");
             }
 
-            return $user->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            return $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
         }
     }
 
@@ -324,8 +337,9 @@ class User extends Repository
         // deb($recoveryid);
 
         // $results = LocalDatabase::run(" SELECT * FROM userpasswordrecoveries WHERE userpasswordrecoveriesid='$recoveryid' ");
-        $results = Repository::getRepository('userpasswordrecoveries', " \$userpasswordrecoveriesid=='$recoveryid' ");
+        //$results = Repository::getRepository('userpasswordrecoveries', " \$userpasswordrecoveriesid=='$recoveryid' ");        
         // deb($results);
+        throw new Exception("");
 
         if (count($results) === 0) {
             throw new Exception("Recuperação inválida (identificador incorreto ou senha já recuperada).");

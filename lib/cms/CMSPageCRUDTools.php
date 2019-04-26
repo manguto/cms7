@@ -135,9 +135,9 @@ class CMSPageCRUDTools
                 $return[] = "\$filter_" . $fieldname . "_array = $Modelname::$$fieldname;";
             }
             
-            if (RepositoryReferences::ehParametroReferencial($fieldname) || RepositoryReferences::ehParametroReferencialMultiplo($fieldname)) {
+            if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
                 
-                $repositoryName = RepositoryReferences::getPossibleRepositoryName($fieldname);
+                $repositoryName = RepositoryReferences::getReferencedModelName($fieldname);
                 //deb($repositoryName);
                 $FieldModelname = Repository::getObjectClassname($repositoryName);
                 $return[] = "\$filter_" . $fieldname . "_array = $FieldModelname::getList('', \$returnAsObject=true, \$loadReferences=true);";
@@ -224,7 +224,7 @@ class CMSPageCRUDTools
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (RepositoryReferences::ehParametroReferencial($fieldname) || RepositoryReferences::ehParametroReferencialMultiplo($fieldname)) {
+        if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "combo_ordenar('#$fieldname',true,false); ";
             return $return;
@@ -287,7 +287,7 @@ class CMSPageCRUDTools
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (RepositoryReferences::ehParametroReferencial($fieldname) || RepositoryReferences::ehParametroReferencialMultiplo($fieldname)) {
+        if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "<select class='form-control' id='$fieldname' name='{$fieldname}[]' multiple='multiple'>
                     {loop=\"\$filter_" . $fieldname . "_array\"}                    
