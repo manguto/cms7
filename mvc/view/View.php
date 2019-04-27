@@ -2,16 +2,17 @@
 namespace manguto\cms5\mvc\view;
 
 
-use manguto\cms5\cms\CMSPageSite;
-use manguto\cms5\cms\CMSPageAdmin;
-use manguto\cms5\cms\CMSPageDev;
-use manguto\cms5\cms\CMSPageOther;
 use manguto\cms5\lib\repository\Repository;
 use manguto\cms5\lib\Arrays;
-use manguto\cms5\cms\CMSPageCRUD;
+use manguto\cms5\lib\cms\CMSPageSite;
+use manguto\cms5\lib\cms\CMSPageAdmin;
+use manguto\cms5\lib\cms\CMSPageCRUD;
+use manguto\cms5\lib\cms\CMSPageDev;
+use manguto\cms5\lib\cms\CMSPageOther;
 
 class View
 {    
+    
     static protected function PageSite(string $templateFilename,array $parameters=[],bool $toString=false){
         $page = new CMSPageSite();        
         $return = $page->setTpl($templateFilename,$parameters,$toString,$page);

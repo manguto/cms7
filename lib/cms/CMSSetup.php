@@ -9,86 +9,126 @@ use manguto\cms5\lib\Exception;
 class CMSSetup
 {
 
-    static function Run($echo = true)
+    static function Run($vendor_manguto_prj_root)
     {
         try {
-
-            $relat = [];
-            $relat[] = "<hr/>";
-            $relat[] = "<h1>SETUP</h1>";
-            $relat[] = "<h2>Procedimento de instalação do General Managemente System (CMS) inicializado</h2>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
+            echo "<h1>SETUP</h1>";
+            echo "<hr />";
             // config
-            $originFilesPath = ServerHelp::fixds('vendor/manguto/manguto/cms/files');
-
-            // get folders/files structure to reply
-            $originFiles = Diretorios::obterArquivosPastas($originFilesPath, true, true, true);
-            $relat[] = "Foram encontrados '" . sizeof($originFiles) . "' pastas/arquivos.";
-            // deb($foldersFiles);
+            $originFilesPath = ServerHelp::fixds($vendor_manguto_prj_root . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR . 'cms' . DIRECTORY_SEPARATOR);
+            // informacoes iniciais
+            $originFiles = self::Initialize($originFilesPath);
+            // deb($originFiles);
+            echo "<hr />";
             // criacao de pastas e arquivos
-            $relat[] = "<ol>";
-            foreach ($originFiles as $originFile) {
-                $relat[] = "<li>$originFile";
-                $destinationFilePath = str_replace($originFilesPath . DIRECTORY_SEPARATOR, '', $originFile);
+            self::FileFolderAnalisys($originFilesPath, $originFiles);
+            echo "<hr />";
+            // finalizacao
+            self::finalization();
+            echo "<hr />";
+            // renomear e criar copia de determinados arquivos
+            self::SetupReplaceIndexes();
+        } catch (Exception $e) {
+            echo $e->show();
+        }
+    }
+
+    private static function Initialize($originFilesPath)
+    {
+        
+        echo "<h2>Procedimento de instalação inicializado...</h2>";
+
+        // deb($originFilesPath);
+        echo "Caminho para obtenção dos pastas/arquivos base:<br />";
+        echo "<b>$originFilesPath</b><br />";
+        echo "<br />";
+
+        // get folders/files structure to reply
+        $originFiles = Diretorios::obterArquivosPastas($originFilesPath, true, true, true);
+        // deb($originFiles);
+
+        echo "<b>" . sizeof($originFiles) . "</b> pastas/arquivos encontrados <br />";
+        echo "<br />";
+        // deb($foldersFiles);
+        foreach ($originFiles as $originFile) {
+            echo "- " . str_replace($originFilesPath, '', $originFile) . " <br />";
+        }
+        return $originFiles;
+    }
+
+    private static function FileFolderAnalisys(string $originFilesPath, array $originFiles)
+    {
+        echo "<h2>Procedimento de criação de arquivos/pastas inicializado...</h2>";
+
+        {
+            $ds = "<div style='width:100%; text-align:right; background:#afa;'>";
+            $dn = "<div style='width:100%; text-align:left; background:#faa;'>";
+        }
+
+        $dir_n = 0;
+
+        echo "<div style='padding-bottom:5px;'>";
+
+        foreach ($originFiles as $originFile) {
+
+            {
+                // deb($originFilesPath,0);
+                $destinationFilePath = str_replace($originFilesPath, '', $originFile);
+                // deb($destinationFilePath);
 
                 if (is_dir($originFile)) {
+
+                    echo "</div>";
+
+                    echo "<div style='padding-bottom:5px;'>";
+
+                    $dir_n ++;
+
                     if (! file_exists($destinationFilePath)) {
                         Diretorios::mkdir($destinationFilePath);
-                        $relat[] = " - Diretório '$destinationFilePath' criado com sucesso!";
+                        echo $ds . "Diretório '$destinationFilePath' criado com sucesso! &#8592; </div>";
+                    } else {
+                        echo $dn . " &#8594; Diretório '$destinationFilePath' já existente. Nenhum procedimento realizado.</div>";
                     }
                 } else if (is_file($originFile)) {
+
                     { // tratamento deviso a extensao "php_"
-                        $ext = Arquivos::obterExtensao($originFile);
-                        if ($ext == 'php_') {
+                        if (Arquivos::obterExtensao($originFile) == 'php_') {
                             $destinationFilePath = str_replace('php_', 'php', $destinationFilePath);
                         }
                     }
 
                     if (! file_exists($destinationFilePath)) {
                         Arquivos::copiarArquivo($originFile, '.' . DIRECTORY_SEPARATOR . $destinationFilePath);
-                        $relat[] = " - <b>Arquivo '$destinationFilePath' criado com sucesso!</b>";
+                        echo $ds . "  Arquivo '$destinationFilePath' criado com sucesso! &#8592; </div>";
                     } else {
-                        $relat[] = " - Arquivo '$destinationFilePath' já existente (NOP).";
+                        echo $dn . " &#8594; Arquivo '$destinationFilePath' já existente. Nenhum procedimento realizado.</div>";
                     }
                 } else {
                     throw new Exception("Arquivo de tipo inadequado/desconhecido (?).");
                 }
-                $relat[] = "</li>";
             }
-
-            $relat[] = "</ol>";
-            $relat[] = "<h3>Procedimento de SETUP finalizado com sucesso!</h3>";
-            $relat[] = "<hr/>";
-            $relat[] = "<h2>CLIQUE <a href='index.php' title='Clique aqui para acessar a nova plataforma.'>AQUI</a> PARA ACESSAR A NOVA PLATAFORMA</h2>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<hr/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            // $relat[] = Javascript::TimeoutDocumentLocation('index.php');
-
-            { // RENAME/REPLACE INDEX
-                self::SetupReplaceIndexes();
-            }
-
-            { // relat
-                $relat = implode(chr(10), $relat);
-                if ($echo) {
-                    echo $relat;
-                } else {
-                    return $relat;
-                }
-            }
-        } catch (Exception $e) {
-            echo $e->show();
         }
+    }
+
+    private static function finalization()
+    {
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<h2>SETUP finalizado com sucesso!</h2>";
+        echo "Acesse a nova plataforma clicando <a href='index.php'>AQUI</a>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        // echo Javascript::TimeoutDocumentLocation('index.php');
     }
 
     private static function SetupReplaceIndexes()

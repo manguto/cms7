@@ -9,6 +9,10 @@ use manguto\cms5\lib\Exception;
 use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\Session;
 use manguto\cms5\lib\cms\CMSStart;
+use manguto\cms5\mvc\control\site\ControlSite;
+use manguto\cms5\mvc\control\admin\ControlAdmin;
+use manguto\cms5\mvc\control\dev\ControlDev;
+use manguto\cms5\mvc\control\crud\ControlCRUD;
 
 class Control
 {
@@ -23,7 +27,7 @@ class Control
         // ====================================================================================================
         { // CMS - REQUIRED DATA SETUP
             CMSStart::Run();
-        }        
+        }
         // ====================================================================================================
         { // SLIM PLATAFORM ANALISYS - ROUTES
             $app = new Slim();
@@ -32,7 +36,6 @@ class Control
             $app->run();
         }
         // ====================================================================================================
-        
     }
 
     private static function PlataformRouteAnalisys($app)
@@ -101,7 +104,7 @@ class Control
         {
             // logged user
             $user = User::getSessionUser();
-            $user = $user->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
             // deb($user);
             $adm = intval($user['adminzoneaccess']);
             // deb($adm);
@@ -113,7 +116,7 @@ class Control
 
         { // target user
             $user = new User($target_user_id);
-            $user = $user->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
             // deb($user);
             $adm = intval($user['adminzoneaccess']);
             // deb($adm);
@@ -212,7 +215,7 @@ class Control
             foreach ($classesFilhas as $classeFilha) {
                 $classeFilha = str_replace('/', '\\', $classeFilha);
                 $classeFilha = str_replace('vendor', '', $classeFilha);
-                // deb('CLASSE FILHA >>> '.$classeFilha,0);
+                //deb('CLASSE FILHA >>> '.$classeFilha,0);
                 $classeFilha::RunRouteAnalisys($app);
             }
         }

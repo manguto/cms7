@@ -16,11 +16,21 @@ class CMSStart
             throw new Exception("A constante 'VIRTUAL_HOST_ACTIVE' não foi definida. Defina-a no arquivo de CONFGURAÇÕES e tente novamente.");
         }
 
-        self::AUTO_DEFINED();
+        self::ERROR_HANDLER();
+
+        // --------------------------------------
+        
+        define('VENDOR_MANGUTO_PRJ_ROOT', CMSStart::VENDOR_MANGUTO_PRJ_ROOT());
+        
+        // --------------------------------------
+        
+        define('SIS_FOLDERNAME', CMSStart::SIS_FOLDERNAME());
+
+        define('SIS_URL', CMSStart::SIS_URL());
 
         // --------------------------------------
 
-        define('ROOT', CMSStart::ROOT());   
+        define('ROOT', CMSStart::ROOT());
 
         define('ROOT_ACTION', CMSStart::ROOT_ACTION());
 
@@ -44,21 +54,53 @@ class CMSStart
 
         self::LOG();
 
-        self::DEBUG();
     }
 
-    private function AUTO_DEFINED()
+    private static function ERROR_HANDLER()
+    {
+        register_shutdown_function("fatal_error_handler");
+    }
+
+    private static function SIS_FOLDERNAME()
     {
 
-        // ##################################################################################################
-        // ############################## CONFIGURATION AUTOMATIC DEFINED ###################################
-        // ##################################################################################################
+        $dir = __DIR__;
+        //deb($dir);
+        
+        if(strpos($dir,VENDOR_MANGUTO_PRJ_ROOT)===false){
+            throw new Exception("Caminho base incompatível ($dir). Contate o administrador.");
+        }
 
-        // abrev. do sistema
-        define("SIS_FOLDERNAME", Arquivos::obterNomePasta(__FILE__));
+        $return_ = explode(VENDOR_MANGUTO_PRJ_ROOT, $dir);
+        //deb($return_);
+        if(sizeof($return_)!=2){
+            deb($return_,0);
+            throw new Exception("Caminho incompatível com o padrão necessário.");
+        }
+        
+        $caminho_base = array_shift($return_);
+        //deb($caminho_base);
+        
+        $return_base_array = explode(DIRECTORY_SEPARATOR,$caminho_base);
+        //deb($return_base_array);
+        
+        foreach ($return_base_array as $pasta){
+          $pasta = trim($pasta);
+          if($pasta=='') continue;
+          $return = $pasta;
+        }
 
+        //deb($return);
+        $return = ServerHelp::fixds($return);
+        return $return;
+    }
+
+    private static function SIS_URL()
+    {
         // sistem url
-        define("SIS_URL", SERVER_URL . SIS_FOLDERNAME);
+        $return = SERVER_URL . '/' . SIS_FOLDERNAME;
+        $return = ServerHelp::fixds($return);
+        return $return;
     }
 
     private static function SUBVERSION_CSS()
@@ -72,11 +114,6 @@ class CMSStart
             $SUBVERSION_CSS = '';
         }
         define("SUBVERSION_CSS", $SUBVERSION_CSS);
-    }
-
-    private static function DEBUG()
-    {
-        CMSDebug::Start();
     }
 
     private static function LOG()
@@ -96,7 +133,7 @@ class CMSStart
         // deb($php_self);
 
         $request_uri = $_SERVER['REQUEST_URI'];
-        // deb($request_uri);
+        //deb($request_uri);
 
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -163,9 +200,10 @@ class CMSStart
             $uri_levels = explode('/', $_SERVER['REQUEST_URI']);
             $return = str_repeat('..' . DIRECTORY_SEPARATOR, sizeof($uri_levels) - 1);
         } else {
-            $return = '/' . SIS_FOLDERNAME;
+            $return = DIRECTORY_SEPARATOR . SIS_FOLDERNAME;
         }
         // die($return);
+        $return = ServerHelp::fixds($return);
         return $return;
     }
 
@@ -193,13 +231,55 @@ class CMSStart
 
     private static function ROOT_TPL()
     {
+        $DR = $_SERVER['DOCUMENT_ROOT'];
+        // deb($DR);
         if (VIRTUAL_HOST_ACTIVE) {
-            $return = $_SERVER['DOCUMENT_ROOT'] . '/vendor/manguto/manguto/tpl/';
+            $return = $DR . VENDOR_MANGUTO_PRJ_ROOT . 'tpl/';
         } else {
-            $return = '../' . SIS_FOLDERNAME . '/vendor/manguto/manguto/tpl/';
+            // deb(SIS_FOLDERNAME);
+            $return = '../' . SIS_FOLDERNAME . '/' . VENDOR_MANGUTO_PRJ_ROOT . 'tpl/';
         }
-        // die($return);
+        // deb($return);
         return $return;
+    }
+
+    private static function VENDOR_MANGUTO_PRJ_ROOT()
+    {
+        $thisClassDir = __DIR__;
+        // deb($thisClassDir);
+
+        $DIRECTORY_SEPARATOR = DIRECTORY_SEPARATOR;
+        // deb($DIRECTORY_SEPARATOR);
+
+        if (strpos($thisClassDir, $DIRECTORY_SEPARATOR) !== false) {
+            $thisClassDir_array = explode($DIRECTORY_SEPARATOR, $thisClassDir);
+            // deb($thisClassDir_array);
+            $path = [];
+            $mangutoFolderReached = 0;
+            foreach ($thisClassDir_array as $thisClassDir_tmp) {
+                // deb($thisClassDir_tmp);
+                if (trim($thisClassDir_tmp) == 'vendor' || sizeof($path) > 0) {
+
+                    if ($mangutoFolderReached <= 1) {
+                        $path[] = $thisClassDir_tmp;
+                    }
+
+                    if (trim($thisClassDir_tmp) == 'manguto' || $mangutoFolderReached > 0) {
+                        $mangutoFolderReached ++;
+                    }
+                }
+            }
+            // deb($mangutoFolderReached);
+            // deb($path);
+            $manguto_prj_dir = implode($DIRECTORY_SEPARATOR, $path) . $DIRECTORY_SEPARATOR;
+            
+            // deb($manguto_prj_dir);
+        } else {
+            throw new Exception("Não foi possível definir o diretório raiz do projeto no 'vendor'.");
+        }
+        
+        $manguto_prj_dir = ServerHelp::fixds($manguto_prj_dir);
+        return $manguto_prj_dir;
     }
 
     private static function ROOT_SIS()
@@ -210,128 +290,8 @@ class CMSStart
             $return = '../' . SIS_FOLDERNAME . '/sis/';
         }
         // die($return);
+        $return = ServerHelp::fixds($return);
         return $return;
-    }
-
-    // ##################################################################################################################################################################
-    // ##################################################################################################################################################################
-    // ##################################################################################################################################################################
-    static function Setup($echo = true)
-    {
-        try {
-
-            $relat = [];
-            $relat[] = "<hr/>";
-            $relat[] = "<h1>SETUP</h1>";
-            $relat[] = "<h2>Procedimento de instalação do General Managemente System (CMS) inicializado</h2>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            // config
-            $originFilesPath = ServerHelp::fixds('vendor/manguto/manguto/cms/files');
-
-            // get folders/files structure to reply
-            $originFiles = Diretorios::obterArquivosPastas($originFilesPath, true, true, true);
-            $relat[] = "Foram encontrados '" . sizeof($originFiles) . "' pastas/arquivos.";
-            // deb($foldersFiles);
-            // criacao de pastas e arquivos
-            $relat[] = "<ol>";
-            foreach ($originFiles as $originFile) {
-                $relat[] = "<li>$originFile";
-                $destinationFilePath = str_replace($originFilesPath . DIRECTORY_SEPARATOR, '', $originFile);
-
-                if (is_dir($originFile)) {
-                    if (! file_exists($destinationFilePath)) {
-                        Diretorios::mkdir($destinationFilePath);
-                        $relat[] = " - Diretório '$destinationFilePath' criado com sucesso!";
-                    }
-                } else if (is_file($originFile)) {
-                    { // tratamento deviso a extensao "php_"
-                        $ext = Arquivos::obterExtensao($originFile);
-                        if ($ext == 'php_') {
-                            $destinationFilePath = str_replace('php_', 'php', $destinationFilePath);
-                        }
-                    }
-
-                    if (! file_exists($destinationFilePath)) {
-                        Arquivos::copiarArquivo($originFile, '.' . DIRECTORY_SEPARATOR . $destinationFilePath);
-                        $relat[] = " - <b>Arquivo '$destinationFilePath' criado com sucesso!</b>";
-                    } else {
-                        $relat[] = " - Arquivo '$destinationFilePath' já existente (NOP).";
-                    }
-                } else {
-                    throw new Exception("Arquivo de tipo inadequado/desconhecido (?).");
-                }
-                $relat[] = "</li>";
-            }
-
-            $relat[] = "</ol>";
-            $relat[] = "<h3>Procedimento de SETUP finalizado com sucesso!</h3>";
-            $relat[] = "<hr/>";
-            $relat[] = "<h2>CLIQUE <a href='index.php' title='Clique aqui para acessar a nova plataforma.'>AQUI</a> PARA ACESSAR A NOVA PLATAFORMA</h2>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<hr/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            $relat[] = "<br/>";
-            // $relat[] = Javascript::TimeoutDocumentLocation('index.php');
-
-            { // RENAME/REPLACE INDEX
-                self::SetupReplaceIndexes();
-            }
-
-            { // relat
-                $relat = implode(chr(10), $relat);
-                if ($echo) {
-                    echo $relat;
-                } else {
-                    return $relat;
-                }
-            }
-        } catch (Exception $e) {
-            echo $e->show();
-        }
-    }
-
-    private static function SetupReplaceIndexes()
-    {
-        $index_old_filename = 'index.php';
-        $index_old_bkp_filename = 'index_old.php';
-        $index_cms_filename = 'index_cms.php';
-        $index_new_filename = 'index.php';
-
-        { // backup arquivo index atual
-            if (file_exists($index_old_filename)) {
-                $index_old_content = file_get_contents($index_old_filename);
-                if ($index_old_content === false) {
-                    throw new \Exception("Não foi possível obter o conteúdo do arquivo de indexação antigo (index). Contate o administrador!");
-                } else {
-                    if (! file_put_contents($index_old_bkp_filename, $index_old_content)) {
-                        throw new \Exception("Não foi possível copiar o conteúdo do arquivo de indexação antigo (index -> index_old). Contate o administrador!");
-                    }
-                }
-            }
-        }
-
-        { // atualizacao do arquivo de indexacao para acesso ao cms instalado
-            if (! file_exists($index_cms_filename)) {
-                throw new \Exception("Arquivo de indexação do Content Management System (CMS) não encontrado (index_cms). Contate o administrador!");
-            } else {
-                $index_cms_content = file_get_contents($index_cms_filename);
-                if ($index_cms_content === false) {
-                    throw new \Exception("Não foi possível obter o conteúdo do arquivo de indexação do cms (index_cms). Contate o administrador!");
-                } else {
-                    if (! file_put_contents($index_new_filename, $index_cms_content)) {
-                        throw new \Exception("Não foi possível atualizar o conteúdo do arquivo de indexação atual (index_cms -> index). Contate o administrador!");
-                    }
-                }
-            }
-        }
     }
 
     // ##################################################################################################################################################################

@@ -270,7 +270,7 @@ class HTMLPagination extends HTML
     {
         $this->set_page($GET);
         $this->set_length($GET);
-        $this->set_data($GET);
+        $this->SetData($GET);
         // ...
     }
 
@@ -314,7 +314,7 @@ class HTMLPagination extends HTML
         } // <<<<<<<<<<<<<<<<<<<<<<<
     }
 
-    private function set_data(array $GET)
+    private function SetData(array $GET)
     {
         { // MIN
             $min = $this->page * $this->length;

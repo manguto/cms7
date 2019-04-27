@@ -124,6 +124,21 @@ class Log
         $filename = self::dir . DIRECTORY_SEPARATOR . $data_arquivo . '.csv';
         return $filename;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    static function AddClassMethod($class_name,$class_method,$arguments) {
+        
+        //$rc = new \ReflectionClass($class_name);
+        $rcm = new \ReflectionMethod($class_method);
+        deb($rcm->getDocComment(),0);
+    }
 }
 
 ?>

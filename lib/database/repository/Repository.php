@@ -13,7 +13,7 @@ use manguto\cms5\lib\Arrays;
 use manguto\cms5\lib\Model;
 
 
-class Repository extends Model
+class Repository extends Model 
 {
 
     // pasta onde serao disponibilizados os arquivos de dados
@@ -211,7 +211,7 @@ class Repository extends Model
                 throw new Exception("ATENÇÃO! Não foi possível realizar o salvamento do registro atual. A indexação do repositório '" . $this->getModelname() . "' está incorreta. Contate o Administrador.");
             }
         }
-        $repositoryArray[$this->getId()] = $this->getData($extraIncluded = false, $ctrlParametersIncluded = true, $referencesIncluded = false, $singleLevelArray = false);
+        $repositoryArray[$this->getId()] = $this->GetData($extraIncluded = false, $ctrlParametersIncluded = true, $referencesIncluded = false, $singleLevelArray = false);
         Repository::saveRepositoryARRAY($this->repositoryname, $repositoryArray);
     }
     
@@ -291,7 +291,7 @@ class Repository extends Model
             //deb($repositoryName,0);
 
             if (isset($repositoryArray[$registerid])) {
-                $this->setData($repositoryArray[$this->getId()]);
+                $this->SetData($repositoryArray[$this->getId()]);
             } else {
                 $msg = "O registro de identificador '$registerid' não foi encontrado no repositório '$repositoryName'.";
                 // deb($msg);
@@ -310,7 +310,7 @@ class Repository extends Model
             $idOld = $this->getId();
             $idDeleted = abs($this->getId()) * (- 1);
             $this->setId($idDeleted);
-            $repositoryArray[$idDeleted] = $this->getData($extraIncluded = false, $ctrlParametersIncluded = true, $referencesIncluded = false, $singleLevelArray = false);
+            $repositoryArray[$idDeleted] = $this->GetData($extraIncluded = false, $ctrlParametersIncluded = true, $referencesIncluded = false, $singleLevelArray = false);
             unset($repositoryArray[$idOld]);
             Repository::saveRepositoryARRAY($this->repositoryname, $repositoryArray);
         } else {
@@ -327,10 +327,10 @@ class Repository extends Model
      *
      * {@inheritdoc}     
      */
-    public function getData(bool $extraIncluded, bool $ctrlParametersIncluded, bool $referencesIncluded, bool $singleLevelArray): array
+    public function GetData(bool $extraIncluded, bool $ctrlParametersIncluded, bool $referencesIncluded, bool $singleLevelArray): array
     {   
         //deb($singleLevelArray,0);
-        $data = parent::getData($extraIncluded, $ctrlParametersIncluded, $referencesIncluded, $singleLevelArray);
+        $data = parent::GetData($extraIncluded, $ctrlParametersIncluded, $referencesIncluded, $singleLevelArray);
         return $data;
     }
 
@@ -514,7 +514,7 @@ class Repository extends Model
                 //deb($objectClassname,0);
                 $entryModel = new $objectClassname();
                 //deb($entryModel,0);
-                $entryModel->setData($entry_asArray);
+                $entryModel->SetData($entry_asArray);
                 // deb($entryModel);
                 // -----------------------------------
                 // pos load - loading
@@ -532,7 +532,7 @@ class Repository extends Model
                 if ($returnAsObject == true) {
                     $FULL_REPOSITORY_ARRAY[$id] = $entryModel;
                 } else {
-                    $FULL_REPOSITORY_ARRAY[$id] = $entryModel->getData($loadReferences, $loadCtrlParameters, $referencesIncluded = true, $singleLevelArray = false);
+                    $FULL_REPOSITORY_ARRAY[$id] = $entryModel->GetData($loadReferences, $loadCtrlParameters, $referencesIncluded = true, $singleLevelArray = false);
 
                     { // --------------------------------------- SINGLE LEVEL ARRAY
                         if ($singleLevelArray) {
@@ -671,7 +671,7 @@ class Repository extends Model
             // montagem do arquivo zerado
             $objectClassname = self::getObjectClassname($repositoryname);
             $object = new $objectClassname();
-            $data = $object->getData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $data = $object->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
             // deb($data);
             $defaultArray = [];
             $defaultEntryArray = [];
@@ -886,7 +886,7 @@ class Repository extends Model
     {
         // $this->loadReferences();
         // deb($this,0);
-        $data = $this->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+        $data = $this->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
         // deb($data,0);
 
         foreach ($data as $k => $v) {
@@ -903,7 +903,7 @@ class Repository extends Model
                     // deb($modelClassFullname);
                     $obj = new $modelClassFullname($v);
                     $obj->loadReferences();
-                    $obj = $obj->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+                    $obj = $obj->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
                     // deb($obj,0);
                     {
                         $vNew = [];
@@ -937,7 +937,7 @@ class Repository extends Model
     public function getReferenciedModels(): array
     {
         $return = [];
-        $parameters = $this->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+        $parameters = $this->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
         foreach (array_keys($parameters) as $column) {
             if (substr($column, - 3) == '_id') {
                 $tablename = substr($column, 0, strlen($column) - 3);
@@ -956,7 +956,7 @@ class Repository extends Model
         {
             $key_filters = $sample->key_filters;
             if(sizeof($key_filters)==0){
-                $key_filters = array_keys($sample->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false));
+                $key_filters = array_keys($sample->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false));
             }
         }
         {   
@@ -982,7 +982,7 @@ class Repository extends Model
             $key_names = $sample->key_names;
         }
         {               
-            $data_array = $sample->getData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);                        
+            $data_array = $sample->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);                        
             foreach (array_keys($data_array) as $key){
                 
                 if(isset($key_names[$key])){
