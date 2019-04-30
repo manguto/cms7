@@ -3,7 +3,6 @@ namespace manguto\cms5\lib\model;
 
 use manguto\cms5\lib\Exception;
 
-
 /**
  * esta classe tera como intuito representar os objetor que precisam ser salvos de alguma forma (banco de dados, xml, json, etc.)
  *
@@ -16,63 +15,133 @@ abstract class Model
     private $attributes = [];
 
     private $attributes_extra = [];
-        
-    const fundamentalAttributes = ['id'];
-    
+
+    const fundamentalAttributes = [
+        'id',
+        'insert___datetime',
+        'insert___user_id',
+        'update___datetime',
+        'update___user_id',
+    ];
+
     public function __construct(int $id = 0)
-    {           
-        //atributos basicos (fundamentais)
-        $this->DefineAttributeFundamentals($id);
-                
-        //atributos definidos
+    {
+        // atributos basicos (fundamentais)
+        $this->SetAttributeFundamentals($id);
+
+        // atributos definidos
         $this->CheckAttributesSetted();
         
+        //ordernar atributos
+        $this->AttributesOrder();
     }
     
     /**
-     * define um atributo para o 
-     * @param ModelAttribute $attribute
+     * recebe um arrau de Atributos e os define para o modelo
+     *
+     * @param array $attributes
      */
-    protected function DefineAttribute(ModelAttribute $attribute){
-        $this->attributes[$attribute->getName()] = $attribute;
+    protected function SetAttributes(array $attributes, bool $checkAttributeName = true)
+    {
+        foreach ($attributes as $attributeName => $parameters) {
+            // cria o atributo
+            $attribute = new ModelAttribute($attributeName, $checkAttributeName);
+            foreach ($parameters as $parameterName => $parameterValue) {
+                $setMethod = 'set' . ucfirst($parameterName);
+                // define os parametros
+                $attribute->$setMethod($parameterValue);
+            }
+            // salva no modelo
+            $this->SetAttribute($attribute);
+        }
     }
-    
+
     /**
      * insere no modelo os atributos fundamentais
+     *
      * @param int $id
      */
-    private function DefineAttributeFundamentals(int $id){
-        
-        {//id <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<            
-            $attribute = new ModelAttribute('id',false);
-            $attribute->setType(ModelAttribute::TYPE_INT);
-            $attribute->setvalue($id);
-            $this->DefineAttribute($attribute);
-        }//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<            
-    }    
-        
-    
-    private function CheckAttributesSetted(){
+    private function SetAttributeFundamentals(int $id)
+    {
+        $attributes = [
+            'id' => [
+                'type' => ModelAttribute::TYPE_INT,
+                'value' => $id
+            ],
+            'insert___datetime' => [
+                'type' => ModelAttribute::TYPE_DATETIME,
+                'value' => date('Y-m-d H:i:s')
+            ],
+            'insert___user_id' => [
+                'type' => ModelAttribute::TYPE_INT,
+                'nature' => ModelAttribute::NATURE_REFERENCE_SINGLE,
+                'value' => 0
+            ],
+            'update___datetime' => [
+                'type' => ModelAttribute::TYPE_DATETIME,
+                'value' => date('Y-m-d H:i:s')
+            ],
+            'update___user_id' => [
+                'type' => ModelAttribute::TYPE_INT,
+                'nature' => ModelAttribute::NATURE_REFERENCE_SINGLE,
+                'value' => 0
+            ]
+        ];
+
+        $this->SetAttributes($attributes, false);
+    }
+
+    /**
+     * define um atributo para o
+     *
+     * @param ModelAttribute $attribute
+     */
+    private function SetAttribute(ModelAttribute $attribute)
+    {
+        $this->attributes[$attribute->getName()] = $attribute;
+    }
+
+    private function CheckAttributesSetted()
+    {
         $attributesSetted = false;
-        //deb(self::fundamentalAttributes,0);
-        
+        // deb(self::fundamentalAttributes,0);
+
         $thisAttributes = $this->attributes;
-        //deb($thisAttributes);
-        
-        foreach ($thisAttributes as $attribute){
-            //deb($attribute,0);
-            if(!in_array($attribute->getName(), self::fundamentalAttributes)){
+        // deb($thisAttributes);
+
+        foreach ($thisAttributes as $attribute) {
+            // deb($attribute,0);
+            if (! in_array($attribute->getName(), self::fundamentalAttributes)) {
                 $attributesSetted = true;
             }
         }
-        //deb($attributesSetted);
-        if($attributesSetted==false){
-            $class =  get_class($this);
-            //deb($class);
+        // deb($attributesSetted);
+        if ($attributesSetted == false) {
+            $class = get_class($this);
+            // deb($class);
             throw new Exception("Os atributos do modelo '$class' não foram definidos. Defina-os e tente novamente!");
         }
     }
-   
+
+    /**
+     * ordernar atributos do objeto
+     */
+    private function AttributesOrder(){
+        $attributesOrdered = [];
+        foreach (self::fundamentalAttributes as $attributeFundamental){
+            if(isset($this->attributes[$attributeFundamental])){
+                $attributesOrdered[$attributeFundamental] = $this->attributes[$attributeFundamental];
+            }
+        }
+        
+        foreach ($this->attributes as $attributeName=>$attribute){
+            if(!isset($attributesOrdered[$attributeName])){
+                $attributesOrdered[$attributeName] = $attribute;
+            }
+        }
+        $this->attributes = $attributesOrdered;
+    }
+    
     /**
      * retorna o modelo em forma de string
      *
@@ -90,16 +159,16 @@ abstract class Model
             // remocao dos atributos de controle
             $attribute_array = Model_Control::RemoveControlAttributes($attribute_array);
 
-            //percorre todos os atributos para expo-los
+            // percorre todos os atributos para expo-los
             foreach ($attribute_array as $attrName => $attrValue) {
 
                 { // verifica se o atributo eh referencial (ex.: categoria_id, modalidade_ids) para definicao do(s) valor(es) __toString() das referencias
-                    
+
                     {
                         $itsReferenceAttributeSimple = Model_Reference::itsReferenceAttributeSimple($attrName);
                         $itsReferenceAttributeMultiple = Model_Reference::itsReferenceAttributeMultiple($attrName);
                     }
-                    
+
                     if ($itsReferenceAttributeSimple || $itsReferenceAttributeMultiple) {
 
                         $referencedModelName = Model_Reference::getReferencedModelName($attrName);
@@ -109,12 +178,12 @@ abstract class Model
                             if ($itsReferenceAttributeSimple) {
                                 $attrValue = $this->attributes_extra[$referencedModelName];
                             }
-                            
-                            if($itsReferenceAttributeMultiple){
+
+                            if ($itsReferenceAttributeMultiple) {
                                 $attrValueArray = [];
-                                foreach ($this->attributes_extra[$referencedModelName] as $referencedModel){
+                                foreach ($this->attributes_extra[$referencedModelName] as $referencedModel) {
                                     $attrValueArray[] = "$referencedModel";
-                                }                    
+                                }
                                 $attrValue = implode(', ', $attrValueArray);
                             }
                         }
@@ -134,7 +203,11 @@ abstract class Model
         return $return;
     }
 
-    // magic methods GET & SET
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+    
+    //------------------------------------------------------------------------------------------------------------------
     public function __call(string $methodName, $args)
     {
         // metodo aplicado (solicitado)
@@ -156,7 +229,9 @@ abstract class Model
             throw new Exception("Método não encontrado ou incorreto ($methodName()).");
         }
     }
-
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
     /**
      * define os parametros ou atributos do modelo atraves de um array passado
      * caso estes existam no objeto atual (por segurancao, definir no __construct deste),
@@ -165,7 +240,7 @@ abstract class Model
      * @param array $data
      * @param bool $valueExtra
      */
-    public function SetData(array $data = array())
+    public function SetData(array $data)
     {
         // deb($data);
         foreach ($data as $key => $value) {
@@ -208,27 +283,32 @@ abstract class Model
 
     /**
      * obtem o nome completo da classe deste objeto
+     *
      * @return string
      */
-    public function GetClass() {
-        return get_class($this);        
+    public function GetClass()
+    {
+        return get_class($this);
     }
+
     /**
      * obtem especificamente o nome da classe deste objeto
      */
-    public function GetClassName() {
+    public function GetClassName()
+    {
         $class = $this->GetClass();
         $className = explode(DIRECTORY_SEPARATOR, $class);
         $className = array_pop($className);
         return $className;
     }
-    
-    public function GetTablename(){        
-        $className = $this->GetClassName();        
+
+    public function GetTablename()
+    {
+        $className = $this->GetClassName();
         $tablename = strtolower($className);
-        return $tablename;        
+        return $tablename;
     }
-    
+
     // ##################################################################################################################################
     // ##################################################################################################################################
     // ######################################################## PRIVATE #################################################################
@@ -243,10 +323,9 @@ abstract class Model
      */
     private function GET(string $attributeName)
     {
-        
         if (isset($this->attributes[$attributeName])) {
-    
-            $return = $this->attributes[$attributeName]->getValue();                        
+                        
+            $return = $this->attributes[$attributeName]->getValue();            
             
         } else if (isset($this->attributes_extra[$attributeName])) {
 
@@ -254,8 +333,8 @@ abstract class Model
             
         } else {
             throw new Exception("Parâmetro não encontrado/definido ($attributeName).");
-        }    
-        
+        }
+
         return $return;
     }
 

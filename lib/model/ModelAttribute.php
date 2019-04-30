@@ -10,11 +10,17 @@ class ModelAttribute
 
     private $type;
 
+    private $nature;
+
+    private $length;
+
     private $value;
-    
+
     private $unit;
 
-    // ---------------------------------------------------------------------------------------------------------------
+    private $encrypted;
+
+    // ------------------------------------------------------------------------------------------------------------------------
     const TYPE_CHAR = 'char';
 
     const TYPE_VARCHAR = 'varchar';
@@ -35,9 +41,14 @@ class ModelAttribute
 
     const TYPE_BOOLEAN = 'boolean';
 
-    const TYPE_REFERENCE_SIMPLE = 'reference_simple';
+    // -----------------------------------------------------------------
+    const NATURE_DEFAULT = 'default';
 
-    const TYPE_REFERENCE_MULTIPLE = 'reference_multiple';
+    const NATURE_REFERENCE_SINGLE = 'reference_single';
+
+    const NATURE_REFERENCE_MULTIPLE = 'reference_multiple';
+
+    const NATURE_EMAIL = 'email';
 
     // ########################################################################################################################
     // ########################################################################################################################
@@ -50,73 +61,117 @@ class ModelAttribute
             }
             $this->setName($attributeName);
         }
-        { // tipo padrao
-            $this->type = 'varchar';
-        }
+        // tipo padrao
+        $this->type = self::TYPE_VARCHAR;
 
-        { // valor padrao
-            $this->value = '';
-        }
+        // natureza padrao
+        $this->nature = self::NATURE_DEFAULT;
+
+        // valor padrao
+        $this->value = '';
     }
-    // --------------------------------------------------------------------------------------------------------------
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GETTERS & SETTERS
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GETTERS & SETTERS
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GETTERS & SETTERS
     private function setName($name)
-    {           
-        $this->name=$name;
+    {
+        $this->name = $name;
     }
-    // --------------------------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
     public function setType($type)
     {
-        $constant_name = 'TYPE_'.strtoupper($type);
-        //deb($constant_name);
-        if(!defined("self::$constant_name")){
-            throw new Exception("Definição de tipo de atributo incorreto. Não encontrado ('$type').");
-        }        
-        $this->type=$type;
+        $constant_name = 'TYPE_' . strtoupper($type);
+        // deb($constant_name);
+        if (! defined("self::$constant_name")) {
+            throw new Exception("Definição de tipo de atributo incorreto ou não encontrado ('$type').");
+        }
+        $this->type = $type;
     }
-    // --------------------------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    public function setNature($nature)
+    {
+        $constant_name = 'NATURE_' . strtoupper($nature);
+        // deb($constant_name);
+        if (! defined("self::$constant_name")) {
+            throw new Exception("Definição de natureza de atributo incorreto ou não encontrado ('$nature').");
+        }
+        $this->nature = $nature;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    public function getValue()
+    {
+        $value = "$this->value";
+        // ---------------------------------------------------------------
+        switch ($this->getType()) {
+            case self::TYPE_INT:
+                $value = intval($value);
+                break;
+
+            case self::TYPE_FLOAT:
+                $value = floatval($value);
+                break;
+
+            case self::TYPE_BOOLEAN:
+                $value = boolval($value);
+                break;
+
+            default:
+                $value = strval($value);
+                ;
+                break;
+        }
+        // ---------------------------------------------------------------
+        return $value;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
     // magic methods GET & SET geral
     public function __call(string $methodName, $args)
     {
         // metodo aplicado (solicitado)
         $method_nature = substr($methodName, 0, 3);
-        
+
         // garimpa o nome do parametro
         $attributeName = strtolower(substr($methodName, 3));
-        
+
         if ($method_nature == 'get') {
-            
+
             return $this->$attributeName;
-            
         } elseif ($method_nature == 'set') {
-            
+
             $this->$attributeName = $args[0];
-            
         } else {
-            
+
             throw new Exception("Método não encontrado ou incorreto ($methodName()).");
         }
-    }    
+    }
 
-    // --------------------------------------------------------------------------------------------------------------
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS & SETTERS
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS & SETTERS
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS & SETTERS
     public function __toString()
     {
         $return = $this->getValue();
         $return = strval($return);
-        //deb($return);
-        
+        // deb($return);
+
         return $return;
     }
-    
+
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
-    
-    public function checkQuotesWrap(){
+    public function checkQuotesWrap()
+    {
         $notQuoteWrapTypes = [
-          self::TYPE_FLOAT,  
-          self::TYPE_INT            
+            self::TYPE_FLOAT,
+            self::TYPE_INT
         ];
-        return !in_array($this->getType(), $notQuoteWrapTypes);
+        return ! in_array($this->getType(), $notQuoteWrapTypes);
     }
 
     // ########################################################################################################################
@@ -131,10 +186,10 @@ class ModelAttribute
      */
     private function checkAttributeName(string $attributeName)
     {
-        if(in_array($attributeName, Model::fundamentalAttributes)){
+        if (in_array($attributeName, Model::fundamentalAttributes)) {
             throw new Exception("Foi definido um nome de atributo reservado para um atributo fundamental do modelo ($attributeName). Por favor, escolha outro e tente novamente.");
         }
-        
+
         if (Model_Control::itsAControlParameter($attributeName)) {
             throw new Exception("Foi definido um nome de atributo reservado para um atributo de controle do modelo ($attributeName). Por favor, escolha outro e tente novamente.");
         }

@@ -2,7 +2,7 @@
 namespace manguto\cms5\mvc\control\dev;
 
 
-use manguto\cms5\lib\Log;
+use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\Datas;
 use manguto\cms5\lib\Calendario;
 use manguto\cms5\lib\Diretorios;
@@ -18,7 +18,7 @@ class ControlDevLog extends ControlDev
     {
         $app->get('/dev/log', function () {
             self::PrivativeDevZone();
-            $data = date(Log::formato_data_arquivo);
+            $data = date(Logs::formato_data_arquivo);
             headerLocation('/dev/log/dia/' . $data);
             exit();
         });
@@ -26,13 +26,13 @@ class ControlDevLog extends ControlDev
         $app->get('/dev/log/dia/:data', function ($data) {
             self::PrivativeDevZone();
             {//par
-                $data = new Datas($data,Log::formato_data_arquivo);
+                $data = new Datas($data,Logs::formato_data_arquivo);
                 $datashow = $data->getDate('d/m/Y');
                 $ano = $data->getDate('Y');                
             }
             {
-                $datahora = $data->getDate(Log::formato_datahora);
-                $filename = Log::get_filename($datahora);
+                $datahora = $data->getDate(Logs::formato_datahora);
+                $filename = Logs::get_filename($datahora);
                 $csvContent = utf8_encode(Arquivos::obterConteudo($filename));
                 $logs = CSV::CSVToArray($csvContent);
                 //deb($logs);
@@ -78,14 +78,14 @@ class ControlDevLog extends ControlDev
     //===================================================================================
     
     static private function obterDiasComRegistros($ano){
-        $path = Log::dir;
+        $path = Logs::dir;
         $logs = Diretorios::obterArquivosPastas($path, false, true, false, ['csv']);
         $return = [];
         foreach ($logs as $log){
             $nomearquivo = Arquivos::obterNomeArquivo($log,false);
             //deb($nomearquivo);
             if(substr($nomearquivo, 0,4)==$ano){
-                $data = new Datas($nomearquivo,Log::formato_data_arquivo);
+                $data = new Datas($nomearquivo,Logs::formato_data_arquivo);
                 $mes = intval($data->getDate('m'));
                 $dia = intval($data->getDate('d'));
                 $return[$mes][$dia] = $log;

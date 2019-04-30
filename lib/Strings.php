@@ -25,7 +25,7 @@ class Strings
         }
         return $texto;
     }
-
+    
     static function RemoverCaracteresEspeciais($string)
     {
         // Replaces all spaces with hyphens.
@@ -34,6 +34,14 @@ class Strings
         $string = preg_replace('/[^A-Za-z0-9\- ]/', '', $string);
         return $string;
     }
+    
+    static function RemoverQuebrasDeLinha($string,$replace=''){
+        $return = $string;
+        $return = str_replace("\r",$replace,$return);
+        $return = str_replace("\n",$replace,$return);
+        return $return;
+    }
+    
 
     static function acronimo($string)
     {

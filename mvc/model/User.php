@@ -6,33 +6,73 @@ use manguto\cms5\lib\Safety;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Session;
 use manguto\cms5\lib\model\Model;
-use manguto\cms5\lib\database\mysql\DatabaseMysql;
+use manguto\cms5\lib\model\ModelInterface;
+use manguto\cms5\lib\model\ModelAttribute;
+use manguto\cms5\lib\database\mysql\Mysql;
+use manguto\cms5\lib\database\sql\Sql;
+use manguto\cms5\lib\model\ModelSql;
 
-
-class User extends Model
+class User extends ModelSql implements ModelInterface
 {
+
     const SESSION = "User";
 
     const FORGOT_EMAIL = "UserEmail";
 
     public function __construct($id = 0)
     {
-        { // default values
-            $this->values = [
-                'name' => '',
-                'login' => '',
-                'password' => '',
-                'email' => '',
-                'phone' => '',
-                'adminzoneaccess' => '0',
-                'devzoneaccess' => '0'
-            ];
-        }
-        
+        // definicao dos atributos deste modelo
+        $this->DefineAttributes();
+
+        // construct
+        parent::__construct($id);
+       
     }
 
-    public function posLoad()
-    {}
+    // definicao dos atributos deste modelo
+    private function DefineAttributes()
+    {
+        $attributes = [
+            'name' => [
+                'type' => ModelAttribute::TYPE_VARCHAR,
+                'value' => '',
+                'length' => 64,
+            ],
+            'login' =>[
+                'type' => ModelAttribute::TYPE_VARCHAR,
+                'value' => '',
+                'length' => 24,
+            ],
+            'password' =>[
+                'type' => ModelAttribute::TYPE_VARCHAR,
+                'value' => '',
+                'length' => 32,
+                'encrypted' => true,
+            ],
+            'email' =>[
+                'type' => ModelAttribute::TYPE_VARCHAR,
+                'value' => '',
+                'length' => 64,
+                'nature' => ModelAttribute::NATURE_EMAIL,
+            ],
+            'phone' =>[
+                'type' => ModelAttribute::TYPE_VARCHAR,
+                'value' => '',
+                'length' => 64,                
+            ],
+            'adminzoneaccess' =>[
+                'type' => ModelAttribute::TYPE_BOOLEAN,
+                'value' => 0,                                
+            ],
+            'devzoneaccess' =>[
+                'type' => ModelAttribute::TYPE_BOOLEAN,
+                'value' => 0,
+            ],
+            
+        ];
+        
+        $this->SetAttributes($attributes);
+    }
 
     // const FORGOT_SECRET_KEY = "1234567890123456";
     static function checkUserLogged(): bool
@@ -88,21 +128,9 @@ class User extends Model
 
     static public function initialize()
     {
-        $quantUsuarios = DatabaseMysql::getTableLength('user');
+        $quantUsuarios = Sql::getTableLength('SELECT * FROM user WHERE 1');
         // deb($quantUsuarios);
-        if ($quantUsuarios == 0) {
-            // --------------------------------------------------- set user
-            /*
-             * $usuario = new User();
-             * $usuario->setname('Usuário');
-             * $usuario->setlogin('usuario');
-             * $usuario->setpassword(self::password_crypt('usuario'));
-             * $usuario->setemail('usuario@usuario.com');
-             * $usuario->setphone('-');
-             * $usuario->setadminzoneaccess(0);
-             * $usuario->setdevzoneaccess(0);
-             * $usuario->save();/*
-             */
+        if ($quantUsuarios == 0) {            
             // --------------------------------------------------- set user admin
             $admin = new User();
             $admin->setname('Administrador');
@@ -126,31 +154,27 @@ class User extends Model
         User::initialize();
         // die('++');
         {
-            // ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES
-            // ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES
-            // ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES
             { // usuario existe
-                $conditions = " \$login=='$login'";
-                // deb($conditions,0);
-                
-                //$results = Repository::getRepository('user', $conditions);                
-                throw new Exception("");
-                
+                $mysql = new Mysql();
+                $mysql->query(" SELECT * FROM user WHERE login='$login' ");                
+                $results = $mysql->fetchArray();
                 // deb($results);
                 if (count($results) === 0) {
-                    throw new Exception("LOGIN não encontrado ou senha inválida.");
+                    throw new Exception("Login não encontrado e/ou senha inválida.");
                 }
             }
-            { // usuario e senha existem
-                $conditions = " \$login=='$login' && \$password=='$password' ";
-                // deb($conditions,0);
-                
-                //$results = Repository::getRepository('user', $conditions);
+            { // usuario e senha existem                
+                $mysql = new Mysql();
+                $mysql->query(" SELECT * FROM user WHERE login='$login' && password='$password' ");
+                $results = $mysql->fetchArray();
+                // deb($results);
+
+                // $results = Repository::getRepository('user', $conditions);
                 throw new Exception("");
-                
+
                 // deb($results);
                 if (count($results) === 0) {
-                    throw new Exception("Usuário não encontrado ou SENHA inválida.");
+                    throw new Exception("Senha inválida e/ou login não encontrado.");
                 }
             }
             // ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES
@@ -173,7 +197,7 @@ class User extends Model
     {
         // deb($user);
         // $__SESSION[SIS_ABREV][User::SESSION] = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
-        $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+        $user = $user->GetData($extraIncluded = false);
         Session::set(User::SESSION, $user);
     }
 
@@ -225,9 +249,9 @@ class User extends Model
     public function checkLoginExist(): bool
     {
         // $result = LocalDatabase::run(" SELECT * FROM user WHERE login='".$this->getlogin()."' ");
-        //$result = Repository::getRepository('user', " \$login=='" . $this->getlogin() . "' ");
+        // $result = Repository::getRepository('user', " \$login=='" . $this->getlogin() . "' ");
         throw new Exception("");
-        
+
         // deb($result);
         if (sizeof($result) == 1) {
             $user = array_shift($result);
@@ -246,9 +270,9 @@ class User extends Model
     public function checkEmailExist(): bool
     {
         // $result = LocalDatabase::run(" SELECT * FROM user WHERE email='".$this->getemail()."' ");
-        //$result = Repository::getRepository('user', " \$email=='" . $this->getemail() . "' ");
+        // $result = Repository::getRepository('user', " \$email=='" . $this->getemail() . "' ");
         throw new Exception("");
-        
+
         // deb($result);
         if (sizeof($result) == 1) {
             $user = array_shift($result);
@@ -270,7 +294,7 @@ class User extends Model
         User::setForgotEmail($email);
 
         // $results = LocalDatabase::run(" SELECT * FROM user WHERE email='$email' ");
-        //$results = Repository::getRepository('user', " \$email=='$email' ");
+        // $results = Repository::getRepository('user', " \$email=='$email' ");
         throw new Exception("");
         // deb($results);
 
@@ -309,10 +333,12 @@ class User extends Model
             $link = SIS_URL . "/forgot/reset?code=" . $recoveryid_encrypted;
             // deb($link);
 
-            /*$mailer = new CMSMailer($user->getemail(), $user->getname(), "Redefinição de senha do(a) " . SIS_NAME, "forgot", array(
-                "name" => $user->getname(),
-                "link" => $link
-            ));*/
+            /*
+             * $mailer = new CMSMailer($user->getemail(), $user->getname(), "Redefinição de senha do(a) " . SIS_NAME, "forgot", array(
+             * "name" => $user->getname(),
+             * "link" => $link
+             * ));
+             */
             throw new Exception("");
 
             if (! $mailer->send()) {
@@ -337,7 +363,7 @@ class User extends Model
         // deb($recoveryid);
 
         // $results = LocalDatabase::run(" SELECT * FROM userpasswordrecoveries WHERE userpasswordrecoveriesid='$recoveryid' ");
-        //$results = Repository::getRepository('userpasswordrecoveries', " \$userpasswordrecoveriesid=='$recoveryid' ");        
+        // $results = Repository::getRepository('userpasswordrecoveries', " \$userpasswordrecoveriesid=='$recoveryid' ");
         // deb($results);
         throw new Exception("");
 
@@ -463,8 +489,6 @@ class User extends Model
             }
         }
     }
-
- 
 }
 
 

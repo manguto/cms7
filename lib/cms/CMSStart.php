@@ -1,17 +1,16 @@
 <?php
 namespace manguto\cms5\lib\cms;
 
-use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\ServerHelp;
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Log;
+use manguto\cms5\lib\Logs;  
 
 class CMSStart
 {
 
     static function Run()
-    {
+    {   
         if (! defined('VIRTUAL_HOST_ACTIVE')) {
             throw new Exception("A constante 'VIRTUAL_HOST_ACTIVE' não foi definida. Defina-a no arquivo de CONFGURAÇÕES e tente novamente.");
         }
@@ -52,13 +51,22 @@ class CMSStart
 
         self::HTML_AUX();
 
-        self::LOG();
+        
 
     }
 
     private static function ERROR_HANDLER()
     {
         register_shutdown_function("fatal_error_handler");
+        
+        error_reporting(E_ALL);
+        
+        ini_set("display_errors",1);
+        
+        ini_set("log_errors",1);
+        
+        ini_set("error_log",Logs::dir.DIRECTORY_SEPARATOR."error_".date('Ymd_His').".txt");
+                
     }
 
     private static function SIS_FOLDERNAME()
@@ -114,11 +122,6 @@ class CMSStart
             $SUBVERSION_CSS = '';
         }
         define("SUBVERSION_CSS", $SUBVERSION_CSS);
-    }
-
-    private static function LOG()
-    {
-        Log::Go();
     }
 
     private static function EXTRA_PARAMETERS()

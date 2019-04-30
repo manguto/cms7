@@ -13,21 +13,26 @@ use manguto\cms5\mvc\control\site\ControlSite;
 use manguto\cms5\mvc\control\admin\ControlAdmin;
 use manguto\cms5\mvc\control\dev\ControlDev;
 use manguto\cms5\mvc\control\crud\ControlCRUD;
+use manguto\cms5\lib\Logs;  
 
 class Control
 {
 
     static function Start()
     {
-
+           
         // ====================================================================================================
         { // SESSION - RESET REQUEST?
             Session::checkResetRequest();
         }
         // ====================================================================================================
         { // CMS - REQUIRED DATA SETUP
-            CMSStart::Run();
+            CMSStart::Run();            
         }
+        // ====================================================================================================
+        {//LOGIN START!
+            Logs::Start();
+        }     
         // ====================================================================================================
         { // SLIM PLATAFORM ANALISYS - ROUTES
             $app = new Slim();
@@ -40,9 +45,11 @@ class Control
 
     private static function PlataformRouteAnalisys($app)
     {
+        Logs::CheckPoint();
+        
         // ====================================================================================================
         { // SITE - Front End
-            ControlSite::RunRouteAnalisys($app);
+            ControlSite::RunRouteAnalisys($app);            
         }
         // ====================================================================================================
         { // SITE - Back End

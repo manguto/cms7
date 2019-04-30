@@ -354,8 +354,8 @@ class Repository extends Model
             $conditions = trim($conditions);            
         }
         { // obtencao do nome do repositorio
-            $caled_class = get_called_class();
-            $class_sample = new $caled_class();
+            $called_class = get_called_class();
+            $class_sample = new $called_class();
             $repositoryname = $class_sample->getRepositoryname();
             // deb($repositoryname);
         }
@@ -1013,8 +1013,8 @@ class Repository extends Model
         try {
 
             { // obtencao do nome do repositorio
-                $caled_class = get_called_class();
-                $class_sample = new $caled_class();
+                $called_class = get_called_class();
+                $class_sample = new $called_class();
                 $repositoryname = $class_sample->getRepositoryname();
                 // deb($repositoryname);
             }

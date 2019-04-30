@@ -107,6 +107,9 @@ class Session
             $eval = '$return = isset('.$var.');';
             //deb($eval,0);            
         }
+        
+        //Exception::deb($eval);        
+        
         //<<<<<<<<<<<<<<<<<<
         eval($eval);
         //<<<<<<<<<<<<<<<<<<
@@ -119,7 +122,7 @@ class Session
      * verifica se foi solicitada um reset da 
      * sessao e caso afirmativo realiza-o
      */
-    static function checkResetRequest(){
+    static function checkResetRequest(){        
         if(isset($_GET['session']) && trim($_GET['session'])=='reset'){
             session_destroy();
             session_start();

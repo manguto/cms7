@@ -73,11 +73,9 @@ class ProcessResult
         // deb($parameterIsObject);
         if ($parameterIsObject) {
             $msg = $expection_or_message->getMessage();
-            // deb($msg);
-            Log::ProcessResult($msg, 'exception');
+            // deb($msg);            
         } else {
-            $msg = $expection_or_message;
-            Log::ProcessResult($msg, 'error');
+            $msg = $expection_or_message;            
         }
         // deb($msg);
         Session::set(self::key, '', [
@@ -95,10 +93,10 @@ class ProcessResult
         // verifica se o parametro informado eh do tipo exception ou string
         if (is_object($expection_or_message)) {
             $msg = $expection_or_message->getMessage();
-            Log::ProcessResult($msg, 'warning');
+
         } else {
             $msg = $expection_or_message;
-            Log::ProcessResult($msg, 'warning');
+
         }
         // deb($msg);
         Session::set(self::key, '', [
@@ -116,10 +114,9 @@ class ProcessResult
         // verifica se o parametro informado eh do tipo exception ou string
         if (is_object($expection_or_message)) {
             $msg = $expection_or_message->getMessage();
-            Log::ProcessResult($msg, 'success');
+
         } else {
             $msg = $expection_or_message;
-            Log::ProcessResult($msg, 'success');
         }
         // deb($msg);
         Session::set(self::key, '', [
