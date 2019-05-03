@@ -9,7 +9,7 @@ class ControlDev extends Control
 
     static function RunRouteAnalisys($app)
     {
-        Logs::CheckPoint();
+        
         { // VERIFICA/EXECUTA CLASSES FILHAS
             $classObjectSample = new self();
             self::RunChilds($app, $classObjectSample);

@@ -100,13 +100,7 @@ function deb($var, bool $die = true, bool $backtrace = true)
     
     // backtrace show?
     if ($backtrace) {
-        $backtrace = get_backtrace();
-        $backtrace = str_replace("'", '"', $backtrace);
-        {//revert order
-            $backtrace_ = explode(chr(10), $backtrace);
-            krsort($backtrace_);
-            $backtrace = implode(chr(10), $backtrace_);
-        }
+        $backtrace = backtraceFix(get_backtrace(),false);
         
     } else {
         $backtrace = '';
@@ -181,6 +175,23 @@ function deb($var, bool $die = true, bool $backtrace = true)
 }
 
 /**
+ * realiza ajustes no backtrace informado para uma melhor apresetnacao
+ * @param string $backtrace
+ * @param boolean $sortAsc
+ */
+function backtraceFix(string $backtrace,$sortAsc=true){    
+    $backtrace = str_replace("'", '"', $backtrace);
+    {//revert order
+        $backtrace_ = explode(chr(10), $backtrace);
+        if($sortAsc==false){
+            krsort($backtrace_);
+        }
+        $backtrace = implode(chr(10), $backtrace_);
+    }
+    return $backtrace;
+}
+
+/**
  * debug code
  * 
  * @param bool $die
@@ -191,7 +202,7 @@ function debc($var, bool $die = true, bool $backtrace = true)
     
     // backtrace show?
     if ($backtrace) {
-        $backtrace = get_backtrace();
+        $backtrace = backtraceFix(get_backtrace(),false);
     } else {
         $backtrace = '';
     }
@@ -264,8 +275,8 @@ function fatal_error_handler(){
 
 function format_fatal_error( $errno, $errstr, $errfile, $errline ) {
     
-    $trace = print_r( debug_backtrace( false ), true );
-    
+    $trace = print_r( debug_backtrace(), true );
+        
     $content = "<br />
     <table border='1' style='font-family:Courier New'>        
         <tbody>
@@ -291,6 +302,7 @@ function format_fatal_error( $errno, $errstr, $errfile, $errline ) {
             </tr>
         </tbody>
     </table>";
+    
     return $content;
 }
 

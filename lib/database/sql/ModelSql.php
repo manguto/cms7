@@ -1,17 +1,19 @@
 <?php
-namespace manguto\cms5\lib\model;
+namespace manguto\cms5\lib\database\sql;
 
-use manguto\cms5\lib\database\sql\Sql;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\model\Model;
 
-class ModelSql extends Model
+abstract class ModelSql extends Model
 {
 
     public function __construct(int $id = 0)
-    {
+    {   
+        //deb($this);
         parent::__construct($id);
-
+        //deb($this);
+        
         if ($id != 0) {
             $this->load();
         }
@@ -31,6 +33,7 @@ class ModelSql extends Model
         ]);
 
         $registerAmount = sizeof($object_array);
+        //deb($registerAmount);
         if ($registerAmount == 0) {
             throw new Exception("Não foi encontrado nenhum registro para identificador ($id) na tabela '$tablename'.");
         } elseif ($registerAmount > 1) {
@@ -39,10 +42,14 @@ class ModelSql extends Model
 
         // obter o primeiro registro obtido
         $object = array_shift($object_array);
-        // deb($data);
-
+        //deb($object);
+        
+        $ModelAttribute = $object->GetData(true,true);
+        //deb($ModelAttribute);
+        
         // definir dados no objeto
-        $this->SetData($object->GetData(true, true));
+        //$this->SetData($data);
+        $this->SetAttributes($ModelAttribute,false);/**/
     }
 
     /**
@@ -57,7 +64,9 @@ class ModelSql extends Model
         $this->setUpdate___datetime(date('Y-m-d H:i:s'));
 
         // atualizacao do usuario autor da atulizacao
-        $this->setUpdate___user_id(User::getSessionUserDirectParameter('id'));
+        $this->setUpdate___user_id(User::getSessionUserDirectAttribute('id'));
+        
+        
     }
 
     public function save()
@@ -142,7 +151,13 @@ class ModelSql extends Model
         }
     }
 
-    public static function search($query = '', $params = [])
+    /**
+     * obtem uma lista de objetos do modelo em questao
+     * @param string $query
+     * @param array $params
+     * @return array
+     */
+    public static function search(string $query = '', array $params = []):array
     {
         $return = [];
 

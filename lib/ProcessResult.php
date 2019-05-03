@@ -18,9 +18,12 @@ class ProcessResult
     {
         $return = [];
 
-        if (Session::isset(self::key)) {
-            $prs = Session::get(self::key);
-            // deb($prs);
+        if (Sessions::isset(self::key)) {
+            $prs = Sessions::get(self::key,false);
+            //deb($_SESSION);
+            //deb(gettype($prs));
+            //deb($prs);
+            $prs = $prs=='' ? [] : $prs;
             foreach ($prs as $pr) {
                 {
                     $type = $pr['type'];
@@ -54,7 +57,7 @@ class ProcessResult
             }
             // deb($unset_all,0);
             if ($unset_all == true) {
-                Session::set(self::key, []);
+                Sessions::set(self::key, []);
             }
         }
 
@@ -78,10 +81,10 @@ class ProcessResult
             $msg = $expection_or_message;            
         }
         // deb($msg);
-        Session::set(self::key, '', [
+        Sessions::set(self::key, [
             'type' => 'Error',
             'msg' => $msg
-        ]);
+        ],true);
     }
 
     // ==================================# WARNING CONTROL ==================================================#
@@ -99,10 +102,10 @@ class ProcessResult
 
         }
         // deb($msg);
-        Session::set(self::key, '', [
+        Sessions::set(self::key, [
             'type' => 'Warning',
             'msg' => $msg
-        ]);
+        ],true);
     }
 
     // ==================================# SUCCESS CONTROL ==================================================#
@@ -119,10 +122,10 @@ class ProcessResult
             $msg = $expection_or_message;
         }
         // deb($msg);
-        Session::set(self::key, '', [
+        Sessions::set(self::key, [
             'type' => 'Success',
             'msg' => $msg
-        ]);
+        ],true);
     }
 
     // ##########################################################################################################################################

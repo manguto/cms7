@@ -134,6 +134,7 @@ class Datas
         $object = $this->date;
         //deb($object,0);
         //deb($format);        
+        
         if(!is_object($object)){
             throw new \Exception('Parametro informado nao é um objeto date.');
         }                

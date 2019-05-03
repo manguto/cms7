@@ -1,16 +1,16 @@
 <?php
 namespace manguto\cms5\mvc\model;
 
-use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Safety;
 use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Session;
+use manguto\cms5\lib\Sessions;
 use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\model\ModelInterface;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\database\mysql\Mysql;
 use manguto\cms5\lib\database\sql\Sql;
-use manguto\cms5\lib\model\ModelSql;
+use manguto\cms5\lib\Logs;
+use manguto\cms5\lib\database\sql\ModelSql;
 
 class User extends ModelSql implements ModelInterface
 {
@@ -18,76 +18,75 @@ class User extends ModelSql implements ModelInterface
     const SESSION = "User";
 
     const FORGOT_EMAIL = "UserEmail";
-
+    
     public function __construct($id = 0)
     {
+        // atributos basicos (fundamentais)
+        $this->SetFundamentalAttributes($id);
+        //deb($this);
+        
         // definicao dos atributos deste modelo
-        $this->DefineAttributes();
-
+        $this->SetModelAttributes();
+        //deb($this);
+        
         // construct
         parent::__construct($id);
-       
+        
     }
-
-    // definicao dos atributos deste modelo
-    private function DefineAttributes()
+    
+    /** 
+     * !IMPORTANT
+     * Função para defniicao do atributos do modelo! 
+     */
+    private function SetModelAttributes()
     {
-        $attributes = [
+        Logs::set("Definição dos ATRIBUTOS do modelo <b>".$this->GetClassName()."</b>.");
+        
+        $attributes_data = [
             'name' => [
                 'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => '',
-                'length' => 64,
+                'length' => 64
             ],
-            'login' =>[
+            'login' => [
                 'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => '',
-                'length' => 24,
+                'length' => 24
             ],
-            'password' =>[
+            'password' => [
                 'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => '',
                 'length' => 32,
-                'encrypted' => true,
+                'encrypted' => true
             ],
-            'email' =>[
+            'email' => [
                 'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => '',
                 'length' => 64,
-                'nature' => ModelAttribute::NATURE_EMAIL,
+                'nature' => ModelAttribute::NATURE_EMAIL
             ],
-            'phone' =>[
+            'phone' => [
                 'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => '',
-                'length' => 64,                
+                'length' => 64
             ],
-            'adminzoneaccess' =>[
+            'adminzoneaccess' => [
                 'type' => ModelAttribute::TYPE_BOOLEAN,
-                'value' => 0,                                
+                'value' => 0
             ],
-            'devzoneaccess' =>[
+            'devzoneaccess' => [
                 'type' => ModelAttribute::TYPE_BOOLEAN,
-                'value' => 0,
-            ],
-            
+                'value' => 0
+            ]
         ];
         
-        $this->SetAttributes($attributes);
+        parent::SetAttributes($attributes_data);
+        
     }
 
-    // const FORGOT_SECRET_KEY = "1234567890123456";
     static function checkUserLogged(): bool
     {
-        $return = false;
-        if (Session::isset(User::SESSION)) {
-            $user = Session::get(User::SESSION);
-            if (isset($user['id'])) {
-                $id = intval($user['id']);
-                if ($id > 0) {
-                    $return = true;
-                }
-            }
-        }
-        return $return;
+        return Sessions::isset(User::SESSION);
     }
 
     static function checkUserLoggedAdmin(): bool
@@ -128,9 +127,12 @@ class User extends ModelSql implements ModelInterface
 
     static public function initialize()
     {
-        $quantUsuarios = Sql::getTableLength('SELECT * FROM user WHERE 1');
+        Logs::set('Verificação/Definição de usuário administrador.');
+
+        $quantUsuarios = Sql::getTableLength('SELECT * FROM user WHERE login="admin" ');
         // deb($quantUsuarios);
-        if ($quantUsuarios == 0) {            
+        if ($quantUsuarios == 0) {
+            Logs::set('Usuário administrador NÃO encontrado.');
             // --------------------------------------------------- set user admin
             $admin = new User();
             $admin->setname('Administrador');
@@ -141,49 +143,57 @@ class User extends ModelSql implements ModelInterface
             $admin->setadminzoneaccess(1);
             $admin->setdevzoneaccess(1);
             $admin->save();
+            Logs::set('Usuário administrador criado com sucesso!');
             // ---------------------------------------------------
+        }else{
+            Logs::set('Usuário administrador encontrado.');
         }
     }
 
     static function login($login, $password)
     {
+        Logs::set('Validação de login/senha de usuário informados...');
         // deb($login,0); deb($password,0); deb(User::password_crypt($password));
-        // cifragem de password para comparacao
-        $password = User::password_crypt($password);
-        // veirifcacao do repositorio do susuarios
-        User::initialize();
-        // die('++');
+        
+        {// verificacao do repositorio do susuarios
+            User::initialize();
+        }        
+
         {
             { // usuario existe
                 $mysql = new Mysql();
-                $mysql->query(" SELECT * FROM user WHERE login='$login' ");                
+                $mysql->query(" SELECT * FROM user WHERE login='$login' ");
                 $results = $mysql->fetchArray();
-                // deb($results);
+                //deb($results);
                 if (count($results) === 0) {
                     throw new Exception("Login não encontrado e/ou senha inválida.");
+                }else{
+                    Logs::set("Login encontrado ($login).");
                 }
             }
-            { // usuario e senha existem                
+            { // usuario e senha existem
+                {
+                    // cifragem de password para comparacao
+                    $password = User::password_crypt($password);
+                }
+                
                 $mysql = new Mysql();
-                $mysql->query(" SELECT * FROM user WHERE login='$login' && password='$password' ");
+                $mysql->query(" SELECT id FROM user WHERE login='$login' && password='$password' ");
                 $results = $mysql->fetchArray();
                 // deb($results);
-
-                // $results = Repository::getRepository('user', $conditions);
-                throw new Exception("");
-
                 // deb($results);
                 if (count($results) === 0) {
                     throw new Exception("Senha inválida e/ou login não encontrado.");
+                }else{
+                    Logs::set("Login/senha encontrados ($login/************).");
                 }
             }
-            // ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES
-            // ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES
-            // ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES ### TESTES
         }
-        // deb($results);
-        $user = array_shift($results);
-        // deb($user);
+        //deb($results);
+        $user_id = array_shift($results);
+        //deb($user_id);
+        $user = new User($user_id);
+        //deb($user);
         User::setSessionUser($user);
     }
 
@@ -193,73 +203,43 @@ class User extends ModelSql implements ModelInterface
         return md5($passwordRaw);
     }
 
-    static function setSessionUser(Model $user)
+    static function setSessionUser($user)
     {
-        // deb($user);
-        // $__SESSION[SIS_ABREV][User::SESSION] = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
-        $user = $user->GetData($extraIncluded = false);
-        Session::set(User::SESSION, $user);
+        Sessions::set(User::SESSION, $user);
+        Logs::set('Usuário logado e definido na sessão.');
     }
 
     static function getSessionUser()
     {
-        $user = false;
-
-        if (User::checkUserLogged()) {
-            // $user_array = $__SESSION[SIS_ABREV][User::SESSION];
-            $user = Session::get(User::SESSION);
-            // deb($user_array);
-
-            try {
-                $user = new User($user['id']);
-                // deb($user);
-            } catch (Exception $e) {
-                ProcessResult::setError($e);
-                User::logout();
-                headerLocation('/login');
-                exit();
-            }
-        }
-        return $user;
+        return Sessions::get(User::SESSION,false);
     }
 
-    static function getSessionUserDirectParameter($parameter)
+    static function getSessionUserDirectAttribute($attribute)
     {
-        if (User::checkUserLogged()) {
-            // $user_array = $__SESSION[SIS_ABREV][User::SESSION];
-            $user_array = Session::get(User::SESSION);
-
-            // deb($user_array);
-            if (isset($user_array[$parameter])) {
-                return $user_array[$parameter];
-            } else {
-                return 'indefinido';
-            }
-        } else {
-            return 'indefinido2';
-        }
+        $user = self::getSessionUser();
+        $getMethod = 'get' . ucfirst($attribute);
+        $attribute = $user->$getMethod();
+        return $attribute;
     }
 
     static function logout()
     {
-        // unset($__SESSION[SIS_ABREV][User::SESSION]);
-        Session::unset(User::SESSION);
+        Sessions::unset(User::SESSION);
+        Logs::set('Usuário des-logado e indefinido na sessão.');
     }
 
+    /**
+     * verifica se o login existe
+     *
+     * @throws Exception
+     * @return bool
+     */
     public function checkLoginExist(): bool
     {
-        // $result = LocalDatabase::run(" SELECT * FROM user WHERE login='".$this->getlogin()."' ");
-        // $result = Repository::getRepository('user', " \$login=='" . $this->getlogin() . "' ");
-        throw new Exception("");
-
+        $result = User::search(" SELECT * FROM user WHERE ( login='" . $this->getlogin() . "' AND id!=" . $this->getId() . " )");
         // deb($result);
         if (sizeof($result) == 1) {
-            $user = array_shift($result);
-            if ($this->getId() == $user->getId()) {
-                return false;
-            } else {
-                return true;
-            }
+            return true;
         } else if (sizeof($result) == 0) {
             return false;
         } else {
@@ -269,18 +249,10 @@ class User extends ModelSql implements ModelInterface
 
     public function checkEmailExist(): bool
     {
-        // $result = LocalDatabase::run(" SELECT * FROM user WHERE email='".$this->getemail()."' ");
-        // $result = Repository::getRepository('user', " \$email=='" . $this->getemail() . "' ");
-        throw new Exception("");
-
+        $result = User::search(" SELECT * FROM user WHERE ( email='" . $this->getemail() . "' AND id!=" . $this->getId() . " )");
         // deb($result);
         if (sizeof($result) == 1) {
-            $user = array_shift($result);
-            if ($this->getId() == $user->getId()) {
-                return false;
-            } else {
-                return true;
-            }
+            return true;
         } else if (sizeof($result) == 0) {
             return false;
         } else {
@@ -292,11 +264,9 @@ class User extends ModelSql implements ModelInterface
     {
         // deb($email);
         User::setForgotEmail($email);
-
-        // $results = LocalDatabase::run(" SELECT * FROM user WHERE email='$email' ");
-        // $results = Repository::getRepository('user', " \$email=='$email' ");
-        throw new Exception("");
-        // deb($results);
+        
+        $results = User::search(" SELECT * FROM user WHERE ( email='" . $this->getemail() . "' )");
+        // deb($result);
 
         if (count($results) == 0) {
             throw new Exception("Não foi possível recuperar a sua senha.");
@@ -323,13 +293,6 @@ class User extends ModelSql implements ModelInterface
             // ==========================================================================================================
             // ==========================================================================================================
 
-            /*
-             * if ($adminzoneaccess === true) {
-             * $link = SIS_URL . "/admin/forgot/reset?code=" . $recoveryid_encrypted;
-             * } else {
-             * $link = SIS_URL . "/forgot/reset?code=" . $recoveryid_encrypted;
-             * }
-             */
             $link = SIS_URL . "/forgot/reset?code=" . $recoveryid_encrypted;
             // deb($link);
 
@@ -339,7 +302,7 @@ class User extends ModelSql implements ModelInterface
              * "link" => $link
              * ));
              */
-            throw new Exception("");
+            throw new Exception("Nenhum servidor de e-mail configurado. Contate o Administrador e solicite-o esta atualização.");
 
             if (! $mailer->send()) {
                 throw new Exception("Não foi possível enviar o e-mail de recuperação.<br/>Aguarde alguns instantes e tente novamente.<br/>Caso o problema persista, contate o administrador.");
@@ -398,20 +361,20 @@ class User extends ModelSql implements ModelInterface
     {
         // deb($msg);
         // $__SESSION[SIS_ABREV][User::FORGOT_EMAIL] = $email;
-        Session::set(User::FORGOT_EMAIL, $email);
+        Sessions::set(User::FORGOT_EMAIL, $email);
     }
 
     static function getForgotEmail()
     {
         // $cond1 = isset($__SESSION[SIS_ABREV][User::FORGOT_EMAIL]);
-        $cond1 = Session::isset(User::FORGOT_EMAIL);
+        $cond1 = Sessions::isset(User::FORGOT_EMAIL);
 
         // $cond2 = $__SESSION[SIS_ABREV][User::FORGOT_EMAIL] !== NULL;
-        $cond2 = Session::get(User::FORGOT_EMAIL) !== NULL;
+        $cond2 = Sessions::get(User::FORGOT_EMAIL) !== NULL;
 
         if ($cond1 && $cond2) {
             // $msg = $__SESSION[SIS_ABREV][User::FORGOT_EMAIL];
-            $msg = Session::get(User::FORGOT_EMAIL);
+            $msg = Sessions::get(User::FORGOT_EMAIL);
         } else {
             $msg = User::clearForgotEmail();
         }
@@ -422,7 +385,7 @@ class User extends ModelSql implements ModelInterface
     {
         // deb("CLEAR!",0);
         // unset($__SESSION[SIS_ABREV][User::FORGOT_EMAIL]);
-        Session::unset(User::FORGOT_EMAIL);
+        Sessions::unset(User::FORGOT_EMAIL);
     }
 
     /**

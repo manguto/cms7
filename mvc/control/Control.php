@@ -7,49 +7,45 @@ use Slim\Slim;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\mvc\model\User;
-use manguto\cms5\lib\Session;
+use manguto\cms5\lib\Sessions;
 use manguto\cms5\lib\cms\CMSStart;
 use manguto\cms5\mvc\control\site\ControlSite;
 use manguto\cms5\mvc\control\admin\ControlAdmin;
 use manguto\cms5\mvc\control\dev\ControlDev;
 use manguto\cms5\mvc\control\crud\ControlCRUD;
-use manguto\cms5\lib\Logs;  
+use manguto\cms5\lib\Logs;
 
 class Control
 {
 
     static function Start()
     {
-           
-        // ====================================================================================================
-        { // SESSION - RESET REQUEST?
-            Session::checkResetRequest();
-        }
         // ====================================================================================================
         { // CMS - REQUIRED DATA SETUP
-            CMSStart::Run();            
+            CMSStart::Run();
         }
         // ====================================================================================================
-        {//LOGIN START!
-            Logs::Start();
-        }     
+        { // SESSION - RESET REQUEST?
+            Sessions::checkResetRequest();
+        }        
         // ====================================================================================================
         { // SLIM PLATAFORM ANALISYS - ROUTES
             $app = new Slim();
             $app->config('debug', true);
             self::PlataformRouteAnalisys($app);
             $app->run();
-        }
+        }        
         // ====================================================================================================
+        
     }
 
     private static function PlataformRouteAnalisys($app)
-    {
-        Logs::CheckPoint();
+    {   
+        Logs::set('##### Início #####');
         
         // ====================================================================================================
         { // SITE - Front End
-            ControlSite::RunRouteAnalisys($app);            
+            ControlSite::RunRouteAnalisys($app);
         }
         // ====================================================================================================
         { // SITE - Back End
@@ -64,6 +60,7 @@ class Control
             ControlDev::RunRouteAnalisys($app);
         }
         // ====================================================================================================
+        
     }
 
     // ============================================================================================ CONTROLE DE ACESSO
@@ -74,6 +71,7 @@ class Control
      */
     protected static function PrivativeZone()
     {
+        
         if (! User::checkUserLogged()) {
             ProcessResult::setError("Permissão de acesso negada. Contate o administrador.");
             headerLocation('/');
@@ -86,6 +84,7 @@ class Control
      */
     protected static function PrivativeAdminZone()
     {
+        
         if (! User::checkUserLoggedAdmin()) {
             ProcessResult::setError("Permissão de acesso negada. Contate o administrador.");
             headerLocation('/');
@@ -98,6 +97,7 @@ class Control
      */
     protected static function PrivativeDevZone()
     {
+        
         if (! User::checkUserLoggedDev()) {
             ProcessResult::setError("Permissão de acesso negada. Contate o administrador.");
             headerLocation('/');
@@ -107,6 +107,7 @@ class Control
 
     protected static function PrivateCrudPermission($operation, $target_user_id)
     {
+        
         // deb($operation,0); deb($target_user_id);
         {
             // logged user
@@ -167,6 +168,7 @@ class Control
      */
     static protected function RunChilds(Slim $app, $classObjectSample)
     {
+        
         { // obtencao do nome desta classe e do local onde ela se encontra
             $thisclassname = get_class($classObjectSample);
             $thisclassname = Diretorios::fixDirectorySeparator($thisclassname);
@@ -222,7 +224,7 @@ class Control
             foreach ($classesFilhas as $classeFilha) {
                 $classeFilha = str_replace('/', '\\', $classeFilha);
                 $classeFilha = str_replace('vendor', '', $classeFilha);
-                //deb('CLASSE FILHA >>> '.$classeFilha,0);
+                // deb('CLASSE FILHA >>> '.$classeFilha,0);
                 $classeFilha::RunRouteAnalisys($app);
             }
         }
@@ -246,6 +248,7 @@ class Control
      */
     static protected function RunChildsModules(Slim $app, $classObjectSample)
     {
+        
         { // obtencao do nome desta classe e do local onde ela se encontra
             $thisclassname = get_class($classObjectSample);
             $thisclassname = Diretorios::fixDirectorySeparator($thisclassname);

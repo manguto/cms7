@@ -1,9 +1,10 @@
 <?php
 namespace manguto\cms5\lib;
 
-class Session
+class Sessions_DEPRECATED
 {
 
+    
     /**
      * aloca parametros na sessao atual do sistema em questao
      *
@@ -122,15 +123,24 @@ class Session
      * verifica se foi solicitada um reset da 
      * sessao e caso afirmativo realiza-o
      */
-    static function checkResetRequest(){        
-        if(isset($_GET['session']) && trim($_GET['session'])=='reset'){
-            session_destroy();
-            session_start();
-            ProcessResult::setSuccess('Sessão reinicializada com sucesso!');
-            headerLocation('/');
-            exit();
+    static function checkResetRequest(){
+                
+        if(isset($_GET['reset'])){
+            self::Reset();
         }
     }
+    
+    /**
+     * realiza um reset na sessao
+     */
+    static function Reset(){        
+        session_destroy();
+        session_start();
+        ProcessResult::setSuccess('Sessão reinicializada com sucesso!');
+        headerLocation('/');
+        exit();
+    }
+    
     
     // =============================================================================================================================
     // =============================================================================================================================
@@ -161,13 +171,16 @@ class Session
      */
     static private function get_var(array $args): string
     {
-        $args = self::args_wrapping($args); 
+        //deb($args,0); throw new Exception();
+        
+        $args = self::args_wrapping($args);
+        deb($args);
 
         $variable = '$_SESSION[SIS_ABREV][SIS_FOLDERNAME]'; 
         foreach ($args as $arg) { 
             $variable .= "[$arg]"; 
         }
-        // deb($variable);
+        deb($variable);
         return $variable;
     }
     

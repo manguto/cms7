@@ -2,6 +2,7 @@
 namespace manguto\cms5\lib\model;
 
 use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Logs;
 
 /**
  * esta classe tera como intuito representar os objetor que precisam ser salvos de alguma forma (banco de dados, xml, json, etc.)
@@ -11,7 +12,7 @@ use manguto\cms5\lib\Exception;
  */
 abstract class Model
 {
-
+    
     private $attributes = [];
 
     private $attributes_extra = [];
@@ -25,11 +26,8 @@ abstract class Model
     ];
 
     public function __construct(int $id = 0)
-    {
-        // atributos basicos (fundamentais)
-        $this->SetAttributeFundamentals($id);
-
-        // atributos definidos
+    {           
+        // verifica se na classe filha os atributos deste foram definidos!
         $this->CheckAttributesSetted();
         
         //ordernar atributos
@@ -37,23 +35,22 @@ abstract class Model
     }
     
     /**
-     * recebe um arrau de Atributos e os define para o modelo
+     * recebe um array de parametros de atributos e os define para o modelo atual
      *
      * @param array $attributes
      */
-    protected function SetAttributes(array $attributes, bool $checkAttributeName = true)
-    {
-        foreach ($attributes as $attributeName => $parameters) {
-            // cria o atributo
-            $attribute = new ModelAttribute($attributeName, $checkAttributeName);
-            foreach ($parameters as $parameterName => $parameterValue) {
-                $setMethod = 'set' . ucfirst($parameterName);
-                // define os parametros
-                $attribute->$setMethod($parameterValue);
-            }
-            // salva no modelo
+    protected function SetAttributes(array $attributes_data=[], bool $checkAttributeName = true)
+    {   
+        //deb($attributes_data);        
+        Logs::set("Definição de ATRIBUTOS: ".implode(', ', array_keys($attributes_data))." (verificação do nome do atributo: $checkAttributeName).");
+                
+        //recebe uma lista de paramertros e transforma uma lista de model attributes e verifica (caso solicitado) se é permitido
+        $attribute_list = ModelAttribute::Convert_ParameterDataArray_to_ModelAttributeArray($attributes_data, $checkAttributeName);
+        
+        foreach ($attribute_list as $attribute) {            
+            // salva atributo no modelo
             $this->SetAttribute($attribute);
-        }
+        }        
     }
 
     /**
@@ -61,8 +58,11 @@ abstract class Model
      *
      * @param int $id
      */
-    private function SetAttributeFundamentals(int $id)
+    protected function SetFundamentalAttributes(int $id)
     {
+        
+        Logs::set("Definição dos ATRIBUTOS FUNDAMENTAIS do modelo <b>".$this->GetClassName()."</b>.");
+        
         $attributes = [
             'id' => [
                 'type' => ModelAttribute::TYPE_INT,
@@ -87,8 +87,9 @@ abstract class Model
                 'value' => 0
             ]
         ];
-
+        //deb($attributes);        
         $this->SetAttributes($attributes, false);
+        
     }
 
     /**
@@ -98,11 +99,18 @@ abstract class Model
      */
     private function SetAttribute(ModelAttribute $attribute)
     {
+        //deb($attribute->getName(),0);
         $this->attributes[$attribute->getName()] = $attribute;
     }
 
+    /**
+     * verifica se na classe filha os atributos deste foram definidos!
+     * @throws Exception
+     */
     private function CheckAttributesSetted()
     {
+        Logs::set("Verificação quanto a atribuição de todos os atributos do modelo.");
+        
         $attributesSetted = false;
         // deb(self::fundamentalAttributes,0);
 
@@ -124,9 +132,14 @@ abstract class Model
     }
 
     /**
-     * ordernar atributos do objeto
+     * ordernar atributos do objeto de maneira
+     * que os atributos fundamentais esteja no
+     * inicio desta listagem
      */
     private function AttributesOrder(){
+        
+        Logs::set("Ordenação dos atributos do modelo.");
+        
         $attributesOrdered = [];
         foreach (self::fundamentalAttributes as $attributeFundamental){
             if(isset($this->attributes[$attributeFundamental])){
@@ -155,10 +168,7 @@ abstract class Model
 
             // atributos do modelo
             $attribute_array = $this->attributes;
-
-            // remocao dos atributos de controle
-            $attribute_array = Model_Control::RemoveControlAttributes($attribute_array);
-
+            
             // percorre todos os atributos para expo-los
             foreach ($attribute_array as $attrName => $attrValue) {
 
@@ -206,8 +216,7 @@ abstract class Model
     //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
     //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
     //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
-    
-    //------------------------------------------------------------------------------------------------------------------
+
     public function __call(string $methodName, $args)
     {
         // metodo aplicado (solicitado)
@@ -247,6 +256,7 @@ abstract class Model
             $key = strtolower($key);
             // evita o carregamento de parametros que nao pertencam ao objeto (outros parametros inseridos no <form> p.ex.)
             if (isset($this->attributes[$key])) {
+                if($value)
                 $this->attributes[$key]->setValue($value);
             }
         }
@@ -274,42 +284,11 @@ abstract class Model
             }
         }
 
-        if (! $attributes_control_included) {
-            $data = Model_Control::RemoveControlAttributes($data);
-        }
-
         return $data;
     }
 
-    /**
-     * obtem o nome completo da classe deste objeto
-     *
-     * @return string
-     */
-    public function GetClass()
-    {
-        return get_class($this);
-    }
 
-    /**
-     * obtem especificamente o nome da classe deste objeto
-     */
-    public function GetClassName()
-    {
-        $class = $this->GetClass();
-        $className = explode(DIRECTORY_SEPARATOR, $class);
-        $className = array_pop($className);
-        return $className;
-    }
-
-    public function GetTablename()
-    {
-        $className = $this->GetClassName();
-        $tablename = strtolower($className);
-        return $tablename;
-    }
-
-    // ##################################################################################################################################
+    
     // ##################################################################################################################################
     // ######################################################## PRIVATE #################################################################
     // ##################################################################################################################################
@@ -394,6 +373,43 @@ abstract class Model
             throw new Exception("Ocorreu uma tentativa de definição de atributo de um modelo, onde não foi informado o valor a ser definido (set" . ucfirst($fieldname) . "(?)).");
         }
     }
+    
+    // ##################################################################################################################################
+    // ##################################################################################################################################
+    // ##################################################################################################################################
+    /**
+     * obtem o nome completo da classe deste objeto
+     *
+     * @return string
+     */
+    public function GetClass()
+    {
+        return get_class($this);
+    }
+    
+    /**
+     * obtem especificamente o nome da classe deste objeto
+     */
+    public function GetClassName()
+    {
+        $class = $this->GetClass();
+        $className = explode(DIRECTORY_SEPARATOR, $class);
+        $className = array_pop($className);
+        return $className;
+    }
+    
+    public function GetTablename()
+    {
+        $className = $this->GetClassName();
+        $tablename = strtolower($className);
+        return $tablename;
+    }
+    
+    // ##################################################################################################################################
+    // ##################################################################################################################################
+    // ##################################################################################################################################
+    
+    
 }
 
 ?>

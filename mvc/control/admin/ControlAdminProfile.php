@@ -4,7 +4,7 @@ namespace manguto\cms5\mvc\control\admin;
 use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Session;
+use manguto\cms5\lib\Sessions;
 use manguto\cms5\mvc\control\Control;
 use manguto\cms5\mvc\view\admin\ViewAdminProfile;
 
@@ -59,7 +59,7 @@ class ControlAdminProfile extends ControlAdmin
             exit();
         } catch (Exception $e) {
             ProcessResult::setError($e);            
-            Session::set(ControlAdminProfile::key,$_POST);            
+            Sessions::set(ControlAdminProfile::key,$_POST);            
             headerLocation('/admin/profile');
             exit();
         }

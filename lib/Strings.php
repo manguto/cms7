@@ -35,10 +35,8 @@ class Strings
         return $string;
     }
     
-    static function RemoverQuebrasDeLinha($string,$replace=''){
-        $return = $string;
-        $return = str_replace("\r",$replace,$return);
-        $return = str_replace("\n",$replace,$return);
+    static function RemoverQuebrasDeLinha($string,$replace=''){        
+        $return = preg_replace('/[\x00-\x1F\x7F]/', $replace, $string);
         return $return;
     }
     

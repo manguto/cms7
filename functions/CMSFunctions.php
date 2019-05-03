@@ -18,7 +18,7 @@ use manguto\cms5\mvc\model\User;
 
     function getUserName()
     {
-        $user = User::getSessionUser();
+        $user = User::getSessionUser();        
         return $user->getName();
     }
 

@@ -104,14 +104,15 @@ class CSV {
 		return $return;
 	}
 	
-	static function CSVToHTML(string $csv,array $tableAtt=[],bool $header=true,bool $sort=true,bool $pagination=true,bool$search=true){
+	static function CSVToHTML(string $csv,array $tableAtt=[],bool $header=true,bool $sort=true,bool $pagination=true,bool $search=true){
 	    $return = [];
 	    
 	    {//table attributes
 	        {//class    
 	            if(!isset($tableAtt['class'])){
-	                $tableAtt['class'] = 'table table-striped table-bordered table-hover table-sm';	                                             
+	                $tableAtt['class'] = '';	                                             
 	            }
+	            $tableAtt['class'] .= ' table table-striped table-bordered table-hover table-sm';
 	        }
 	        {//...to string
 	            $tableAttributesString = '';

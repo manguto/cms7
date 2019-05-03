@@ -137,7 +137,7 @@ class Repository extends Model
 
         { // =========================================================================== general parameters
             $cpi = RepositoryReferences::ctrl_parameter_ini;
-            $user_id = User::getSessionUserDirectParameter('id');
+            $user_id = User::getSessionUserDirectAttribute('id');
             $datetime = date(Datas::FormatoDatahora);
         }
 

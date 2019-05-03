@@ -5,7 +5,7 @@ use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\mvc\view\site\ViewSiteRegister;
 use manguto\cms5\lib\Exception; 
-use manguto\cms5\lib\Session;
+use manguto\cms5\lib\Sessions;
 use manguto\cms5\mvc\control\admin\ControlAdminProfile;
 
 class ControlSiteRegister extends ControlSite
@@ -23,9 +23,9 @@ class ControlSiteRegister extends ControlSite
 
     static function get_register()
     {
-        if (Session::isset(ControlAdminProfile::key)) {
-            $registerFormValues = Session::get(ControlAdminProfile::key);
-            Session::unset(ControlAdminProfile::key);
+        if (Sessions::isset(ControlAdminProfile::key)) {
+            $registerFormValues = Sessions::get(ControlAdminProfile::key);
+            Sessions::unset(ControlAdminProfile::key);
         } else {
             $registerFormValues = [
                 'name' => '',

@@ -5,6 +5,7 @@ use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\mvc\view\site\ViewSiteLogin;
 use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Logs;
 
 class ControlSiteLogin extends ControlSite
 {
@@ -24,17 +25,23 @@ class ControlSiteLogin extends ControlSite
 
     static function get_login()
     {
+        Logs::set("Exibição da tela de login");
         ViewSiteLogin::get_login();
     }
 
     static function post_login()
     {
-        // deb($_POST);
+        Logs::set("Parametros informados para o LOGIN recebidos...");
+
         try {
+            
             User::login($_POST['login'], $_POST['password']);
-            headerLocation('/');
+            Logs::set('Login autorizado! Redirecionamento para página principal solicitado...');
+            headerLocation('/');            
             exit();
+            
         } catch (Exception $e) {
+            
             ProcessResult::setError($e);
             headerLocation('/login');
             exit();
@@ -43,7 +50,9 @@ class ControlSiteLogin extends ControlSite
 
     static function get_logout()
     {
+        
         User::logout();
+        Logs::set('Logout realizado');
         headerLocation("/");
         exit();
     }

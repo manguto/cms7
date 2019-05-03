@@ -2,6 +2,7 @@
 namespace manguto\cms5\lib\model;
 
 use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Logs;
 
 class ModelAttribute
 {
@@ -189,11 +190,45 @@ class ModelAttribute
         if (in_array($attributeName, Model::fundamentalAttributes)) {
             throw new Exception("Foi definido um nome de atributo reservado para um atributo fundamental do modelo ($attributeName). Por favor, escolha outro e tente novamente.");
         }
-
-        if (Model_Control::itsAControlParameter($attributeName)) {
-            throw new Exception("Foi definido um nome de atributo reservado para um atributo de controle do modelo ($attributeName). Por favor, escolha outro e tente novamente.");
-        }
+      
     }
+    
+    // ########################################################################################################################
+    // ########################################################################################################################
+    // ########################################################################################################################
+    
+    /**
+     * recebe um array de parametros brutos e o converte em um array de ModelAttributes
+     * @param array $attributeArray
+     * @param bool $checkAttributeName
+     * @return array
+     */
+    static function Convert_ParameterDataArray_to_ModelAttributeArray(array $attributeArray,bool $checkAttributeName=true):array{
+        
+        $ModelAttributeArray = [];
+        
+        foreach ($attributeArray as $attributeName => $parameters) {
+            // cria o atributo
+            //deb($attributeName,0); deb($parameters,0);
+            $ModelAttribute = new ModelAttribute($attributeName, $checkAttributeName);
+            foreach ($parameters as $parameterName => $parameterValue) {
+                $setMethod = 'set' . ucfirst($parameterName);
+                // define os parametros
+                $ModelAttribute->$setMethod($parameterValue);
+            }
+            // salva no modelo
+            $ModelAttributeArray[$attributeName]=$ModelAttribute;
+        }
+        
+        return $ModelAttributeArray;
+    }
+    
+    
+    
+    // ########################################################################################################################
+    // ########################################################################################################################
+    // ########################################################################################################################
+    
 }
 
 ?>

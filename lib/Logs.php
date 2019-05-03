@@ -14,138 +14,110 @@ class Logs
 
     const parameters = [
         'datahora',
-        'user_login',
-        'user_id',
         'ip',
+        'user_id',
+        'user_login',
         'rota',
         'type',
-        'subtype',
-        'msg'
+        'msg',
+        'trace'
     ];
 
-    private $trace;
+    const trace_base_parameters = [
+        'file',
+        'line',
+        'function',
+        'class',
+        'type',
+        'args'
+    ];
 
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTRUCT
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTRUCT
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTRUCT
-    static function Start()
-    {
-        $log = new self();
-        self::write('Log inicializado.', 'START', '#############');
-        Session::set('log', $log);
-    }
+    const trace_hide_terms = [
+        'slim\slim'
+    ];
 
-    private function __construct()
-    {
-        $this->trace = [];
-    }
+    const traceDelimiter = '<br/>';
 
-    private function saveTrace($msg)
-    {
-        if (! $this->issetTrace($msg)) {
-            $this->trace[] = $msg;
-        }
-    }
-
-    private function issetTrace($msg)
-    {
-        return in_array($msg, $this->trace);
-    }
+    // <<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTRUCT
+    // <<<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTRUCT
+    // <<<<<<<<<<<<<<<<<<<< <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< CONSTRUCT
 
     // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-    static private function GetLogObject()
+    static public function set($msg = 'Ponto de Verificação!', $type = '...')
     {
-        return Session::get('log');
+        {//destaque por tipo
+            if(strpos(strtolower($type),'exc')!==false){
+                $msg_style = "color:#f00";
+                $type_style = "color:#f00";
+            }else{
+                $msg_style = "";
+                $type_style = "";
+            }
+        }
+        {//encapsulamento
+            $msg = "<span style='$msg_style'>$msg</span>";
+            $type = "<span style='$type_style'>$type</span>";
+        }
+        self::write($msg, $type);
     }
 
-    static private function SetLogObject(Logs $log)
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ADD
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ADD
+    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ADD
+    static private function getBackTrace()
     {
-        Session::set('log', $log);
-    }
-
-    /**
-     * verifica se um 'trace' existe e caso contrario registra-o,
-     * retornando true ou false, conforme o caso.
-     *
-     * @param string $trace
-     * @return boolean
-     */
-    static private function CheckPointTrace_checkSet(string $trace): bool
-    {
-        $log = self::GetLogObject();
-        if ($log->issetTrace($trace)) {
-            return true;
-        } else {
-            $log->saveTrace($trace);
-            return false;
-        }
-    }
-
-    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-    static public function CheckPoint($msg = '')
-    {
-        if (trim($msg) == '') {
-            $msg = 'Ponto de Verificação!';
-        }
-
-        $traceAsArray = self::getTraceAsArray();
-        // deb($traceAsArray);
-
-        foreach ($traceAsArray as $trace) {
-            
-            // evita o mesmo registro duas vezes por conta dos multiplos pontos de verificação!
-            /*if (self::CheckPointTrace_checkSet($trace) == false) {
-                self::write($trace, 'Checkpoint');
-            }/**/
-            
-            self::write($trace, 'Checkpoint');
-        }
-    }
-
-    static private function getTraceAsArray()
-    {
-        { // conf
-            $lineDelimiter = '#';
-        }
         $return = [];
-        $traceAsString = get_backtrace();
-        // deb($traceAsString);
-        
-        $trace_line_array = explode($lineDelimiter, $traceAsString);
-        // deb($trace_line_array);
-        
-        foreach ($trace_line_array as $trace_line) {
-            $trace_line = Strings::RemoverQuebrasDeLinha($trace_line);
-            $trace_line = trim($trace_line);
-            
-            // pula linhas vazias
-            if ($trace_line == ''){
-                continue;
+        $backtrace_array = debug_backtrace();
+        // deb($backtrace_array);
+
+        // $backtrace_last = array_shift($backtrace_array);
+        // deb($backtrace_last);
+
+        // ---------------------------------- remove traces desta classe (desnecessarios)
+        if (sizeof($backtrace_array) > 1) {
+            array_shift($backtrace_array);
+            array_shift($backtrace_array);
+        } /* */
+
+        foreach ($backtrace_array as $backtrace) {
+            // deb($backtrace,0);
+
+            { // garimpagem de parametros
+                $title = [];
+                foreach (self::trace_base_parameters as $key) {
+                    if (isset($backtrace[$key]) && (is_string($backtrace[$key]) || is_int($backtrace[$key]))) {
+                        $$key = trim($backtrace[$key]);
+                    } else {
+                        $$key = '';
+                    }
+                    $title[] = "$key=" . $$key;
+                }
+                $title = implode(' #', $title);
             }
-            
-            //remove o indice à esquerda ("34 Xxxxxxxx xxxxxxxx")
-            //$trace_line = substr($trace_line, strpos($trace_line, ' '));
-            
-            //remoce o registro referente ao index
-            if(strpos($trace_line, '{main}')){
-                $trace_line = getcwd().DIRECTORY_SEPARATOR.'index.php';
+
+            { // verifica se o trace deve ser ocultado
+                $hide = false;
+                foreach (self::trace_hide_terms as $term) {
+                    if (strpos($file, $term) !== false) {
+                        $hide = true;
+                    }
+                }
+                if ($hide) {
+                    continue;
+                }
             }
-            $return[] = trim($trace_line);
-            
-        }
-        //remove registros referente as chamadas desta classe
-        array_pop($return);
-        array_pop($return);
-        
-        //inverte a ordem do array
-        //rsort($return);
+
+            $return[] = "<span title='$title'>$file ($line)</span>";
+        } /* */
+
+        // inverter a ordem
+        rsort($return);
+
+        $return = implode(self::traceDelimiter, $return);
         return $return;
     }
 
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ADD
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ADD
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ADD
-    static private function write($msg = '', $type = 'Default', $subType = 'Default')
+    static private function write($msg = '', $type = 'Default')
     {
         { // parameters
             $values = [];
@@ -154,6 +126,7 @@ class Logs
             $values['rota'] = ServerHelp::getURLRoute();
             { // usuario
                 $user = User::getSessionUser();
+                // deb($user);
                 if ($user != false) {
                     $values['user_id'] = $user->getId();
                     $values['user_login'] = $user->getLogin();
@@ -163,8 +136,8 @@ class Logs
                 }
             }
             $values['type'] = $type;
-            $values['subtype'] = $subType;
             $values['msg'] = $msg;
+            $values['trace'] = self::getBackTrace();
         }
 
         { // define os parametros (e seus valores) a serem registrados
@@ -206,6 +179,11 @@ class Logs
     {
         { // basic parameters
             $datahora = $parameters['datahora'];
+            { // extra datahora (microsegundos)
+                $microtime = round(microtime(false), 4);
+                $microtime = str_pad($microtime, 5, STR_PAD_RIGHT);
+                $parameters['datahora'] .= ' ' . $microtime;
+            }
         }
         { // checks
           // dir
@@ -219,10 +197,13 @@ class Logs
         { // data
             $data = utf8_decode(implode(';', $parameters) . chr(10));
         }
-        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        // deb($filename, 0); debc($data);
+        // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Arquivos::escreverConteudo($filename, $data, FILE_APPEND);
-        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -245,18 +226,42 @@ class Logs
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    /*
-     * static function ReflectionClassAnalisys($class_name, $class_method, $arguments=[])
-     * {
-     *
-     * $rc = new \ReflectionClass($class_name);
-     * //deb($rc);
-     * $docComment = $rc->getDocComment();
-     *
-     * $rcm = new \ReflectionMethod($class_method);
-     * deb($rcm->getDocComment());
-     * }/*
-     */
+    static function getLastLogFileHTML($sortByField = 'datahora', $sortDesc = true, $deleteFile = false)
+    {
+        $logs = Diretorios::obterArquivosPastas(self::dir, $recursive = false, $filesAllowed = true, $foldersAllowed = false, [
+            'csv'
+        ]);
+        if (sizeof($logs) > 0) {
+            $lastLog = array_pop($logs);
+            $return = utf8_encode(CSV::CSVToHTML(Arquivos::obterConteudo($lastLog), [
+                'class' => 'log'
+            ], true, true, false));
+            if ($deleteFile) {
+                Arquivos::excluir($lastLog);
+            }
+        } else {
+            $return = 'Nenhum arquivo de log encontrado.';
+        }
+        { // html
+            $return = "<br/><br/><div class='container_large log'>$return</div><br/><br/><br/><br/><br/><br/>";
+        }
+        { // js
+            $return .= "<script>";
+            $return .= "  $(document).ready(function(){";
+            $return .= "      $('th[data-field=\"msg\"]').css('width','300px');";
+            $return .= "      $('th[data-field=\"$sortByField\"] div.th-inner').click();";
+            // deb($sortDesc,0);
+            if ($sortDesc) {
+                $return .= "        $('th[data-field=\"$sortByField\"] div.th-inner').click();";
+            }
+            $return .= " $('div.container_large.log *').css({'font-size':'12px'});";
+            $return .= " $('table.log th,td').css({'padding':'0px 5px 1px 5px','vertical-align':'top'});";
+            $return .= "  });";
+            $return .= "</script>";
+        }
+        return $return;
+    }
+
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
 
