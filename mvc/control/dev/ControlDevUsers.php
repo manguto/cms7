@@ -49,7 +49,7 @@ class ControlDevUsers extends ControlDev
 
     static function get_dev_users()
     {   
-        $users = User::getList('', false);
+        $users = User::search();
         ViewDevUsers::get_dev_users($users);
     }
 
@@ -92,6 +92,7 @@ class ControlDevUsers extends ControlDev
     static function get_dev_user_edit($id)
     {
         $user = new User($id);
+        //deb($user);
         ViewDevUsers::get_dev_user_edit($user);
     }
 

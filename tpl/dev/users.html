@@ -1,45 +1,42 @@
-{include="../general/__open"} {include="../general/_header"} 
+{include="../general/__open"} {include="../general/_header"}
 <section>
-	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
+	<script>
+		$(document).ready(function() {
+
+		});
+	</script>
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
 	<div class="container usuarios">
 		<h2>Lista de Usuários</h2>
 		<br />
-		<a href="/dev/users/create" class='btn btn-success btn-sm '>Cadastrar Usuário</a>
+		<a href="/dev/users/create" class='btn btn-success btn-sm float-right'>Cadastrar Usuário</a>
 		<br />
 		<br />
-		<table class="table">
+		<table class='table table-bordered table-striped table-hover' data-sort-name="id" data-sort-order="asc" data-pagination="true" data-search="true">
 			<thead class='thead-light'>
-				<tr>
-					<th scope="col">#</th>
-					<th scope="col">Nome</th>
-					<th scope="col">Login</th>
-					<th scope="col">E-mail</th>
-					<th scope="col">Administrador</th>
-					<th scope="col">Desenvolvedor</th>
-					<th scope="col" style="width:250px;">Opções</th>
+				<tr scope="col">
+					<th data-sortable="true" data-field="id">#</th>
+					<th data-sortable="true" data-field="nome">Nome</th>
+					<th data-sortable="true" data-field="login">Login</th>
+					<th data-sortable="true" data-field="email">E-mail</th>
+					<th data-sortable="true" data-field="adminzoneaccess">Administrador</th>
+					<th data-sortable="true" data-field="devzoneaccess">Desenvolvedor</th>
+					<th data-sortable="false">Opções</th>
 				</tr>
 			</thead>
 			<tbody>
 				{loop="$users"}
-				<tr>
-					<th scope="row">{$value.id}</th>
-					<td style="text-align: left;">{$value.name}</td>
-					<td>{$value.login}</td/>
-					<td>{$value.email}</td>
-					<td>{if="$value.adminzoneaccess == TRUE"}Sim{else}Não{/if}</td>
-					<td>{if="$value.devzoneaccess == TRUE"}Sim{else}Não{/if}</td>
+				<tr scope="row">
+					<td>{$value->getid()}</td>
+					<td>{$value->getname()}</td>
+					<td>{$value->getlogin()}</td/>
+					<td>{$value->getemail()}</td>
+					<td>{if="$value->getadminzoneaccess() == TRUE"}Sim{else}Não{/if}</td>
+					<td>{if="$value->getdevzoneaccess() == TRUE"}Sim{else}Não{/if}</td>
 					<td>
-						<div class="row">
-							<div class="col-4">
-								<a href="/dev/users/{$value.id}" class='btn btn-sm btn-success'>Visualizar</a>
-							</div>
-							<div class="col-4">
-								<a href="/dev/users/{$value.id}/edit" class='btn btn-sm btn-warning'>Editar</a>
-							</div>
-							<div class="col-4">
-								<a href="/dev/users/{$value.id}/delete" class='btn btn-sm btn-danger' onclick="return confirm('Deseja realmente excluir este registro?')">Excluir</a>
-							</div>
-						</div>
+						<a href="/dev/users/{$value->getid()}" class='btn btn-sm btn-success mb-2 mr-2'>Visualizar</a>
+						<a href="/dev/users/{$value->getid()}/edit" class='btn btn-sm btn-warning mb-2 mr-2'>Editar</a>
+						<a href="/dev/users/{$value->getid()}/delete" class='btn btn-sm btn-danger mb-2 mr-2' onclick="return confirm('Deseja realmente excluir este registro?')">Excluir</a>
 					</td>
 				</tr>
 				{/loop}
@@ -48,20 +45,23 @@
 	</div>
 </section>
 <style>
-.usuarios {
-	border-bottom: solid 1px #aaa;	
-}
-
-.usuarios th {
-	text-align: center;
-}
-
-.usuarios td {
-	text-align: center;
-}
-.usuarios td .btn{
-	width:80px;
-}
-
 </style>
+<script>
+	$(document).ready(function() {
+		$('table').bootstrapTable();
+
+		setTimeout(function() {
+			$('table th').css({
+				'padding' : '5px',
+				'text-align' : 'center',
+			});
+
+			$('table td').css({
+				'padding' : '10px 15px 10px 15px',
+				'text-align' : 'center',
+			});
+
+		}, 200);
+	});
+</script>
 {include="../general/_footer"} {include="../general/__close"}

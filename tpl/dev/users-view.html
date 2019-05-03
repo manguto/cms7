@@ -10,26 +10,26 @@
 		</div>
 		<div class="row">
 			<div class="col-2 titulo">Nome:</div>
-			<div class="col-10 valor">{$user.name}</div>
+			<div class="col-10 valor">{$user->getname()}</div>
 		</div>
 		<div class="row">
 			<div class="col-2 titulo">Login:</div>
-			<div class="col-10 valor">{$user.login}</div>
+			<div class="col-10 valor">{$user->getlogin()}</div>
 		</div>
 		<div class="row">
 			<div class="col-2 titulo">E-mail:</div>
-			<div class="col-10 valor">{$user.email}</div>
+			<div class="col-10 valor">{$user->getemail()}</div>
 		</div>
 		<div class="row">
 			<div class="col-2 titulo">Administrador:</div>
 			<div class="col-10 valor">
-				{if="$user.adminzoneaccess == 1"}Sim{else}Não{/if}
+				{if="$user->getadminzoneaccess() == 1"}Sim{else}Não{/if}
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-2 titulo">Desenvolvedor:</div>
 			<div class="col-10 valor">
-				{if="$user.devzoneaccess == 1"}Sim{else}Não{/if}
+				{if="$user->getdevzoneaccess() == 1"}Sim{else}Não{/if}
 			</div>
 		</div>
 		

@@ -1,6 +1,8 @@
 <?php
 namespace manguto\cms5\lib\html;
 
+use manguto\cms5\lib\Arrays;
+
 class HTMLForm extends HTML
 {
 
@@ -21,6 +23,46 @@ class HTMLForm extends HTML
         $html .= "</select>";
 
         return $html;
+    }
+    
+    
+    
+    
+    static function HTML_Combo($idSelected='',$tablename,$showFiels=[],$glue=' | '){
+        $return = [];
+        //$rep = Repository::getRepository($tablename,'',false,true,false,true);
+        //throw new Exception("...");
+        //deb($rep);
+        
+        $return[] = "<select name='{$tablename}_id' id='{$tablename}_id' class='form-control'>";
+        $return[] = "<option value=''>Selecione uma opção...</option>";
+        foreach ($rep as $r){
+            $r = Arrays::arrayMultiNivelParaSimples($r);
+            {
+                $selected = $r['id']==$idSelected ? 'selected' : '';
+            }
+            {
+                $value = [];
+                if(sizeof($showFiels)>0){
+                    foreach ($showFiels as $showField){
+                        $value[] = $r[$showField];
+                    }
+                }else{
+                    foreach ($r as $field=>$fieldValue){
+                        if(substr($field, -3)=='_id'){
+                            continue;
+                        }
+                        $value[] = $fieldValue;
+                    }
+                }
+                //deb($value);
+                $value = implode($glue, $value);
+            }
+            $return[] = "<option value='".$r['id']."' $selected>$value</option>";
+        }
+        $return[] = "</select>";
+        $return = implode('', $return);
+        return $return;
     }
 }
 

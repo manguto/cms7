@@ -20,15 +20,11 @@ class ViewDevUsers extends ViewDev
     }
     static function get_dev_user($user)
     {   
-        self::PageDev("users-view", [
-            'user' => $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
-        ]);        
+        self::PageDev("users-view", get_defined_vars());        
     }
     
     static function get_dev_user_edit($user)
     {   
-        self::PageDev("users-update", [
-            'user' => $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
-        ]);
+        self::PageDev("users-update", get_defined_vars());
     }
 }

@@ -6,6 +6,7 @@ use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\repository\Repository;
 use manguto\cms5\lib\repository\RepositoryReferences;
+use manguto\cms5\lib\html\HTMLForm;
 
 class ViewDevRepository extends ViewDev
 {
@@ -93,7 +94,7 @@ class ViewDevRepository extends ViewDev
                 if(RepositoryReferences::itsReferenceAttributeSimple($k)){
                     $tablename = substr($k, 0,-3);
                     //deb($tablename,0);
-                    $register[$k] = self::HTML_Combo($id,$tablename);
+                    $register[$k] = HTMLForm::HTML_Combo($id,$tablename);
                 }
             }
             //debc($register);
