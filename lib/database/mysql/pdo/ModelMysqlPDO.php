@@ -1,23 +1,11 @@
 <?php
-namespace manguto\cms5\lib\database\sql;
+namespace manguto\cms5\lib\database\mysql\pdo;
 
 use manguto\cms5\lib\Exception;
 use manguto\cms5\mvc\model\User;
-use manguto\cms5\lib\model\Model;
 
-abstract class ModelSql extends Model
+trait ModelMysqlPDO
 {
-
-    public function __construct(int $id = 0)
-    {   
-        //deb($this);
-        parent::__construct($id);
-        //deb($this);
-        
-        if ($id != 0) {
-            $this->load();
-        }
-    }
 
     private function load()
     {
@@ -125,12 +113,12 @@ abstract class ModelSql extends Model
         }
 
         {
-            $sql = new Sql();
+            $mysql_pdo = new MysqlPDO();    
             
-            $sql->query($query,$params);
+            $mysql_pdo->query($query,$params);
             
             if ($id == 0) {
-                $lastInsertedId = $sql->getLastInsertedId();
+                $lastInsertedId = $mysql_pdo->getLastInsertedId();
                 //deb($lastInsertedId,0);
                 $this->setId($lastInsertedId);
             }
@@ -146,8 +134,8 @@ abstract class ModelSql extends Model
             // deb($id);
         }
         {
-            $sql = new Sql();
-            $sql->query("DELETE FROM $tablename WHERE id=:ID",[':ID'=>$id]);
+            $mysql_pdo = new MysqlPDO();
+            $mysql_pdo->query("DELETE FROM $tablename WHERE id=:ID",[':ID'=>$id]);
         }
     }
 
@@ -174,8 +162,8 @@ abstract class ModelSql extends Model
             }
         }
 
-        $sql = new Sql();
-        $register_array = $sql->select($query, $params);
+        $mysql = new MysqlPDO();
+        $register_array = $mysql->select($query, $params);
         foreach ($register_array as $register) {
             { // deb($register,0);
                 $object = new $called_class();
@@ -186,6 +174,18 @@ abstract class ModelSql extends Model
         return $return;
     }
 
+
+    /**
+     * obter a quantidade de itens de uma determinada tabela com base em uma query eventualmente parametrizada
+     * @param string $query
+     * @param array $params
+     * @return int
+     */
+    static function getTableLength(string $query,array $params=[]): int
+    {        
+        return MysqlPDO::getTableLength($query,$params);        
+    }
+    
     public function LoadReferences()
     {}
 }

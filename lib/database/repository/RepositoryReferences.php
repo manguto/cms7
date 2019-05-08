@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib\repository;
+namespace manguto\cms5\lib\database\repository;
 
 use manguto\cms5\lib\Exception;  
 

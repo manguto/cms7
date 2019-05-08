@@ -1,9 +1,9 @@
 <?php
-namespace manguto\cms5\lib\database\mysql;
+namespace manguto\cms5\lib\database\mysql\mysqli;
 
 use manguto\cms5\lib\Exception;
 
-class Mysql
+class Mysqli
 {
 
     protected $connection;

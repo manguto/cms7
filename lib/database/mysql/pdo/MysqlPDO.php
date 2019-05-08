@@ -1,7 +1,7 @@
 <?php
-namespace manguto\cms5\lib\database\sql;
+namespace manguto\cms5\lib\database\mysql\pdo;
 
-class Sql extends \PDO
+class MysqlPDO extends \PDO
 {
 
     protected $conn;
@@ -47,10 +47,6 @@ class Sql extends \PDO
         
     }
     
-        
-    
-    
-   
 
     public function select($rawQuery,$parameters=[]):array {
         
@@ -72,7 +68,7 @@ class Sql extends \PDO
      */
     static function getTableLength(string $query,array $params=[]): int
     {
-        $sql = new Sql();
+        $sql = new MysqlPDO();
         $result = $sql->select($query,$params);        
         return sizeof($result);
     }

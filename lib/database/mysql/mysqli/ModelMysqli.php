@@ -1,13 +1,12 @@
 <?php
-namespace manguto\cms5\lib\database\mysql;
+namespace manguto\cms5\lib\database\mysql\mysqli;
 
-use manguto\cms5\lib\database\Database;
 use manguto\cms5\lib\Exception;
 
-class DatabaseMysql extends Database
+class ModelMysqli
 {
 
-    static function load(&$model)
+    static function load(&$model)       
     {
         {
             $tablename = $model->GetTablename();
@@ -19,9 +18,9 @@ class DatabaseMysql extends Database
             $query = "SELECT * FROM $tablename WHERE id=$id";            
         }
         {
-            $mysql = new Mysql();
-            $mysql->query($query);
-            $data_array = $mysql->fetchAll();
+            $mysqli = new Mysqli();
+            $mysqli->query($query);
+            $data_array = $mysqli->fetchAll();
             $registerAmount = sizeof($data_array);
             if($registerAmount==0){
                 throw new Exception("Não foi encontrado nenhum registro para identificador ($id) na tabela '$tablename'.");
@@ -83,13 +82,13 @@ class DatabaseMysql extends Database
                 $query = " UPDATE $tablename SET $column_value_s WHERE id=$id ";
             }
             
-            //deb($sql);
+            //deb($mysqli);
         }
         {
-            $mysql = new Mysql();
-            $mysql->query($query);
+            $mysqli = new Mysqli();
+            $mysqli->query($query);
             if($id==0){
-                $model->setId($mysql->getInsertedId());
+                $model->setId($mysqli->getInsertedId());
             }
         }        
     }
@@ -106,8 +105,8 @@ class DatabaseMysql extends Database
             $query = "DELETE FROM $tablename WHERE id=$id";
         }
         {
-            $mysql = new Mysql();
-            $mysql->query($query);            
+            $mysqli = new Mysqli();
+            $mysqli->query($query);            
         }    
     }
 }

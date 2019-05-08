@@ -7,13 +7,14 @@ use manguto\cms5\lib\Sessions;
 use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\model\ModelInterface;
 use manguto\cms5\lib\model\ModelAttribute;
-use manguto\cms5\lib\database\mysql\Mysql;
-use manguto\cms5\lib\database\sql\Sql;
 use manguto\cms5\lib\Logs;
-use manguto\cms5\lib\database\sql\ModelSql;
+use manguto\cms5\lib\database\mysql\pdo\ModelMysqlPDO;
+use manguto\cms5\lib\database\mysql\pdo\MysqlPDO;
 
-class User extends ModelSql implements ModelInterface
+class User extends Model implements ModelInterface
 {
+    
+    use ModelMysqlPDO;  
 
     const SESSION = "User";
 
@@ -29,10 +30,16 @@ class User extends ModelSql implements ModelInterface
         $this->SetModelAttributes();
         //deb($this);
         
-        // construct
+        //deb($this);
         parent::__construct($id);
+        //deb($this);
+        
+        if ($id != 0) {
+            $this->load();
+        }
         
     }
+    
     
     /** 
      * !IMPORTANT
@@ -129,7 +136,7 @@ class User extends ModelSql implements ModelInterface
     {
         Logs::set('Verificação/Definição de usuário administrador.');
 
-        $quantUsuarios = Sql::getTableLength('SELECT * FROM user WHERE login="admin" ');
+        $quantUsuarios = self::getTableLength('SELECT * FROM user WHERE login="admin" ');
         // deb($quantUsuarios);
         if ($quantUsuarios == 0) {
             Logs::set('Usuário administrador NÃO encontrado.');
@@ -160,10 +167,9 @@ class User extends ModelSql implements ModelInterface
         }        
 
         {
-            { // usuario existe
-                $mysql = new Mysql();
-                $mysql->query(" SELECT * FROM user WHERE login='$login' ");
-                $results = $mysql->fetchArray();
+            { // usuario existe                
+                $results = self::search(" SELECT * FROM user WHERE login=':login' ",[':login'=>$login]);
+                
                 //deb($results);
                 if (count($results) === 0) {
                     throw new Exception("Login não encontrado e/ou senha inválida.");
@@ -177,7 +183,7 @@ class User extends ModelSql implements ModelInterface
                     $password = User::password_crypt($password);
                 }
                 
-                $mysql = new Mysql();
+                $mysql = new MysqlPDO();
                 $mysql->query(" SELECT id FROM user WHERE login='$login' && password='$password' ");
                 $results = $mysql->fetchArray();
                 // deb($results);
