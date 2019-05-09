@@ -35,15 +35,15 @@ class MysqlPDO extends \PDO
         
     public function query($rawQuery, $parameters = [])
     {
-        $stmt = $this->conn->prepare($rawQuery);
+        $statement = $this->conn->prepare($rawQuery);
         
         if(sizeof($parameters)>0){
-            $this->setParams($stmt, $parameters);
-        }        
-                
-        $stmt->execute();
+            $this->setParams($statement, $parameters);
+        }
+        //deb($statement);
+        $statement->execute();
         
-        return $stmt;
+        return $statement;
         
     }
     
@@ -52,7 +52,10 @@ class MysqlPDO extends \PDO
         
         $stmt = $this->query($rawQuery,$parameters);
         
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $return = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        //deb($return);
+        
+        return $return;
     }
     
     public function getLastInsertedId(){

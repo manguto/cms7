@@ -3,6 +3,7 @@ namespace manguto\cms5\lib\database\mysql\pdo;
 
 use manguto\cms5\lib\Exception;
 use manguto\cms5\mvc\model\User;
+use manguto\cms5\lib\Logs;
 
 trait ModelMysqlPDO
 {
@@ -147,6 +148,8 @@ trait ModelMysqlPDO
      */
     public static function search(string $query = '', array $params = []):array
     {
+        Logs::set($query.' - '.implode(',',$params));        
+        
         $return = [];
 
         { // parametros
@@ -163,9 +166,12 @@ trait ModelMysqlPDO
         }
 
         $mysql = new MysqlPDO();
+        //deb($query,0);        
         $register_array = $mysql->select($query, $params);
+        //deb($register_array);
+        
         foreach ($register_array as $register) {
-            { // deb($register,0);
+            {  //deb($register);
                 $object = new $called_class();
                 $object->SetData($register);
             }
