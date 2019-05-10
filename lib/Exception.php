@@ -6,7 +6,7 @@ class Exception extends \Exception
 
     public function __construct($message = null, $code = null, $previous = null)
     {   
-        Logs::set($message,'Exception');
+        Logs::set(Logs::TYPE_ERROR,$message);
         parent::__construct($message, $code, $previous);
     }
 

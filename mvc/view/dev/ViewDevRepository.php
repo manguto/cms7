@@ -4,9 +4,8 @@ namespace manguto\cms5\mvc\view\dev;
 
 use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\Arquivos;
-use manguto\cms5\lib\repository\Repository;
-use manguto\cms5\lib\repository\RepositoryReferences;
 use manguto\cms5\lib\html\HTMLForm;
+use manguto\cms5\lib\Exception;
 
 class ViewDevRepository extends ViewDev
 {
@@ -44,7 +43,8 @@ class ViewDevRepository extends ViewDev
         }
         {//colunas
             $cols = [];
-            $repositoryNameCall = Repository::getObjectClassname($repository);
+            //$repositoryNameCall = Repository::getObjectClassname($repository);
+            throw new Exception('$repositoryNameCall = Repository::getObjectClassname($repository);');
             // deb($repositoryNameCall);
             $temp = new $repositoryNameCall();
             // deb($temp);
@@ -59,7 +59,8 @@ class ViewDevRepository extends ViewDev
             // deb($colunas,0);
         }
         {//registros
-            $registers = Repository::getRepository($repository, '', true, true, false);
+            throw new Exception('Atualização necessária a partir deste ponto...');
+            //$registers = Repository::getRepository($repository, '', true, true, false);            
             //deb($repository);
             //deb($registers);
             foreach ($registers as &$register){
@@ -91,11 +92,12 @@ class ViewDevRepository extends ViewDev
         }
         {
             foreach ($register as $k=>$id){
-                if(RepositoryReferences::itsReferenceAttributeSimple($k)){
+                throw new Exception('Atualização necessária a partir deste ponto...');
+                /*if(RepositoryReferences::itsReferenceAttributeSimple($k)){
                     $tablename = substr($k, 0,-3);
                     //deb($tablename,0);
                     $register[$k] = HTMLForm::HTML_Combo($id,$tablename);
-                }
+                }/**/
             }
             //debc($register);
         }
@@ -113,7 +115,8 @@ class ViewDevRepository extends ViewDev
         }
         {//colunas
             $cols = [];
-            $repositoryNameCall = Repository::getObjectClassname($repository);
+            throw new Exception('Atualização necessária a partir deste ponto...');
+            //$repositoryNameCall = Repository::getObjectClassname($repository);
             // deb($repositoryNameCall);
             $temp = new $repositoryNameCall();
             // deb($temp);
@@ -128,7 +131,8 @@ class ViewDevRepository extends ViewDev
             // deb($colunas,0);
         }
         {//registros
-            $registers = Repository::getRepository($repository, '', false, false, false);            
+            throw new Exception('Atualização necessária a partir deste ponto...');
+            //$registers = Repository::getRepository($repository, '', false, false, false);            
         }
         
         self::load('repository_sheet_view', get_defined_vars());

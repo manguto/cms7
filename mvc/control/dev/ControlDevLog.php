@@ -32,7 +32,7 @@ class ControlDevLog extends ControlDev
             }
             {
                 $datahora = $data->getDate(Logs::formato_datahora);
-                $filename = Logs::get_filename($datahora);
+                $filename = Logs::getFilename($datahora);
                 $csvContent = utf8_encode(Arquivos::obterConteudo($filename));
                 $logs = CSV::CSVToArray($csvContent);
                 //deb($logs);

@@ -25,18 +25,18 @@ class ControlSiteLogin extends ControlSite
 
     static function get_login()
     {
-        Logs::set("Exibição da tela de login");
+        Logs::set(Logs::TYPE_INFO,"Exibição da tela de login");
         ViewSiteLogin::get_login();
     }
 
     static function post_login()
     {
-        Logs::set("Parametros informados para o LOGIN recebidos...");
+        Logs::set(Logs::TYPE_INFO,"Parametros informados para o LOGIN recebidos...");
 
         try {
             
             User::login($_POST['login'], $_POST['password']);
-            Logs::set('Login autorizado! Redirecionamento para página principal solicitado...');
+            Logs::set(Logs::TYPE_INFO,'Login autorizado! Redirecionamento para página principal...');
             headerLocation('/');            
             exit();
             
@@ -52,7 +52,7 @@ class ControlSiteLogin extends ControlSite
     {
         
         User::logout();
-        Logs::set('Logout realizado');
+        Logs::set(Logs::TYPE_INFO,'Logout realizado');
         headerLocation("/");
         exit();
     }

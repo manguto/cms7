@@ -1,6 +1,9 @@
 <?php
 namespace manguto\cms5\lib\database\mysql\pdo;
 
+use manguto\cms5\lib\Logs;
+use manguto\cms5\lib\Exception;
+
 class MysqlPDO extends \PDO
 {
 
@@ -20,62 +23,92 @@ class MysqlPDO extends \PDO
 
         $this->conn = new \PDO($dsn, $dbuser, $dbpass);
     }
-    
+
     private function setParams($statement, $parameters = [])
     {
-        foreach ($parameters as $key => $value) {            
+        foreach ($parameters as $key => $parameter_info) {
+            
+            $value = $parameter_info['value'] ?? false;
+            $data_type = $parameter_info['data_type'] ?? false;
+            $length = $parameter_info['length'] ?? null;
+            
+            if($value===false || $data_type===false){
+                throw new Exception("Os parâmetros informados não estão no formato correto (value='$value', data_type='$data_type', length='$length').");
+            }
+
+            $this->setParam($statement, $key, $value, $data_type, $length);
+        }
+    }
+
+    private function OFF_setParams($statement, $parameters = [])
+    {
+        foreach ($parameters as $key => $value) {
             $this->setParam($statement, $key, $value);
         }
-    }    
-    
-    private function setParam($statement, $key, $value)
-    {
-        $statement->bindParam($key, $value);
     }
-        
-    public function query($rawQuery, $parameters = [])
+
+    /**
+     *
+     * @param \PDOStatement $statement
+     * @param string $key
+     * @param
+     *            $value
+     * @param int $data_type
+     *            - Explicit data type for the parameter using the PDO::PARAM_&#42; constants
+     * @param int $length
+     *            - Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
+     */
+    private function setParam(\PDOStatement $statement, string $key, $value, $data_type = null, $length = null)
+    {
+        $statement->bindParam($key, $value, $data_type, $length);
+    }
+
+    public function query($rawQuery, $parameters = []): \PDOStatement
     {
         $statement = $this->conn->prepare($rawQuery);
-        
-        if(sizeof($parameters)>0){
+
+        if (sizeof($parameters) > 0) {
             $this->setParams($statement, $parameters);
         }
-        //deb($statement);
+        // deb($statement);
         $statement->execute();
-        
-        return $statement;
-        
-    }
-    
 
-    public function select($rawQuery,$parameters=[]):array {
-        
-        $stmt = $this->query($rawQuery,$parameters);
-        
+        return $statement;
+    }
+
+    public function select($rawQuery, $parameters = []): array
+    {
+        $stmt = $this->query($rawQuery, $parameters);
+        // deb($stmt);
+
+        Logs::set(Logs::TYPE_NOTICE, "Query: " . $stmt->queryString);
+
         $return = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        //deb($return);
-        
+        // deb($return);
+        // Logs::set(Logs::TYPE_NOTICE,"'".count($return)."' registro(s) encontrado(s).",$return);
+
         return $return;
     }
-    
-    public function getLastInsertedId(){
+
+    public function getLastInsertedId()
+    {
         return $this->conn->lastInsertId();
     }
-    
-    //############################################################################
+
+    // ############################################################################
     /**
      * obter a quantidade de itens de uma determinada tabela com base em uma query eventualmente parametrizada
+     *
      * @param string $query
      * @param array $params
      * @return int
      */
-    static function getTableLength(string $query,array $params=[]): int
+    static function getTableLength(string $query, array $params = []): int
     {
         $sql = new MysqlPDO();
-        $result = $sql->select($query,$params);        
+        $result = $sql->select($query, $params);
         return sizeof($result);
     }
-    
 }
 
 ?>

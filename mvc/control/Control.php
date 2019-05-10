@@ -7,8 +7,6 @@ use Slim\Slim;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\mvc\model\User;
-use manguto\cms5\lib\Sessions;
-use manguto\cms5\lib\cms\CMSStart;
 use manguto\cms5\mvc\control\site\ControlSite;
 use manguto\cms5\mvc\control\admin\ControlAdmin;
 use manguto\cms5\mvc\control\dev\ControlDev;
@@ -20,14 +18,6 @@ class Control
 
     static function Start()
     {
-        // ====================================================================================================
-        { // CMS - REQUIRED DATA SETUP
-            CMSStart::Run();
-        }
-        // ====================================================================================================
-        { // SESSION - RESET REQUEST?
-            Sessions::checkResetRequest();
-        }        
         // ====================================================================================================
         { // SLIM PLATAFORM ANALISYS - ROUTES
             $app = new Slim();
@@ -41,8 +31,11 @@ class Control
 
     private static function PlataformRouteAnalisys($app)
     {   
-        Logs::set('##### Início #####');
         
+        // ====================================================================================================
+        {// LOG START!
+            Logs::Start();
+        }
         // ====================================================================================================
         { // SITE - Front End
             ControlSite::RunRouteAnalisys($app);
@@ -62,7 +55,7 @@ class Control
         // ====================================================================================================
         
     }
-
+    
     // ============================================================================================ CONTROLE DE ACESSO
     // ============================================================================================ CONTROLE DE ACESSO
     // ============================================================================================ CONTROLE DE ACESSO

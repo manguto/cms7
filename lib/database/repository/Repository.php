@@ -10,7 +10,7 @@ use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\Datas;
 use manguto\cms5\lib\Arrays;
-use manguto\cms5\lib\Model;
+use manguto\cms5\lib\model\Model;
 
 
 class Repository extends Model 
@@ -22,6 +22,7 @@ class Repository extends Model
     // pasta onde serao disponibilizados os eventuais arquivos de dados iniciais ou base
     private const foldernameini = 'repository/ini';
 
+    // nomes reservados que nao podem ser utilizados como nomes de parametros
     private const private_parameter_names = ['data'];
     
     // nome a ser utilizado como nome do repositorio do objeto em questao

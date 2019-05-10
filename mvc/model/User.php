@@ -9,7 +9,6 @@ use manguto\cms5\lib\model\ModelInterface;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\database\mysql\pdo\ModelMysqlPDO;
-use manguto\cms5\lib\database\mysql\pdo\MysqlPDO;
 
 class User extends Model implements ModelInterface
 {
@@ -23,6 +22,7 @@ class User extends Model implements ModelInterface
     public function __construct($id = 0)
     {
         // atributos basicos (fundamentais)
+        //deb($id,0);
         $this->SetFundamentalAttributes($id);
         //deb($this);
         
@@ -47,7 +47,7 @@ class User extends Model implements ModelInterface
      */
     private function SetModelAttributes()
     {
-        Logs::set("Definição dos ATRIBUTOS do modelo <b>".$this->GetClassName()."</b>.");
+        Logs::set(Logs::TYPE_INFO,"Definição dos ATRIBUTOS do modelo <b>".$this->GetClassName()."</b>.");
         
         $attributes_data = [
             'name' => [
@@ -134,71 +134,76 @@ class User extends Model implements ModelInterface
 
     static public function initialize()
     {
-        Logs::set('Verificação/Definição de usuário administrador.');
+        Logs::set(Logs::TYPE_INFO,'Verificação/Definição de usuário administrador.');
 
         $quantUsuarios = self::getTableLength('SELECT * FROM user WHERE login="admin" ');
         // deb($quantUsuarios);
         if ($quantUsuarios == 0) {
-            Logs::set('Usuário administrador NÃO encontrado.');
+            Logs::set(Logs::TYPE_INFO,'Usuário administrador NÃO encontrado.');
             // --------------------------------------------------- set user admin
             $admin = new User();
             $admin->setname('Administrador');
             $admin->setlogin('admin');
-            $admin->setpassword('7f002aed5bd47189aae03deaf5149292');
+            $admin->setpassword('21232f297a57a5a743894a0e4a801fc3'); //admin
             $admin->setemail('admin@admin.com');
             $admin->setphone('(XX) X.XXXX-XXXX');
             $admin->setadminzoneaccess(1);
             $admin->setdevzoneaccess(1);
             $admin->save();
-            Logs::set('Usuário administrador criado com sucesso!');
+            Logs::set(Logs::TYPE_INFO,'Usuário administrador criado com sucesso!');
             // ---------------------------------------------------
         }else{
-            Logs::set('Usuário administrador encontrado.');
+            Logs::set(Logs::TYPE_INFO,'Usuário administrador encontrado.');
         }
     }
 
     static function login($login, $password)
     {
-        Logs::set('Validação de login/senha de usuário informados...');
+        Logs::set(Logs::TYPE_INFO,'Validação de login/senha de usuário informados...');
         // deb($login,0); deb($password,0); deb(User::password_crypt($password));
         
         {// verificacao do repositorio do susuarios
             User::initialize();
         }        
 
-        {
-            { // usuario existe                
-                $results = self::search(" SELECT * FROM user WHERE login=':login' ",[':login'=>$login]);
+        {            
+            {//usuario de testes
                 
-                //deb($results);
+                $usuario_teste = new User();
+                $usuario_teste->setLogin($login);
+                $usuario_teste->setPassword(User::password_crypt($password));
+                //deb($usuario_teste);
+            }
+            { // usuario existe
+                $query = " SELECT * FROM user WHERE login=:login";                
+                //deb($query,0); deb($parameters);
+                $results = self::search($query,$usuario_teste->getMysqlPDOParameters(['login'],false)); 
+                //deb($results);                
+                
                 if (count($results) === 0) {
                     throw new Exception("Login não encontrado e/ou senha inválida.");
                 }else{
-                    Logs::set("Login encontrado ($login).");
+                    Logs::set(Logs::TYPE_INFO,"Login encontrado ($login).");
                 }
             }
             { // usuario e senha existem
                 {
                     // cifragem de password para comparacao
-                    $password = User::password_crypt($password);
+                    
                 }
+                $query = "SELECT * FROM user WHERE login=:login AND password=:password";                
+                $results = self::search($query,$usuario_teste->getMysqlPDOParameters(['login','password'],false));
+                //deb($results);
                 
-                $mysql = new MysqlPDO();
-                $mysql->query(" SELECT id FROM user WHERE login='$login' && password='$password' ");
-                $results = $mysql->fetchArray();
-                // deb($results);
-                // deb($results);
                 if (count($results) === 0) {
                     throw new Exception("Senha inválida e/ou login não encontrado.");
                 }else{
-                    Logs::set("Login/senha encontrados ($login/************).");
+                    Logs::set(Logs::TYPE_INFO,"Login/senha encontrados ($login/******).");
                 }
             }
         }
         //deb($results);
-        $user_id = array_shift($results);
-        //deb($user_id);
-        $user = new User($user_id);
+        $user = array_shift($results);
         //deb($user);
         User::setSessionUser($user);
     }
@@ -212,7 +217,8 @@ class User extends Model implements ModelInterface
     static function setSessionUser($user)
     {
         Sessions::set(User::SESSION, $user);
-        Logs::set('Usuário logado e definido na sessão.');
+        Logs::Start('LOGIN EFETUADO');
+        Logs::set(Logs::TYPE_INFO,"Usuário logado e definido na sessão ($user).");
     }
 
     static function getSessionUser()
@@ -223,15 +229,19 @@ class User extends Model implements ModelInterface
     static function getSessionUserDirectAttribute($attribute)
     {
         $user = self::getSessionUser();
-        $getMethod = 'get' . ucfirst($attribute);
-        $attribute = $user->$getMethod();
+        if($user!==false){
+            $getMethod = 'get' . ucfirst($attribute);
+            $attribute = $user->$getMethod();
+        }else{
+            $attribute = '';   
+        }        
         return $attribute;
     }
 
     static function logout()
     {
         Sessions::unset(User::SESSION);
-        Logs::set('Usuário des-logado e indefinido na sessão.');
+        Logs::set(Logs::TYPE_INFO,'Usuário des-logado e indefinido na sessão.');
     }
 
     /**
@@ -308,7 +318,7 @@ class User extends Model implements ModelInterface
              * "link" => $link
              * ));
              */
-            throw new Exception("Nenhum servidor de e-mail configurado. Contate o Administrador e solicite-o esta atualização.");
+            throw new Exception("Nenhum servidor de e-mail configurado. Contate o Administrador e informe-o desta necessidade.");
 
             if (! $mailer->send()) {
                 throw new Exception("Não foi possível enviar o e-mail de recuperação.<br/>Aguarde alguns instantes e tente novamente.<br/>Caso o problema persista, contate o administrador.");

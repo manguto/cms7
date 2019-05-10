@@ -31,7 +31,7 @@ abstract class Model
         $this->CheckAttributesSetted();
         
         //ordernar atributos
-        $this->AttributesOrder();
+        $this->SetAttributesOrder();
     }
     
     /**
@@ -42,7 +42,7 @@ abstract class Model
     protected function SetAttributes(array $attributes_data=[], bool $checkAttributeName = true)
     {   
         //deb($attributes_data);        
-        Logs::set("Definição de ATRIBUTOS: ".implode(', ', array_keys($attributes_data))." (verificação do nome do atributo: $checkAttributeName).");
+        Logs::set(Logs::TYPE_INFO,"Definição de ATRIBUTOS: ".implode(', ', array_keys($attributes_data))." (verificação do nome do atributo: $checkAttributeName).");
                 
         //recebe uma lista de paramertros e transforma uma lista de model attributes e verifica (caso solicitado) se é permitido
         $attribute_list = ModelAttribute::Convert_ParameterDataArray_to_ModelAttributeArray($attributes_data, $checkAttributeName);
@@ -52,6 +52,43 @@ abstract class Model
             $this->SetAttribute($attribute);
         }        
     }
+    
+    /**
+     * obtem um array de parametros de atributos e os define para o modelo atual
+     *
+     * @param array $attributes
+     */
+    protected function GetAttributes()
+    {   
+        //deb($attributes_data);        
+        Logs::set(Logs::TYPE_INFO,"Obtenção de ATRIBUTOS do modelo ".$this->GetClassName());
+                
+        $attributes = $this->attributes;
+        
+        return $attributes;
+    }
+       
+    
+    /**
+     * obtem o atributo solicitado
+     *
+     * @param array $attributes
+     */
+    protected function GetAttribute(string $attributeName)
+    {   
+        //deb($attributes_data);        
+        Logs::set(Logs::TYPE_INFO,"Obtenção do ATRIBUTO '$attributeName' do modelo ".$this->GetClassName());
+
+        if(isset($this->attributes[$attributeName])){
+            $attribute = $this->attributes[$attributeName];
+        }else{
+            throw new Exception("Atributo '$attributeName' não definido para o modelo ".$this->GetClassName());
+        }        
+        
+        return $attribute;
+    }
+    
+    
 
     /**
      * insere no modelo os atributos fundamentais
@@ -61,7 +98,7 @@ abstract class Model
     protected function SetFundamentalAttributes(int $id)
     {
         
-        Logs::set("Definição dos ATRIBUTOS FUNDAMENTAIS do modelo <b>".$this->GetClassName()."</b>.");
+        Logs::set(Logs::TYPE_INFO,"Definição dos ATRIBUTOS FUNDAMENTAIS do modelo <b>".$this->GetClassName()."</b>.");
         
         $attributes = [
             'id' => [
@@ -109,7 +146,7 @@ abstract class Model
      */
     private function CheckAttributesSetted()
     {
-        Logs::set("Verificação quanto a atribuição de todos os atributos do modelo.");
+        Logs::set(Logs::TYPE_INFO,"Verificação quanto a atribuição de todos os atributos do modelo.");
         
         $attributesSetted = false;
         // deb(self::fundamentalAttributes,0);
@@ -136,9 +173,9 @@ abstract class Model
      * que os atributos fundamentais esteja no
      * inicio desta listagem
      */
-    private function AttributesOrder(){
+    private function SetAttributesOrder(){
         
-        Logs::set("Ordenação dos atributos do modelo.");
+        Logs::set(Logs::TYPE_INFO,"Ordenação dos atributos do modelo.");
         
         $attributesOrdered = [];
         foreach (self::fundamentalAttributes as $attributeFundamental){
@@ -404,12 +441,7 @@ abstract class Model
         $tablename = strtolower($className);
         return $tablename;
     }
-    
-    // ##################################################################################################################################
-    // ##################################################################################################################################
-    // ##################################################################################################################################
-    
-    
+      
 }
 
 ?>

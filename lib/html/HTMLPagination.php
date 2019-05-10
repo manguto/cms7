@@ -2,7 +2,7 @@
 namespace manguto\cms5\lib\html;
 
 
-use manguto\cms5\lib\repository\Repository;
+use manguto\cms5\lib\Exception;
 
 class HTMLPagination extends HTML
 {
@@ -56,7 +56,8 @@ class HTMLPagination extends HTML
     {
         $this->tablename = $tablename;
         $this->arguments = $arguments;
-        $objectClassName = Repository::getObjectClassname($tablename);
+        //$objectClassName = Repository::getObjectClassname($tablename);
+        throw new Exception('$objectClassName = Repository::getObjectClassname($tablename);');
         $this->objectClassName = $objectClassName;
 
         { // repositorio completo
@@ -229,7 +230,8 @@ class HTMLPagination extends HTML
 
     public function set_conditions_search()
     {
-        $filter_array = Repository::get_filters($this->tablename);
+        //$filter_array = Repository::get_filters($this->tablename);
+        throw new Exception('$filter_array = Repository::get_filters($this->tablename);');
         //deb($filter_array);
 
         { // ======================================================================================================= CONDICOES
