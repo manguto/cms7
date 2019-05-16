@@ -5,12 +5,11 @@ use manguto\cms5\lib\Safety;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Sessions;
 use manguto\cms5\lib\model\Model;
-use manguto\cms5\lib\model\ModelInterface;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\database\mysql\pdo\ModelMysqlPDO;
 
-class User extends Model implements ModelInterface
+class User extends Model
 {
     
     use ModelMysqlPDO;  
@@ -27,7 +26,7 @@ class User extends Model implements ModelInterface
         //deb($this);
         
         // definicao dos atributos deste modelo
-        $this->SetModelAttributes();
+        $this->defineAttributes();
         //deb($this);
         
         //deb($this);
@@ -45,7 +44,7 @@ class User extends Model implements ModelInterface
      * !IMPORTANT
      * Função para defniicao do atributos do modelo! 
      */
-    private function SetModelAttributes()
+    private function defineAttributes()
     {
         Logs::set(Logs::TYPE_INFO,"Definição dos ATRIBUTOS do modelo <b>".$this->GetClassName()."</b>.");
         
@@ -136,7 +135,7 @@ class User extends Model implements ModelInterface
     {
         Logs::set(Logs::TYPE_INFO,'Verificação/Definição de usuário administrador.');
 
-        $quantUsuarios = self::getTableLength('SELECT * FROM user WHERE login="admin" ');
+        $quantUsuarios = self::length('SELECT * FROM user WHERE login="admin" ');
         // deb($quantUsuarios);
         if ($quantUsuarios == 0) {
             Logs::set(Logs::TYPE_INFO,'Usuário administrador NÃO encontrado.');
@@ -177,7 +176,7 @@ class User extends Model implements ModelInterface
             { // usuario existe
                 $query = " SELECT * FROM user WHERE login=:login";                
                 //deb($query,0); deb($parameters);
-                $results = self::search($query,$usuario_teste->getMysqlPDOParameters(['login'],false)); 
+                $results = self::search($query,$usuario_teste->getMysqlPDOParameters('login')); 
                 //deb($results);                
                 
                 if (count($results) === 0) {
@@ -192,7 +191,7 @@ class User extends Model implements ModelInterface
                     
                 }
                 $query = "SELECT * FROM user WHERE login=:login AND password=:password";                
-                $results = self::search($query,$usuario_teste->getMysqlPDOParameters(['login','password'],false));
+                $results = self::search($query,$usuario_teste->getMysqlPDOParameters(['login','password']));
                 //deb($results);
                 
                 if (count($results) === 0) {
@@ -281,24 +280,24 @@ class User extends Model implements ModelInterface
         // deb($email);
         User::setForgotEmail($email);
         
-        $results = User::search(" SELECT * FROM user WHERE ( email='" . $this->getemail() . "' )");
-        // deb($result);
+        $results = User::search(" SELECT * FROM user WHERE ( email='" . $email . "' )");
+        //deb($results);
 
         if (count($results) == 0) {
-            throw new Exception("Não foi possível recuperar a sua senha.");
+            throw new Exception("Não foi possível recuperar a sua senha. Contate o administrador informando seu problema e e-mail.");
         } else {
 
             $user = array_shift($results);
-            // deb($user);
+            //deb($user);
             // if(false)$user = new User();
             $userPasswordRecoveries = new UserPasswordRecoveries();
             $userPasswordRecoveries->setid($user->getId());
             $userPasswordRecoveries->setip($_SERVER["REMOTE_ADDR"]);
-            $userPasswordRecoveries->setdeadline(time() + UserPasswordRecoveries::deadline);
             $userPasswordRecoveries->setdatetime(time());
+            $userPasswordRecoveries->setdeadline(time() + UserPasswordRecoveries::deadline);            
             // deb($userPasswordRecoveries);
             $userPasswordRecoveries->save();
-            // deb($userPasswordRecoveries);
+            //deb($userPasswordRecoveries);
 
             // ==========================================================================================================
             // ========================================== cifragem =====================================================
@@ -360,16 +359,6 @@ class User extends Model implements ModelInterface
             }
         }
         return $user;
-    }
-
-    static function setForgotUsed($userpasswordrecoveriesid)
-    {
-        $upr = new UserPasswordRecoveries($userpasswordrecoveriesid);
-        // deb($upr,0);
-        $upr->setdeadline(time());
-        // deb($upr,0);
-        $upr->save();
-        // deb($upr);
     }
 
     // ------------------------------------------------------------- ForgotEmail

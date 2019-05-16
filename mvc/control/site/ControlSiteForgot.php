@@ -4,9 +4,10 @@ namespace manguto\cms5\mvc\control\site;
 use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
-use manguto\cms5\mvc\view\ViewSiteForgot;
 use manguto\cms5\mvc\model\UserPasswordRecoveries;
 use manguto\cms5\lib\cms\CMSPage;
+use manguto\cms5\mvc\view\site\ViewSiteForgot;
+    
 
 class ControlSiteForgot extends ControlSite
 {
@@ -31,7 +32,7 @@ class ControlSiteForgot extends ControlSite
     }
 
     static function get_forgot()
-    {
+    {   
         ViewSiteForgot::get_forgot();
     }
 

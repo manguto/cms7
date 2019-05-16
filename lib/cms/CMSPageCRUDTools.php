@@ -3,8 +3,9 @@ namespace manguto\cms5\mvc;
 
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\ProcessResult;
-use manguto\cms5\lib\repository\Repository;
-use manguto\cms5\lib\repository\RepositoryReferences;
+use manguto\cms5\lib\model\Model_Reference;
+use manguto\cms5\lib\model\Model_Helper;
+
 
 class CMSPageCRUDTools
 {
@@ -96,7 +97,7 @@ class CMSPageCRUDTools
         $return = [];
         
         { // parameters
-            $objectClassname = Repository::getObjectClassname($tablename);
+            $objectClassname = Model_Helper::getObjectClassname($tablename);
             // deb($objectClassname);
         }
 
@@ -119,7 +120,7 @@ class CMSPageCRUDTools
     {
         $return = [];
         { // parameters
-            $objectClassname = Repository::getObjectClassname($tablename);
+            $objectClassname = Model_Helper::getObjectClassname($tablename);
             // deb($objectClassname);
             $Modelname = ucfirst($tablename);
         }
@@ -135,11 +136,11 @@ class CMSPageCRUDTools
                 $return[] = "\$filter_" . $fieldname . "_array = $Modelname::$$fieldname;";
             }
             
-            if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
+            if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
                 
-                $repositoryName = RepositoryReferences::getReferencedModelName($fieldname);
+                $repositoryName = Model_Reference::getReferencedModelName($fieldname);
                 //deb($repositoryName);
-                $FieldModelname = Repository::getObjectClassname($repositoryName);
+                $FieldModelname = Model_Helper::getObjectClassname($repositoryName);
                 $return[] = "\$filter_" . $fieldname . "_array = $FieldModelname::getList('', \$returnAsObject=true, \$loadReferences=true);";
             }
             
@@ -186,7 +187,7 @@ class CMSPageCRUDTools
     {
         $return = [];
         { // parameters
-            $objectClassname = Repository::getObjectClassname($tablename);
+            $objectClassname = Model_Helper::getObjectClassname($tablename);
         }
 
         {
@@ -224,7 +225,7 @@ class CMSPageCRUDTools
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
+        if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "combo_ordenar('#$fieldname',true,false); ";
             return $return;
@@ -241,7 +242,7 @@ class CMSPageCRUDTools
     {
         $return = [];
         { // parameters
-            $objectClassname = Repository::getObjectClassname($tablename);
+            $objectClassname = Model_Helper::getObjectClassname($tablename);
         }
 
         {
@@ -287,7 +288,7 @@ class CMSPageCRUDTools
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
+        if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "<select class='form-control' id='$fieldname' name='{$fieldname}[]' multiple='multiple'>
                     {loop=\"\$filter_" . $fieldname . "_array\"}                    

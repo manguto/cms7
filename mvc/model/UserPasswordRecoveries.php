@@ -32,6 +32,11 @@ class UserPasswordRecoveries extends Model
                 'value' => 'new',
                 'length' => 16
             ],
+            'ip' => [
+                'type' => ModelAttribute::TYPE_VARCHAR,
+                'value' => $_SERVER["REMOTE_ADDR"],
+                'length' => 16
+            ],
             'deadline' => [
                 'type' => ModelAttribute::TYPE_TIMESTAMP,
                 'value' => (time()+self::deadline)                
@@ -51,7 +56,7 @@ class UserPasswordRecoveries extends Model
         }
     }
     
-    public static function setForgotUsed($id)
+    static function setForgotUsed($id)
     {
         $upr = new UserPasswordRecoveries($id);
         $upr->setdeadline(time());

@@ -5,9 +5,9 @@ namespace manguto\cms5\lib\database\repository;
 use manguto\cms5\lib\Exception;
 
 class RepositoryCSV{
-    
-    const parameterSeparator = ';';
-    const reservedCaracters = [';','
+
+    const valuesDelimiter = ';';
+    const reservedCharacters = [';','
 '];        
     
     /**
@@ -36,7 +36,7 @@ class RepositoryCSV{
                     }
                 }
                 //insere no topo do futuro arquivo csv o cabecalho das colunas 
-                $lines[] = implode(RepositoryCSV::parameterSeparator, $columnNameArray);
+                $lines[] = implode(RepositoryCSV::valuesDelimiter, $columnNameArray);
             }
             {//BODY
 
@@ -58,7 +58,7 @@ class RepositoryCSV{
                                 $line[] = '';
                             }
                         }
-                        $lines[]=implode(RepositoryCSV::parameterSeparator, $line);
+                        $lines[]=implode(RepositoryCSV::valuesDelimiter, $line);
                                              
                     }else{
                         throw new Exception("Não foi possível converter o array para uma string (CSV).");
@@ -92,7 +92,7 @@ class RepositoryCSV{
                 $csvHeaderLineCSV = array_shift($csvLineArray);
 
                 //transformacao em array
-                $csvHeaderLine_ = explode(RepositoryCSV::parameterSeparator, $csvHeaderLineCSV);
+                $csvHeaderLine_ = explode(RepositoryCSV::valuesDelimiter, $csvHeaderLineCSV);
                 
                 $headerLineArray = [];
                 
@@ -117,7 +117,7 @@ class RepositoryCSV{
                         continue;
                     }
                     
-                    $csvBodyLine_ = explode(RepositoryCSV::parameterSeparator, $csvLine);                        
+                    $csvBodyLine_ = explode(RepositoryCSV::valuesDelimiter, $csvLine);                        
                     $id = $csvBodyLine_[$idKey];
                     foreach ($csvBodyLine_ as $key=>$p){
                         {
@@ -145,7 +145,7 @@ class RepositoryCSV{
      * @return string
      */
     static private function mascString(string $string):string{
-        foreach (RepositoryCSV::reservedCaracters as $key=>$rc) {
+        foreach (RepositoryCSV::reservedCharacters as $key=>$rc) {
             {
                 $search = $rc;
                 $replace = "<$key>";
@@ -162,7 +162,7 @@ class RepositoryCSV{
      * @return string
      */
     static private function unmascString(string $string):string{
-        foreach (RepositoryCSV::reservedCaracters as $key=>$rc) {
+        foreach (RepositoryCSV::reservedCharacters as $key=>$rc) {
             {   
                 $search = "<$key>";
                 $replace = $rc;

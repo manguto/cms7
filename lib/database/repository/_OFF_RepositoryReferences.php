@@ -3,7 +3,7 @@ namespace manguto\cms5\lib\database\repository;
 
 use manguto\cms5\lib\Exception;  
 
-class RepositoryReferences
+class _OFF_RepositoryReferences
 {
 
     // indicador de referencia a outro objeto
@@ -177,22 +177,7 @@ class RepositoryReferences
         return $parameterName;
     }
 
-    /**
-     * verifica se o nome do parametro indica que seja um campo que faca referencia a outro objeto do sistema
-     *
-     * @param string $parameterName
-     * @return bool
-     */
-    static function itsReferenceAttributeSimple(string $parameterName): bool
-    {
-        { // parametro eh uma referencia?
-            $parameterNameFinalPart = substr($parameterName, (- 1) * strlen(self::simple_reference_indicator_end));
-            if ($parameterNameFinalPart == self::simple_reference_indicator_end) {
-                return true;
-            }
-        }
-        return false;
-    }
+    
 
     /**
      * verifica se o nome do parametro indica que seja um campo que faca referencia multiplo a outros objetos (do mesmo tipo) do sistema

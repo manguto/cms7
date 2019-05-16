@@ -9,58 +9,25 @@ use manguto\cms5\lib\model\ModelAttribute;
 trait ModelMysqlPDO
 {
 
-    private function load()
-    {
-        { // params
-            $tablename = $this->GetTablename();
-            // deb($tablename);
-            $id = $this->getId();
-            // deb($id);
-        }
-
-        $object_array = self::search("SELECT * FROM $tablename WHERE id=:ID", [
-            ':ID' => $id
-        ]);
-
-        $registerAmount = sizeof($object_array);
-        // deb($registerAmount);
-        if ($registerAmount == 0) {
-            throw new Exception("Não foi encontrado nenhum registro para identificador ($id) na tabela '$tablename'.");
-        } elseif ($registerAmount > 1) {
-            throw new Exception("Forma encontrados mais de um registro ($registerAmount) com o mesmo identificador ($id) na tabela '$tablename'.");
-        }
-
-        // obter o primeiro registro obtido
-        $object = array_shift($object_array);
-        // deb($object);
-
-        $ModelAttribute = $object->GetData(true, true);
-        // deb($ModelAttribute);
-
-        // definir dados no objeto
-        // $this->SetData($data);
-        $this->SetAttributes($ModelAttribute, false); /* */
-    }
-
-    /**
-     * procedimentos a serem realizados
-     * antes do salvamento propriamente
-     * dito (update info, etc.)
-     */
-    private function save_prepareTo()
-    {
-
-        // atualizacao do datahora da atualizacao
-        $this->setUpdate___datetime(date('Y-m-d H:i:s'));
-
-        // atualizacao do usuario autor da atulizacao
-        $this->setUpdate___user_id(User::getSessionUserDirectAttribute('id'));
-    }
-
     public function save()
     {
         { // verificacao/ajuste antes do salvamento
-            $this->save_prepareTo();
+            $id = $this->getId();
+            // deb($id,0);
+
+            if ($id == 0) {
+                // atualizacao do datahora da atualizacao
+                $this->setInsert___datetime(date('Y-m-d H:i:s'));
+
+                // atualizacao do usuario autor da atulizacao
+                $this->setInsert___user_id(User::getSessionUserDirectAttribute('id'));
+            }
+
+            // atualizacao do datahora da atualizacao
+            $this->setUpdate___datetime(date('Y-m-d H:i:s'));
+
+            // atualizacao do usuario autor da atulizacao
+            $this->setUpdate___user_id(User::getSessionUserDirectAttribute('id'));
         }
 
         {
@@ -103,66 +70,207 @@ trait ModelMysqlPDO
         {
             if ($id == 0) {
                 $query = " INSERT INTO $tablename ($columns) VALUES ($values)";
-                $parameters = $this->getMysqlPDOParameters(['id']);
+                $parameters = $this->getParameters([], 'id');
             } else {
                 $query = " UPDATE $tablename SET $column_value_s WHERE id=:id ";
-                $parameters = $this->getMysqlPDOParameters();
+                $parameters = $this->getParameters();
             }
-            //deb($query,0); deb($parameters);
+            // deb($query,0); deb($parameters);
         }
-        
+
         {
-            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             $mysql_pdo = new MysqlPDO();
             $mysql_pdo->query($query, $parameters);
-            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
-        {//definicao do id do objeto quando da sua criacao
+        { // definicao do id do objeto quando da sua criacao
             if ($id == 0) {
-                $lastInsertedId = $mysql_pdo->getLastInsertedId();
+                $lastInsertedId = $mysql_pdo->getLastInsertId();
                 $this->setId($lastInsertedId);
             }
         }
     }
 
-    /**
-     * Retorna uma listagem com os dados do atributos (parametros para o PDO) no formato exigido pelo metodo PDO->bindParam();
-     * @param array $exceptions - nomes dos parametros que nao devem estar presentes na listagem
-     * @return array
-     */
-    protected function getMysqlPDOParameters(array $exceptions=[],bool $exclude=true):array
+    public function load()
     {
-        $parameters = [];
-        $attributes = $this->GetData(false, true);
-        foreach ($attributes as $attribute) {
-
-            $name = $attribute->getName();
-            
-            //verificacao se algum parametro deve ser removido ou exibido
-            if($exclude){
-                if(in_array($name, $exceptions)){
-                    continue;
-                }   
-            }else{
-                if(!in_array($name, $exceptions)){
-                    continue;
-                }
-            }
-                     
-            $parameters[":$name"]['value'] = $attribute->getValue();
-            $parameters[":$name"]['data_type'] = $this->getMysqlPDOParameter__data_type($attribute->getType());
-            $parameters[":$name"]['length'] = $attribute->getLength();
+        { // params
+            $tablename = $this->GetTablename();
+            // deb($tablename);
         }
-        return $parameters;
+        {
+            $id = $this->getId();
+            $parameters = $this->getParameters('id');
+            // deb($parameters);
+        }
+        // deb($this);
+        $object_array = self::search("SELECT * FROM $tablename WHERE id=:id", $parameters);
+
+        $registerAmount = sizeof($object_array);
+        // deb($registerAmount);
+        if ($registerAmount == 0) {
+            throw new Exception("Não foi encontrado nenhum registro para identificador ($id) na tabela '$tablename'.");
+        } elseif ($registerAmount > 1) {
+            throw new Exception("Forma encontrados mais de um registro ($registerAmount) com o mesmo identificador ($id) na tabela '$tablename'.");
+        }
+
+        // obter o primeiro registro obtido
+        $object = array_shift($object_array);
+        // deb($object);
+
+        $ModelAttribute = $object->GetData(true, true);
+        // deb($ModelAttribute);
+
+        // definir dados no objeto
+        // $this->SetData($data);
+        $this->SetAttributes($ModelAttribute, false); /* */
     }
 
-    private function getMysqlPDOParameter__data_type($modelAttributeType)
-    {
+    public function loadReferences()
+    {}
 
+    public function delete()
+    {
+        {
+            $tablename = $this->GetTablename();
+            // deb($tablename);
+            // $id = $this->getId();
+            // deb($id);
+        }
+        {
+            $mysql_pdo = new MysqlPDO();
+            $parameters = $this->getParameters('id');
+            // deb($parameters);
+            $mysql_pdo->query("DELETE FROM $tablename WHERE id=:id", $parameters);
+        }
+    }
+
+    public function search(string $query = '', array $params = []): array
+    {
+        Logs::set(Logs::TYPE_NOTICE, $query, $params);
+
+        $return = [];
+
+        { // parametros
+            $called_class = get_called_class();
+        }
+
+        { // query verificacao
+            if ($query == '') {
+                { // instanciacao de um objeto para obtencao do nome da tabela
+                    $class_sample = new $called_class();
+                }
+                $query = "SELECT * FROM " . $class_sample->getTablename() . " WHERE 1";
+            }
+        }
+
+        $mysql_pdo = new MysqlPDO();
+        // deb($query,0);
+        $register_array = $mysql_pdo->select($query, $params);
+        // deb($register_array);
+
+        // Logs::set(Logs::TYPE_NOTICE,"Encontrado(s) '".count($register_array)."' registro(s).");
+
+        foreach ($register_array as $register) {
+            { // deb($register);
+                $object = new $called_class();
+                $object->SetData($register);
+            }
+            $return[$object->getId()] = $object;
+        }
+        return $return;
+    }
+
+    public function length(string $query, array $params = []): int
+    {
+        return MysqlPDO::length($query, $params);
+    }
+
+    public function getParameters($attributes = [], $exceptions = []): array
+    {
+        { // correcao ajuste do formato dos parametros
+            {
+                if (is_string($attributes)) {
+                    if (trim($attributes) != '') {
+                        $attributes = [
+                            $attributes
+                        ];
+                    } else {
+                        $attributes = [];
+                    }
+                }
+            }
+            {
+                if (is_string($exceptions)) {
+                    if (trim($exceptions) != '') {
+                        $exceptions = [
+                            $exceptions
+                        ];
+                    } else {
+                        $exceptions = [];
+                    }
+                }
+            }
+        }
+        // deb($attributes);
+
+        { // verificacao do tipo de operacao solicitada
+            {
+                $return_attributes = sizeof($attributes);
+                $remove_attributes = sizeof($exceptions);
+            }
+
+            if (($return_attributes == 0 && $remove_attributes == 0)) {
+                $return_attributes = false;
+                $remove_attributes = false;
+            } else if ($return_attributes > 0 && $remove_attributes == 0) {
+                $return_attributes = true;
+                $remove_attributes = false;
+            } else if ($return_attributes == 0 && $remove_attributes > 0) {
+                $return_attributes = false;
+                $remove_attributes = true;
+            } else {
+                throw new Exception("Não é possível a inclusão e exclusão de parâmetros simultaneamente. Corrija a solicitação e tente novamente.");
+            }
+        }
+
+        {
+            // lista de atributos a serem analisados (processados)
+            $all_attributes = $this->GetData(false, true);
+            // deb($attributes);
+        }
+
+        // deb($attributes,0);
+        // deb($exceptions,0);
+
+        $return = [];
+        foreach ($all_attributes as $attribute) {
+
+            $name = $attribute->getName();
+            // deb($name,0);
+            // verificacao se algum parametro deve ser removido ou exibido
+
+            if ($return_attributes && ! in_array($name, $attributes)) {
+                continue;
+            }
+            if ($remove_attributes && in_array($name, $exceptions)) {
+                continue;
+            }
+
+            $return[":$name"]['value'] = $attribute->getValue();
+            $return[":$name"]['data_type'] = $this->getParameter___data_type($attribute->getType());
+            $return[":$name"]['length'] = $attribute->getLength();
+        }
+        // deb($return);
+        return $return;
+    }
+    
+    private function getParameter___data_type($modelAttributeType)
+    {
         /**
          * +++++++++++++++++++++++++++++++++++++++++++++++ ModelAttribute::
          * const TYPE_CHAR = 'char';
@@ -194,7 +302,6 @@ trait ModelMysqlPDO
          * const PARAM_EVT_FETCH_POST = 5;
          * const PARAM_EVT_NORMALIZE = 6;
          */
-        
         switch ($modelAttributeType) {
             case ModelAttribute::TYPE_BOOLEAN:
                 $data_type = \PDO::PARAM_BOOL;
@@ -210,148 +317,6 @@ trait ModelMysqlPDO
         }
         return $data_type;
     }
-
-    public function OFF_save()
-    {
-        { // verificacao/ajuste antes do salvamento
-            $this->save_prepareTo();
-        }
-
-        {
-            $tablename = $this->GetTablename();
-            // deb($tablename);
-            $id = $this->getId();
-        }
-        {
-            $attributes = $this->GetData(false, true);
-            {
-                $columns = [];
-                $values = [];
-                $column_value_s = [];
-                foreach ($attributes as $attribute) {
-                    {
-                        $name = $attribute->getName();
-                        {
-                            $value = $attribute->getValue();
-                            $value = $attribute->checkQuotesWrap() ? "'$value'" : $value;
-                        }
-                    }
-                    {
-                        if ($name == 'id') {
-                            continue;
-                        }
-                    }
-                    // ----------------------------------------------------------------- insert
-                    $columns[] = "$name";
-                    $values[] = "$value";
-                    // ----------------------------------------------------------------- update
-                    $column_value_s[] = "$name=$value";
-                }
-
-                $columns = implode(', ', $columns);
-                $values = implode(', ', $values);
-                $column_value_s = implode(', ', $column_value_s);
-            }
-        }
-        {
-            if ($id == 0) {
-                $query = " INSERT INTO $tablename ($columns) VALUES ($values)";
-                $params = [];
-            } else {
-                $query = " UPDATE $tablename SET $column_value_s WHERE id=:ID ";
-                $params = [
-                    ':ID' => $id
-                ];
-            }
-            // deb($query,0);
-        }
-
-        {
-            $mysql_pdo = new MysqlPDO();
-
-            $mysql_pdo->query($query, $params);
-
-            if ($id == 0) {
-                $lastInsertedId = $mysql_pdo->getLastInsertedId();
-                // deb($lastInsertedId,0);
-                $this->setId($lastInsertedId);
-            }
-        }
-    }
-
-    public function delete()
-    {
-        {
-            $tablename = $this->GetTablename();
-            // deb($tablename);
-            $id = $this->getId();
-            // deb($id);
-        }
-        {
-            $mysql_pdo = new MysqlPDO();
-            $parameters = $this->getMysqlPDOParameters(['id'],false);
-            //deb($parameters);
-            $mysql_pdo->query("DELETE FROM $tablename WHERE id=:id", $parameters);
-        }
-    }
-
-    /**
-     * obtem uma lista de objetos do modelo em questao
-     *
-     * @param string $query
-     * @param array $params
-     * @return array
-     */
-    public static function search(string $query = '', array $params = []): array
-    {
-        Logs::set(Logs::TYPE_NOTICE, $query, $params);
-
-        $return = [];
-
-        { // parametros
-            $called_class = get_called_class();
-        }
-
-        { // query verificacao
-            if ($query == '') {
-                { // instanciacao de um objeto para obtencao do nome da tabela
-                    $class_sample = new $called_class();
-                }
-                $query = "SELECT * FROM " . $class_sample->getTablename() . " WHERE 1";
-            }
-        }
-
-        $mysql = new MysqlPDO();
-        // deb($query,0);
-        $register_array = $mysql->select($query, $params);
-        // deb($register_array);
-
-        // Logs::set(Logs::TYPE_NOTICE,"Encontrado(s) '".count($register_array)."' registro(s).");
-
-        foreach ($register_array as $register) {
-            { // deb($register);
-                $object = new $called_class();
-                $object->SetData($register);
-            }
-            $return[$object->getId()] = $object;
-        }
-        return $return;
-    }
-
-    /**
-     * obter a quantidade de itens de uma determinada tabela com base em uma query eventualmente parametrizada
-     *
-     * @param string $query
-     * @param array $params
-     * @return int
-     */
-    static function getTableLength(string $query, array $params = []): int
-    {
-        return MysqlPDO::getTableLength($query, $params);
-    }
-
-    public function LoadReferences()
-    {}
 }
 
 ?>

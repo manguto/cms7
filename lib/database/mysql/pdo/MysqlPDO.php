@@ -3,8 +3,9 @@ namespace manguto\cms5\lib\database\mysql\pdo;
 
 use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\database\Database;
 
-class MysqlPDO extends \PDO
+class MysqlPDO extends \PDO implements Database
 {
 
     protected $conn;
@@ -24,16 +25,16 @@ class MysqlPDO extends \PDO
         $this->conn = new \PDO($dsn, $dbuser, $dbpass);
     }
 
-    private function setParams($statement, $parameters = [])
+    private function setParams(\PDOStatement $statement, $parameters = [])
     {
         foreach ($parameters as $key => $parameter_info) {
-            
+
             $value = $parameter_info['value'] ?? false;
             $data_type = $parameter_info['data_type'] ?? false;
             $length = $parameter_info['length'] ?? null;
-            
-            if($value===false || $data_type===false){
-                throw new Exception("Os parâmetros informados não estão no formato correto (value='$value', data_type='$data_type', length='$length').");
+
+            if ($value === false || $data_type === false) {
+                throw new Exception("Os parâmetros informados não estão no formato correto (KEY='$key', VALUE='$value', DATA_TYPE='$data_type', LENGTH='$length' | Query='$statement->queryString').");
             }
 
             $this->setParam($statement, $key, $value, $data_type, $length);
@@ -68,15 +69,18 @@ class MysqlPDO extends \PDO
         $statement = $this->conn->prepare($rawQuery);
 
         if (sizeof($parameters) > 0) {
+            // deb($parameters);
             $this->setParams($statement, $parameters);
         }
-        // deb($statement);
+        // deb($statement,0);
+        // deb($parameters,0);
+        // echo "<hr/>";
         $statement->execute();
 
         return $statement;
     }
 
-    public function select($rawQuery, $parameters = []): array
+    public function select(string $rawQuery='', array $parameters = []): array
     {
         $stmt = $this->query($rawQuery, $parameters);
         // deb($stmt);
@@ -90,7 +94,7 @@ class MysqlPDO extends \PDO
         return $return;
     }
 
-    public function getLastInsertedId()
+    public function getLastInsertId():int
     {
         return $this->conn->lastInsertId();
     }
@@ -103,7 +107,7 @@ class MysqlPDO extends \PDO
      * @param array $params
      * @return int
      */
-    static function getTableLength(string $query, array $params = []): int
+    static function length(string $query='', array $params = []): int
     {
         $sql = new MysqlPDO();
         $result = $sql->select($query, $params);

@@ -2,10 +2,11 @@
 namespace manguto\cms5\lib\database\mysql\mysqli;
 
 use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\database\Database;
 
-class Mysqli
+class Mysqli implements Database
 {
-
+ 
     protected $connection;
 
     protected $query;
@@ -67,13 +68,20 @@ class Mysqli
     }
 
     // -------------------------------------------------------------------------------------------------------------------
-    public function getInsertedId()
+    function select(string $rawQuery='',array $parameters=[]):array
+    {
+        //...
+        throw new Exception("Implementação a ser finalizada...");
+    }
+    
+    // -------------------------------------------------------------------------------------------------------------------
+    public function getLastInsertId():int
     {
         return $this->query->insert_id;
     }
 
     // -------------------------------------------------------------------------------------------------------------------
-    public function fetchAll()
+    private function fetchAll()
     {
         $params = array();
         $meta = $this->query->result_metadata();
@@ -97,7 +105,7 @@ class Mysqli
     }
 
     // -------------------------------------------------------------------------------------------------------------------
-    public function fetchArray()
+    private function fetchArray()
     {
         $params = array();
         $meta = $this->query->result_metadata();
@@ -119,20 +127,20 @@ class Mysqli
     }
 
     // -------------------------------------------------------------------------------------------------------------------
-    public function numRows()
+    private function numRows()
     {
         $this->query->store_result();
         return $this->query->num_rows;
     }
 
     // -------------------------------------------------------------------------------------------------------------------
-    public function close()
+    private function close()
     {
         return $this->connection->close();
     }
 
     // -------------------------------------------------------------------------------------------------------------------
-    public function affectedRows()
+    private function affectedRows()
     {
         return $this->query->affected_rows;
     }

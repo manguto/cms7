@@ -1,13 +1,11 @@
 <?php
-namespace manguto\cms5\model;
+namespace manguto\cms5\lib\database\repository;
 
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\CSV;
-use manguto\cms5\lib\repository\Repository; 
-use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
 
-class CMSRepositoryAssist
+class _OFF_RepositoryCMSAssist
 {    
     //pasta onde ficarao os arquivos iniciais de cada objeto
     private const ini_foldername = 'repository/ini';
@@ -145,7 +143,8 @@ class CMSRepositoryAssist
      */
     static function inicializar()
     {
-        try {
+        throw new Exception("Método aguardando redefinição/aprimoramento.");
+        /*try {
 
             { // obter o nome do repositorio
                 $called_class = '\\' . get_called_class();
@@ -182,6 +181,6 @@ class CMSRepositoryAssist
             }
         } catch (Exception $e) {
             ProcessResult::setError($e);
-        }
+        }*/
     }
 }

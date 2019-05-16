@@ -2,7 +2,6 @@
 namespace manguto\cms5\lib\model;
 
 use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Logs;
 
 class ModelAttribute
 {

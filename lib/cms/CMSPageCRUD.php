@@ -1,8 +1,9 @@
 <?php
 namespace manguto\cms5\lib\cms;
 
-use manguto\cms5\lib\repository\Repository;
-use manguto\cms5\lib\repository\RepositoryReferences;
+
+use manguto\cms5\lib\model\Model_Reference;
+use manguto\cms5\lib\model\Model_Helper;
 
 class CMSPageCRUD extends CMSPage
 {
@@ -14,7 +15,7 @@ class CMSPageCRUD extends CMSPage
 
     static function List___get_register_array(string $tablename,string $conditions='',array $title_array)
     {
-        $ObjectClassname = Repository::getObjectClassname($tablename);
+        $ObjectClassname = Model_Helper::getObjectClassname($tablename);
         
         { // full content
             $obj_array = $ObjectClassname::getList($conditions, $returnAsObject = true, $loadReferences = true);
@@ -28,8 +29,8 @@ class CMSPageCRUD extends CMSPage
                 foreach (array_keys($title_array) as $fieldname) {
 
                     { // caso seja um campo referencial
-                        if (RepositoryReferences::itsReferenceAttributeSimple($fieldname) || RepositoryReferences::itsReferenceAttributeMultiple($fieldname)) {
-                            $fieldame_call = RepositoryReferences::getReferencedModelName($fieldname);
+                        if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+                            $fieldame_call = Model_Reference::getReferencedModelName($fieldname);
                         } else {
                             $fieldame_call = $fieldname;
                         }

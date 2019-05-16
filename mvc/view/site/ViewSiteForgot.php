@@ -1,7 +1,6 @@
 <?php
-namespace manguto\cms5\mvc\view;
+namespace manguto\cms5\mvc\view\site;
 
-use manguto\cms5\mvc\view\site\ViewSite;
 
 class ViewSiteForgot extends ViewSite
 {
