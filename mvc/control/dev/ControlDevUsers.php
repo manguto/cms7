@@ -13,12 +13,13 @@ class ControlDevUsers extends ControlDev
     {
         $app->get('/dev/users', function () {
             self::PrivativeDevZone();
-            ControlDevUsers::get_dev_users();
+            $users = (new User())->search();
+            ViewDevUsers::get_dev_users($users);
         });
 
         $app->get('/dev/users/create', function () {
             self::PrivativeDevZone();
-            ControlDevUsers::get_dev_users_create();
+            ViewDevUsers::get_dev_users_create();
         });
 
         $app->post('/dev/users/create', function () {
@@ -28,7 +29,8 @@ class ControlDevUsers extends ControlDev
 
         $app->get('/dev/users/:id', function ($id) {
             self::PrivativeDevZone();
-            ControlDevUsers::get_dev_user($id);
+            $user = new User($id);
+            ViewDevUsers::get_dev_user($user);  
         });
 
         $app->get('/dev/users/:id/delete', function ($id) {
@@ -38,7 +40,8 @@ class ControlDevUsers extends ControlDev
 
         $app->get('/dev/users/:id/edit', function ($id) {
             self::PrivativeDevZone();
-            ControlDevUsers::get_dev_user_edit($id);
+            $user = new User($id);
+            ViewDevUsers::get_dev_user_edit($user);
         });
 
         $app->post('/dev/users/:id/edit', function ($id) {
@@ -47,23 +50,11 @@ class ControlDevUsers extends ControlDev
         });
     }
 
-    static function get_dev_users()
-    {   
-        $users = User::search();
-        ViewDevUsers::get_dev_users($users);
-    }
-
-    static function get_dev_users_create()
-    {   
-        ViewDevUsers::get_dev_users_create();
-    }
+   
 
     static function post_dev_users_create()
     {
-        // deb($_POST,0);        
-        // fix - form devzoneaccess (checkbox)
-        $_POST['devzoneaccess'] = ! isset($_POST['devzoneaccess']) ? 0 : 1;
-        // password crypt
+        // deb($_POST,0);
         $_POST['password'] = User::password_crypt($_POST['password']);
         // deb($_POST);
 
@@ -83,33 +74,22 @@ class ControlDevUsers extends ControlDev
         }
     }
 
-    static function get_dev_user($id)
-    {
-        $user = new User($id);
-        ViewDevUsers::get_dev_user($user);  
-    }
-
-    static function get_dev_user_edit($id)
-    {
-        $user = new User($id);
-        //deb($user);
-        ViewDevUsers::get_dev_user_edit($user);
-    }
-
     static function post_dev_user_edit($id)
     {
-        // checkbox stuff fix        
-        $_POST['adminzoneaccess'] = ! isset($_POST['adminzoneaccess']) ? 0 : 1;
-        $_POST['devzoneaccess'] = ! isset($_POST['devzoneaccess']) ? 0 : 1;
-        
+                
         //deb($_POST);
         try {
             $user = new User($id);
+            //deb("$user",0);
+            //deb($_POST,0);
             $user->SetData($_POST);
+            //deb("$user");
             //deb($user);
-            $user->verifyFieldsToCreateUpdate();
-            //deb($user);
+            
+            $user->verifyFieldsToCreateUpdate();            
             $user->save();
+            //deb("$user");
+            
             ProcessResult::setSuccess("Usuário atualizado com sucesso!");
             headerLocation("/dev/users");
             exit();

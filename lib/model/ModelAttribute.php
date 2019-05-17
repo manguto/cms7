@@ -102,30 +102,67 @@ class ModelAttribute
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------
+    /**
+     * retorna o valor do atributo
+     *
+     * @param mixed $value
+     */
     public function getValue()
     {
-        $value = "$this->value";
+        return $this->shapeValue($this->value);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    /**
+     * define o valor do atributo
+     *
+     * @param mixed $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $this->shapeValue($value);
+    }
+
+    /**
+     * molda o valor informado de acordo com o tipo do atributo atual
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private function shapeValue($value)
+    {
+        // ---------------------------------------------------------------
+        /**
+         * const TYPE_CHAR = 'char';
+         * const TYPE_VARCHAR = 'varchar';
+         * const TYPE_TEXT = 'text';
+         * const TYPE_INT = 'int';
+         * const TYPE_FLOAT = 'float';
+         * const TYPE_DATE = 'date';
+         * const TYPE_DATETIME = 'datetime';
+         * const TYPE_TIMESTAMP = 'timestamp';
+         * const TYPE_TIME = 'time';
+         * const TYPE_BOOLEAN = 'boolean';
+         */
         // ---------------------------------------------------------------
         switch ($this->getType()) {
             case self::TYPE_INT:
-                $value = intval($value);
+                return intval($value);
                 break;
 
             case self::TYPE_FLOAT:
-                $value = floatval($value);
+                return floatval($value);
                 break;
 
             case self::TYPE_BOOLEAN:
-                $value = boolval($value);
+                return boolval($value);
                 break;
 
             default:
-                $value = strval($value);
+                return strval($value);
                 ;
                 break;
         }
-        // ---------------------------------------------------------------
-        return $value;
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------
@@ -143,7 +180,9 @@ class ModelAttribute
             return $this->$attributeName;
         } elseif ($method_nature == 'set') {
 
-            $this->$attributeName = $args[0];
+            $value = $args[0];
+
+            $this->$attributeName = $value;
         } else {
 
             throw new Exception("Método não encontrado ou incorreto ($methodName()).");
@@ -153,6 +192,13 @@ class ModelAttribute
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS & SETTERS
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS & SETTERS
     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GETTERS & SETTERS
+    /**
+     * obtem uma representacao do atributo
+     * atraves de uma "string_alizacao"
+     * do seu valor
+     *
+     * @return string
+     */
     public function __toString()
     {
         $return = $this->getValue();
@@ -165,6 +211,12 @@ class ModelAttribute
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
+    /**
+     * verifica se o atributo precisa de "aspas"
+     * conforme o tipo do mesmo
+     *
+     * @return boolean
+     */
     public function checkQuotesWrap()
     {
         $notQuoteWrapTypes = [
@@ -189,26 +241,26 @@ class ModelAttribute
         if (in_array($attributeName, Model::fundamentalAttributes)) {
             throw new Exception("Foi definido um nome de atributo reservado para um atributo fundamental do modelo ($attributeName). Por favor, escolha outro e tente novamente.");
         }
-      
     }
-    
+
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
-    
+
     /**
      * recebe um array de parametros brutos e o converte em um array de ModelAttributes
+     *
      * @param array $attributeArray
      * @param bool $checkAttributeName
      * @return array
      */
-    static function Convert_ParameterDataArray_to_ModelAttributeArray(array $attributeArray,bool $checkAttributeName=true):array{
-        
+    static function Convert_ParameterDataArray_to_ModelAttributeArray(array $attributeArray, bool $checkAttributeName = true): array
+    {
         $ModelAttributeArray = [];
-        
+
         foreach ($attributeArray as $attributeName => $parameters) {
             // cria o atributo
-            //deb($attributeName,0); deb($parameters,0);
+            // deb($attributeName,0); deb($parameters,0);
             $ModelAttribute = new ModelAttribute($attributeName, $checkAttributeName);
             foreach ($parameters as $parameterName => $parameterValue) {
                 $setMethod = 'set' . ucfirst($parameterName);
@@ -216,18 +268,15 @@ class ModelAttribute
                 $ModelAttribute->$setMethod($parameterValue);
             }
             // salva no modelo
-            $ModelAttributeArray[$attributeName]=$ModelAttribute;
+            $ModelAttributeArray[$attributeName] = $ModelAttribute;
         }
-        
+
         return $ModelAttributeArray;
     }
-    
-    
-    
+
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
-    
 }
 
 ?>

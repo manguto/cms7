@@ -165,9 +165,9 @@ abstract class Model
         foreach ($data as $key => $value) {
             $key = strtolower($key);
             // evita o carregamento de parametros que nao pertencam ao objeto (outros parametros inseridos no <form> p.ex.)
-            if (isset($this->attributes[$key])) {
-                if ($value)
-                    $this->attributes[$key]->setValue($value);
+            if (isset($this->attributes[$key])) {                
+                //chamada do metodo de definicao de cada atributo (generico ou especifico se definido)
+                $this->{'set'.ucfirst($key)}($value);                          
             }
         }
     }
@@ -400,7 +400,7 @@ abstract class Model
      * @param array $args
      * @throws Exception
      */
-    private function SET(string $fieldname, array $arguments)
+    private function SET(string $attributeName, array $arguments)
     {
         if (isset($arguments[0])) {
 
@@ -424,29 +424,29 @@ abstract class Model
             { // definicao do atribuito conforme o seu tipo
                 if ($setNature == 'default') {
 
-                    if (isset($this->attributes[$fieldname])) {
+                    if (isset($this->attributes[$attributeName])) {
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
-                        $this->attributes[$fieldname]->setValue($value);
+                        $this->attributes[$attributeName]->setValue($value);
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                     } else {
-                        throw new Exception("Parâmetro '$fieldname' não definido para o modelo '" . $this->getModelname() . "'. Defina-o ou utilize-o como um atributo extraordinário.");
+                        throw new Exception("Parâmetro '$attributeName' não definido para o modelo '" . $this->getModelname() . "'. Defina-o ou utilize-o como um atributo extraordinário.");
                     }
                 } else {
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
-                    $this->attributes_extra[$fieldname] = $value;
+                    $this->attributes_extra[$attributeName] = $value;
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
                 }
             }
         } else {
-            throw new Exception("Ocorreu uma tentativa de definição de atributo de um modelo, onde não foi informado o valor a ser definido (set" . ucfirst($fieldname) . "(?)).");
+            throw new Exception("Ocorreu uma tentativa de definição de atributo de um modelo, onde não foi informado o valor a ser definido (set" . ucfirst($attributeName) . "(?)).");
         }
     }
 

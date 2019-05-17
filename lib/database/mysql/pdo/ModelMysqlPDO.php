@@ -148,7 +148,7 @@ trait ModelMysqlPDO
             $mysql_pdo->query("DELETE FROM $tablename WHERE id=:id", $parameters);
         }
     }
-
+    
     public function search(string $query = '', array $params = []): array
     {
         Logs::set(Logs::TYPE_NOTICE, $query, $params);

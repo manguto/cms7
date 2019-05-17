@@ -1,36 +1,66 @@
-{include="../general/__open"} {include="../general/_header"} 
+{include="../general/__open"} {include="../general/_header"}
 <section>
-	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
 	<div class="container">
-		<h2>Editar Usuário</h2>
-		<form action="/dev/users/{$user->getid()}/edit" method="post" class="mr-auto ml-auto" style="width: 60%;">
-			<div class='form-group'>
-				<label for="name">Nome</label>
-				<input type="text" class="form-control" id="name" name="name" placeholder="Digite o nome" value="{$user->getname()}">
+		<div class="row">
+			<div class="col-12">
+				<h2>Editar Usuário</h2>
 			</div>
-			<div class='form-group'>
-				<label for="login">Login</label>
-				<input type="text" class="form-control" id="login" name="login" placeholder="Digite o login" value="{$user->getlogin()}">
+		</div>
+		<form action="/dev/users/{$user->getid()}/edit" method="post" class="mr-auto ml-auto">
+			<div class="row">
+				<div class="col-12">
+					<label for="name">Nome</label>
+					<input type="text" class="form-control" id="name" name="name" placeholder="Digite o nome" value="{$user->getname()}">
+				</div>
+				<div class="col-6">
+					<label for="email">E-mail</label>
+					<input type="email" class="form-control" id="email" name="email" placeholder="Digite o e-mail" value="{$user->getemail()}">
+				</div>
 			</div>
-			<div class='form-group'>
-				<label for="email">E-mail</label>
-				<input type="email" class="form-control" id="email" name="email" placeholder="Digite o e-mail" value="{$user->getemail()}">
+			<div class="row">
+				<div class="col-4">
+					<label for="login">Login</label>
+					<input type="text" class="form-control" id="login" name="login" placeholder="Digite o login" value="{$user->getlogin()}">
+				</div>
 			</div>
-			<div class='form-group'>
-				<label>
-					<input type="checkbox" name="adminzoneaccess" value="{$user->getadminzoneaccess()}" {if="$user->getadminzoneaccess() == 1"}checked{/if}>
-					Acesso de Administrador
-				</label>
+			<div class="row">
+				<div class="col-3">
+					<label for="adminzoneaccess">Acesso de Administrador</label>
+					<select name="adminzoneaccess" id="adminzoneaccess" class="form-control">
+						{loop="$adminzoneaccess"}
+						<option value="{$key}" {if="$key==$user->getAdminzoneaccess()"} selected {/if}>{$value}</option>
+						{/loop}
+					</select>
+				</div>
 			</div>
-			<div class='form-group'>
-				<label>
-					<input type="checkbox" name="devzoneaccess" value="{$user->getdevzoneaccess()}" {if="$user->getdevzoneaccess() == 1"}checked{/if}>
-					Acesso de Desenvolvedor
-				</label>
+			<div class="row">
+				<div class="col-3">
+					<label for="devzoneaccess">Acesso de Desenvolvedor</label>
+					<select name="devzoneaccess" id="devzoneaccess" class="form-control">
+						{loop="$devzoneaccess"}
+						<option value="{$key}" {if="$key==$user->getDevzoneaccess()"} selected {/if}>{$value}</option>
+						{/loop}
+					</select>
+				</div>
 			</div>
-			<a href="/dev/users" class="btn btn-warning mr-2">Voltar</a>
-			<button type="submit" class="btn btn-danger">Salvar</button>
+			<div class="row mt-3">
+				<div class="col-12 text-right">
+					<a href="/dev/users" class="btn btn-danger mr-2">Cancelar</a>
+					<button type="submit" class="btn btn-success">SALVAR</button>
+				</div>
+			</div>
 		</form>
 	</div>
 </section>
+<style>
+form .row>div {
+	margin-top: 20px;
+}
+</style>
+<script>
+	$(document).ready(function() {
+
+	});
+</script>
 {include="../general/_footer"} {include="../general/__close"}

@@ -33,8 +33,8 @@ class MysqlPDO extends \PDO implements Database
             $data_type = $parameter_info['data_type'] ?? false;
             $length = $parameter_info['length'] ?? null;
 
-            if ($value === false || $data_type === false) {
-                throw new Exception("Os parâmetros informados não estão no formato correto (KEY='$key', VALUE='$value', DATA_TYPE='$data_type', LENGTH='$length' | Query='$statement->queryString').");
+            if ($data_type === false) {                
+                throw new Exception("Os parâmetros informados não estão no formato correto (KEY='$key(".gettype($key).")', VALUE='$value'(".gettype($value)."), DATA_TYPE='$data_type'(".gettype($data_type)."), LENGTH='$length'(".gettype($length).") | Query='$statement->queryString').");
             }
 
             $this->setParam($statement, $key, $value, $data_type, $length);
