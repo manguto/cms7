@@ -7,13 +7,12 @@ use manguto\cms5\lib\Strings;
 use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\database\repository\ModelRepository;
 use manguto\cms5\lib\model\ModelDatabase;
-use manguto\cms5\lib\database\mysql\pdo\ModelMysqlPDO;
+
 
 class Zzz extends Model implements ModelDatabase
 {
 
-    //use ModelRepository;
-    use ModelMysqlPDO;
+    use ModelRepository;    
 
     public function __construct($id = 0)
     {

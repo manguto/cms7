@@ -2,14 +2,14 @@
 
 namespace manguto\cms5\mvc\model;
 
-use manguto\cms5\lib\database\mysql\pdo\ModelMysqlPDO;
-use manguto\cms5\lib\model\Model;
+use manguto\cms5\lib\model\Model;   
 use manguto\cms5\lib\model\ModelAttribute;
+use manguto\cms5\lib\database\repository\ModelRepository;
 
 class UserPasswordRecoveries extends Model
 {   
     
-    use ModelMysqlPDO;
+    use ModelRepository;
     
     const deadline = 60*60*2; //prazo de validade da solicitacao de reset de senha (2 horas)
     

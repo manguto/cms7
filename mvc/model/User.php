@@ -7,12 +7,12 @@ use manguto\cms5\lib\Sessions;
 use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\Logs;
-use manguto\cms5\lib\database\mysql\pdo\ModelMysqlPDO;
+use manguto\cms5\lib\database\repository\ModelRepository;
 
 class User extends Model
 {
 
-    use ModelMysqlPDO;
+    use ModelRepository;
 
     const SESSION = "User";
 

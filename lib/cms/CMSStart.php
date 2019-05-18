@@ -5,12 +5,15 @@ use manguto\cms5\lib\ServerHelp;
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Logs;  
+use manguto\cms5\lib\Sessions;
 
 class CMSStart
 {
 
     static function Run()
     {   
+        
+        // --------------------------------------
         if (! defined('VIRTUAL_HOST_ACTIVE')) {
             throw new Exception("A constante 'VIRTUAL_HOST_ACTIVE' não foi definida. Defina-a no arquivo de CONFGURAÇÕES e tente novamente.");
         }
@@ -51,7 +54,17 @@ class CMSStart
 
         self::HTML_AUX();
 
+        // --------------------------------------
         
+        // Logs Start!
+        Logs::Start();
+        
+        // --------------------------------------
+        
+        // Sessions reset check!
+        Sessions::checkResetRequest();
+        
+        // --------------------------------------
 
     }
 

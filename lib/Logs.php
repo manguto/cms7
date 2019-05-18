@@ -1,10 +1,10 @@
 <?php
 namespace manguto\cms5\lib;
 
+use manguto\cms5\mvc\model\User;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
-use manguto\cms5\mvc\model\User;
 
 class Logs
 {
@@ -164,9 +164,20 @@ class Logs
         }
         
         if(sizeof($logs)>0){
-            $filename = array_pop($logs);
-            $return = Arquivos::obterConteudo($filename);
-            $return = "<pre>$return</pre>";
+            {
+                $filename = array_pop($logs);
+                $content = Arquivos::obterConteudo($filename);
+                {//substituicoes para evitar interpretacao de JSON do navegador, entre outras
+                    $content = str_replace('[]', '', $content);
+                    $content = str_replace('[', '', $content);
+                    $content = str_replace(']', ' |', $content);
+                }
+            }
+            
+            
+            $return = "<pre>".chr(10);
+            $return .= $content;
+            $return .= chr(10)."</pre>";
         }else{
             $return = "Nenhum arquivo de log encontrado para a sessão ($sid) e usuário atuais ($uid). [$term]";
         }
