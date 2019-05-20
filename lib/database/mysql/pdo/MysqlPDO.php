@@ -10,14 +10,14 @@ class MysqlPDO extends \PDO implements Database
 
     protected $conn;
 
-    public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = 'utf8')
+    public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = '')
     {
         if ($dbhost == '' && $dbuser == '' && $dbpass == '' && $dbname == '') {
             $dbhost = DATABASE_HOST;
             $dbuser = DATABASE_USER;
             $dbpass = DATABASE_PASS;
             $dbname = DATABASE_NAME;
-            $charset = DATABASE_CHARTSET;
+            $charset = $charset=='' ? 'utf8' : DATABASE_CHARTSET;
         }
 
         $dsn = "mysql:host=$dbhost;dbname=$dbname";
@@ -74,9 +74,20 @@ class MysqlPDO extends \PDO implements Database
         }
         // deb($statement,0);
         // deb($parameters,0);
-        // echo "<hr/>";
-        $statement->execute();
 
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        if(!$statement->execute()){
+            $errorInfo = $statement->errorInfo();
+            $sqlstate_errorCode = $errorInfo[0];
+            $driver_errorCode = $errorInfo[1];
+            $driver_errorMsg = $errorInfo[2];
+            throw new Exception("$driver_errorMsg | Driver:$driver_errorCode | SqlState: $sqlstate_errorCode.");
+        }        
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         return $statement;
     }
 

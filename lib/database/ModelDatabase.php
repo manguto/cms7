@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib\model;
+namespace manguto\cms5\lib\database;
 
 /**
  * Responsavel pela definicao dos metodos fundamentais aos TRAITS que fazem a interface com as bases de dados (ModelMysqlPDO, ModelRepository, etc.),

@@ -28,6 +28,8 @@ class User extends Model
         1 => 'SIM'
     ];
 
+    
+    
     public function __construct($id = 0)
     {
         // atributos basicos (fundamentais)
@@ -43,7 +45,7 @@ class User extends Model
         if ($id != 0) {
             $this->load();
             // deb($this);
-        }        
+        }
         // verifica corretude da estrutura dos dados
         parent::checkSetStruct();
     }
@@ -142,11 +144,8 @@ class User extends Model
     {
         Logs::set(Logs::TYPE_INFO, 'Verificação/Definição de usuário administrador.');
 
-        $quantUsuarios = (new self())->length('SELECT * FROM user WHERE login="admin" ');
-        // deb($quantUsuarios);
-        if ($quantUsuarios == 0) {
-            Logs::set(Logs::TYPE_INFO, 'Usuário administrador NÃO encontrado.');
-            // --------------------------------------------------- set user admin
+        { // usuario padrao fundamental!
+          // --------------------------------------------------- set user admin
             $admin = new User();
             $admin->setname('Administrador');
             $admin->setlogin('admin');
@@ -155,6 +154,20 @@ class User extends Model
             $admin->setphone('(XX) X.XXXX-XXXX');
             $admin->setadminzoneaccess(1);
             $admin->setdevzoneaccess(1);
+        }
+
+        { // obtencao dos usuarios com o login 'admin'
+            {
+                // $query = 'SELECT * FROM user WHERE login=:login ';
+                $query = ' $login="{login}" ';
+            }
+            $quantUsuarios = ($admin->length($query, $admin->getParameters('login')));
+            // deb($quantUsuarios);
+        }
+
+        // deb($quantUsuarios);
+        if ($quantUsuarios == 0) {
+            Logs::set(Logs::TYPE_INFO, 'Criação de usuário administrador necessária...');
             $admin->save();
             Logs::set(Logs::TYPE_INFO, 'Usuário administrador criado com sucesso!');
             // ---------------------------------------------------
@@ -181,7 +194,11 @@ class User extends Model
                 // deb($usuario_teste);
             }
             { // usuario existe
-                $results = (new self())->search(" SELECT * FROM user WHERE login=:login", $usuario_teste->getParameters('login'));
+                {
+                    // $query = ' SELECT * FROM user WHERE login=:login ';
+                    $query = ' $login={login} ';
+                }
+                $results = (new self())->search($query, $usuario_teste->getParameters('login'));
                 // deb($results);
 
                 if (count($results) === 0) {
@@ -192,12 +209,14 @@ class User extends Model
             }
             { // usuario e senha existem
                 {
-                    // cifragem de password para comparacao
+                    // $query = ' SELECT * FROM user WHERE login=:login AND password=:password ';
+                    $query = ' $login={login} && $password={password} ';
                 }
-                $results = $usuario_teste->search("SELECT * FROM user WHERE login=:login AND password=:password", $usuario_teste->getParameters([
+                $results = $usuario_teste->search($query, $usuario_teste->getParameters([
                     'login',
                     'password'
                 ]));
+
                 // deb($results);
 
                 if (count($results) === 0) {
@@ -257,7 +276,14 @@ class User extends Model
      */
     public function checkLoginExist(): bool
     {
-        $result = User::search(" SELECT * FROM user WHERE ( login='" . $this->getlogin() . "' AND id!=" . $this->getId() . " )");
+        {
+            // $query = ' SELECT * FROM user WHERE ( login=:login AND id!=:id ) ';
+            $query = ' $login={login} && $id!={id} ';
+        }
+        $result = User::search($query, $this->getParameters([
+            'login',
+            'id'
+        ]));
         // deb($result);
         if (sizeof($result) == 1) {
             return true;
@@ -270,7 +296,15 @@ class User extends Model
 
     public function checkEmailExist(): bool
     {
-        $result = User::search(" SELECT * FROM user WHERE ( email='" . $this->getemail() . "' AND id!=" . $this->getId() . " )");
+        {
+            // $query = ' SELECT * FROM user WHERE ( email=:email AND id!=:id ) ';
+            $query = ' $email={email} && $id!={id} ';
+        }
+        $result = User::search($query, $this->getParameters([
+            'email',
+            'id'
+        ]));
+
         // deb($result);
         if (sizeof($result) == 1) {
             return true;
@@ -286,7 +320,14 @@ class User extends Model
         // deb($email);
         User::setForgotEmail($email);
 
-        $results = User::search(" SELECT * FROM user WHERE ( email='" . $email . "' )");
+        {
+            // $query = ' SELECT * FROM user WHERE ( email=:email ) ';
+            $query = ' $email={email} ';
+        }
+        $result = User::search($query, $this->getParameters([
+            'email'
+        ]));
+
         // deb($results);
 
         if (count($results) == 0) {

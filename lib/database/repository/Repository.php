@@ -95,7 +95,7 @@ class Repository implements Database
                 //$data_type = $info['data_type'];
                 //$length = $info['length'];
             }
-            $query = str_replace("{\$$key}", "\"$value\"", $query);
+            $query = str_replace('{'.$key.'}', "\"$value\"", $query);
         }
         return $query;
     }

@@ -5,15 +5,15 @@ namespace manguto\cms5\mvc\model;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\Strings;
 use manguto\cms5\lib\model\Model;
+use manguto\cms5\lib\database\ModelDatabase;
 use manguto\cms5\lib\database\repository\ModelRepository;
-use manguto\cms5\lib\model\ModelDatabase;
 
 
 class Zzz extends Model implements ModelDatabase
 {
 
     use ModelRepository;    
-
+    
     public function __construct($id = 0)
     {
         // atributos basicos (fundamentais)

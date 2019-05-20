@@ -7,6 +7,10 @@ use manguto\cms5\lib\Exception;
 trait ModelRepository
 {
     
+    public function getDatabaseName() {
+        return 'Repository';
+    }
+    
     public function save()
     {
         { // verificacao/ajuste antes do salvamento
@@ -66,7 +70,7 @@ trait ModelRepository
             //deb($parameters);
         }
         // deb($this);
-        $object_array = self::search(' $id={$id} ', $this->getParameters('id'));
+        $object_array = self::search(' $id={id} ', $this->getParameters('id'));
         //deb($object_array);
         
         $registerAmount = sizeof($object_array);
@@ -132,7 +136,8 @@ trait ModelRepository
        
     public function length(string $query, array $params = []): int
     {
-        
+        $return =  $this->search();        
+        return sizeof($return);
     }
       
     public function getParameters($attributes = [], $exceptions = []): array

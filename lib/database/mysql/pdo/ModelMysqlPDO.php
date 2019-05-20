@@ -9,6 +9,48 @@ use manguto\cms5\lib\model\ModelAttribute;
 trait ModelMysqlPDO
 {
 
+    /**
+     * Caso os dados do modelo em questao pertencam a outro banco de dados (externo),
+     * informar os dados de conexão neste metodo.
+     * @return string[]
+     */
+    private function DatabaseInfo():array
+    {
+        return [
+            'dbhost' => '',
+            'dbuser' => '',
+            'dbpass' => '',
+            'dbname' => '',
+            'charset' => ''
+        ];
+    }
+
+    /**
+     * Conexao com o banco de dados, conforme os dados
+     * padrao ou informados no modelo a utiliza-lo
+     * @return \manguto\cms5\lib\database\mysql\pdo\MysqlPDO
+     */
+    private function NewMysqlPDO()
+    {
+        $databaseInfo = $this->DatabaseInfo();
+        //deb($databaseInfo);
+        $dbhost = $databaseInfo['dbhost'];
+        $dbuser = $databaseInfo['dbuser'];
+        $dbpass = $databaseInfo['dbpass'];
+        $dbname = $databaseInfo['dbname'];
+        $charset = $databaseInfo['charset'];
+
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        $mysql_pdo = new MysqlPDO($dbhost, $dbuser, $dbpass, $dbname, $charset);
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+        return $mysql_pdo;
+    }
+
     public function save()
     {
         { // verificacao/ajuste antes do salvamento
@@ -75,14 +117,14 @@ trait ModelMysqlPDO
                 $query = " UPDATE $tablename SET $column_value_s WHERE id=:id ";
                 $parameters = $this->getParameters();
             }
-            // deb($query,0); deb($parameters);
+            //deb($query,0); deb($parameters);
         }
 
         {
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            $mysql_pdo = new MysqlPDO();
+            $mysql_pdo = $this->NewMysqlPDO();
             $mysql_pdo->query($query, $parameters);
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -142,13 +184,13 @@ trait ModelMysqlPDO
             // deb($id);
         }
         {
-            $mysql_pdo = new MysqlPDO();
+            $mysql_pdo = $this->NewMysqlPDO();
             $parameters = $this->getParameters('id');
             // deb($parameters);
             $mysql_pdo->query("DELETE FROM $tablename WHERE id=:id", $parameters);
         }
     }
-    
+
     public function search(string $query = '', array $params = []): array
     {
         Logs::set(Logs::TYPE_NOTICE, $query, $params);
@@ -168,7 +210,7 @@ trait ModelMysqlPDO
             }
         }
 
-        $mysql_pdo = new MysqlPDO();
+        $mysql_pdo = $this->NewMysqlPDO();
         // deb($query,0);
         $register_array = $mysql_pdo->select($query, $params);
         // deb($register_array);
@@ -268,7 +310,7 @@ trait ModelMysqlPDO
         // deb($return);
         return $return;
     }
-    
+
     private function getParameter___data_type($modelAttributeType)
     {
         /**

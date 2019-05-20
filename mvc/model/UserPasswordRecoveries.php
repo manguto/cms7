@@ -45,7 +45,7 @@ class UserPasswordRecoveries extends Model
         
         $this->SetAttributes($attributes);
     }
-    
+        
     public function DeadlineValid(){
         $timestampNow = (int) time();
         $timestampDeadline = (int) $this->getdeadline();
