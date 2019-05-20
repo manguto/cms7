@@ -17,7 +17,9 @@ class Logs
 
     const formato_datahora = 'Y-m-d H_i_s';
 
-    const formato_data_arquivo = 'Ymd_Hi';
+    const formato_data_arquivo = 'Ymd-Hi';
+
+    const formato_data_arquivo_diario = 'Ymd'; //para visualizacao no modulo de LOG (dev)
 
     // Detailed debug information
     public const TYPE_DEBUG = 'debug';
@@ -119,18 +121,43 @@ class Logs
     static function getFilename()
     {
         {
+            $date =  date(self::formato_data_arquivo);
+        }
+        {
             $sid = session_id();
-            $user = User::getSessionUser();
+            
         }        
-        
-        if ($user !== false) {
-            $user_id = Numbers::str_pad_left($user->getId(), 3);
-        } else {
-            $user_id = '000';
+        {
+            $user = User::getSessionUser();
+            if ($user !== false) {
+                $userid = Numbers::str_pad_left($user->getId(), 3);
+            } else {
+                $userid = '000';
+            }
         }
         
-        $filename = self::dir . DIRECTORY_SEPARATOR . date(self::formato_data_arquivo) . "_".$sid."_".$user_id.".log";
+        //$filename = self::dir . DIRECTORY_SEPARATOR . $date . "_".$sid."_".$userid.".log";
+        
+        {//montagem do nome do arquivo com base na estrutura padrao
+            $filename = self::filenameStruct();
+            $filename = str_replace('DATE', $date, $filename);
+            $filename = str_replace('SID', $sid, $filename);
+            $filename = str_replace('USERID', $userid, $filename);
+        }        
+        
         return $filename;
+    }
+    
+    /***
+     * estrutura dos dados contidos no nome do arquivo de log
+     * @return string
+     */
+    private static function filenameStruct($complete=true){
+        $return = "DATE_SID_USERID";
+        if($complete){
+            $return = self::dir . DIRECTORY_SEPARATOR . $return . '.log';
+        }
+        return $return;
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -185,6 +212,41 @@ class Logs
         return $return;
     }
 
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    
+    static function getDayLogs($day) {
+        $dayLogs = [];
+        
+        $logs = Diretorios::obterArquivosPastas(Logs::dir, false, true, false);
+        //deb($logs,0);
+        
+        foreach ($logs as $key=>$log) {
+            //deb($log);
+            //evita arquivos que nao tenham o dia (data) informada
+            if(strpos($log, $day)!==false){
+                
+                {//filename
+                    $dayLogs[$key]['FILENAME'] = $log;
+                }                
+                
+                {//other info
+                    $filename = str_replace(self::dir.DIRECTORY_SEPARATOR, '', $log);
+                    $filename = str_replace('.log', '', $filename);
+                    $logInfo = explode('_', $filename);
+                    //deb($logInfo);
+                    $fileStruct = explode('_',self::filenameStruct(false));
+                    //deb($fileStruct);
+                    foreach ($fileStruct as $index=>$infoName){
+                        $dayLogs[$key][$infoName] = $logInfo[$index];
+                    }
+                }                
+            }
+        }
+        
+        return $dayLogs;
+    }
+    
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
 

@@ -17,26 +17,23 @@ class ControlDevLog extends ControlDev
     static function RunRouteAnalisys($app)
     {
         $app->get('/dev/log', function () {
-            self::PrivativeDevZone();
-            $data = date(Logs::formato_data_arquivo);
-            headerLocation('/dev/log/dia/' . $data);
+            self::PrivativeDevZone();            
+            headerLocation('/dev/log/dia/' . date(Logs::formato_data_arquivo_diario));
             exit();
         });
         
-        $app->get('/dev/log/dia/:data', function ($data) {
+        $app->get('/dev/log/dia/:day', function ($day) {
             self::PrivativeDevZone();
-            {//par
-                $data = new Datas($data,Logs::formato_data_arquivo);
-                $datashow = $data->getDate('d/m/Y');
-                $ano = $data->getDate('Y');                
-            }
+            
             {
-                $datahora = $data->getDate(Logs::formato_datahora);
-                $filename = Logs::getFilename($datahora);
-                $csvContent = utf8_encode(Arquivos::obterConteudo($filename));
-                $logs = CSV::CSVToArray($csvContent);
-                //deb($logs);
+                $date = new Datas($day,Logs::formato_data_arquivo_diario);
+                $datashow = $date->getDate('d/m/Y');
+                $ano = $date->getDate('Y');
             }
+            
+            $dayLogs = Logs::getDayLogs($day);
+            //deb($dayLogs);
+            
             ViewDevLog::load('log_dia', get_defined_vars());
         });
         

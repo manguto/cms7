@@ -1,68 +1,58 @@
 {include="../general/__open"} {include="../general/_header"}
 <section>
-	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
-	<div class="container">		
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
+	<div class="container">
 		<div class="row">
 			<div class="col-10">
 				<h1>Registros do Dia</h1>
 				<h2>{$datashow}</h2>
 			</div>
-			<div class="col-2 text-right">								
+			<div class="col-2 text-right">
 				<a href="/dev/log/ano/{$ano}" class="btn btn-outline-dark">Modificar Data</a>
 			</div>
 		</div>
 		<div class="row logs">
 			<div class="col-12">
-			<table class="table table-bordered table-striped table-hover table-condensed " data-sort-name="id" data-sort-order="desc" data-pagination="true" data-search="true" style="display:none;">
-				<thead>
-					<tr>						
-						<th scope="col" data-sortable="true" data-field="id">#</th>						
-						<th scope="col" data-sortable="true" data-field="datahora">Data/Hora</th>						
-						<th scope="col" data-sortable="true" data-field="user_login">Usuário (ID)</th>
-						<th scope="col" data-sortable="true" data-field="ip">IP</th>						
-						<th scope="col" data-sortable="true" data-field="rota">Rota</th>						
-						<th scope="col" data-sortable="true" data-field="type">Tipo</th>						
-						<th scope="col" data-sortable="true" data-field="subtype">Sub-Tipo</th>						
-						<th scope="col" data-sortable="true" data-field="msg">Mensagem</th>					
-										
-					</tr>
-				</thead>
-				<tbody>	
-					{loop="$logs"}
-						<tr scope="row">															
-							<td>{$key}</td>
-							<td>{$value.datahora}</td>
-							<td>{$value.user_login} ({$value.user_id})</td>							
-							<td>{$value.ip}</td>
-							<td>{$value.rota}</td>
-							<td>{$value.type}</td>
-							<td>{$value.subtype}</td>
-							<td class='msg'>
-							{autoescape="off"}
-							{$value.msg}
-							{/autoescape}
-							</td>								
+				<table class="table table-bordered table-striped table-hover table-condensed " data-sort-name="id" data-sort-order="asc" data-pagination="false" data-search="true" style="display: none;">
+					<thead>
+						<tr>
+							<th scope="col" data-sortable="true" data-field="id">#</th>
+							<th scope="col" data-sortable="true" data-field="DATE">Data/Hora</th>
+							<th scope="col" data-sortable="true" data-field="SID">Session ID</th>
+							<th scope="col" data-sortable="true" data-field="USERID">Usuário (ID)</th>
+							<th scope="col" data-sortable="true" data-field="FILENAME">Arquivo</th>
 						</tr>
-					{/loop}	
-					
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{loop="$dayLogs"}
+						<tr scope="row">
+							<td>{$key}</td>
+							<td>{$value.DATE}</td>
+							<td>{$value.SID}</td>
+							<td>{$value.USERID}</td>
+							<td>
+								<a href="/{$value.FILENAME}" target="_blank"> {$value.FILENAME} </a>
+							</td>
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
 			</div>
-		</div>		
+		</div>
 	</div>
 	</div>
 </section>
 <style>
-.logs table td.msg{
-font-size:10px;
+.logs table td.msg {
+	font-size: 10px;
 }
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('div.logs table').bootstrapTable();
-		
+
 		$('div.logs table td.msg').css({
-			'font-size':'10px'		
+			'font-size' : '10px'
 		});
 		//show table
 		$('div.logs table').slideDown(500);
