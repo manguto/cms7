@@ -61,14 +61,12 @@ class CMSPage
     }
 
     /**
-     * verifica se o arquivo template
-     * esta na pasta padrao (ROOT_TPL)
-     * ou se pertence a algum modulos
-     * disponivel em ROOT_SIS
+     * verifica se o arquivo template estah na pasta padrao (ROOT_TPL)
+     * ou se pertence a algum modulos disponivel em ROOT_SIS
      * @param string $filename
      *  @param CMSPage $classObjectSample
      */    
-    private function checkFixTplPath(string $filename,CMSPage $classObjectSample)
+    private function CheckAndOrFixTemplatePath(string $filename,CMSPage $classObjectSample)
     {
         $return = $filename;
         
@@ -207,124 +205,17 @@ class CMSPage
         
         $this->assignDataArray($data);
         
-        $filename = $this->checkFixTplPath($filename, $classObjectSample);
+        $filename = $this->CheckAndOrFixTemplatePath($filename, $classObjectSample);
         //deb($filename);
         $html = $this->tpl->draw($filename, true);
         
-        $html = self::TplReferencesFix($html);
+        $html = CMSPage_Tools::TplReferencesFix($html);
         
         if ($toString) {
             return $html;
         } else {
             echo $html;
         }
-    }
-    
-    /*private static function getIncludeVars(){
-        {//local
-            //deb(ROOT_TPL,0);
-            $tpl_path = ROOT_TPL;
-            $tpl_path = str_replace('..'.DIRECTORY_SEPARATOR.SIS_FOLDERNAME.DIRECTORY_SEPARATOR, '', $tpl_path);
-            //deb($tpl_path);  
-            $levels = 7;
-        }
-        {//pastas a serem utilizadas
-            $folders = self::tpl_inclusive_folders;
-        }
-        {//templates
-            $tpls = [];
-            foreach ($folders as $folder){
-                $tpls =  array_merge($tpls,Diretorios::obterArquivosPastas($tpl_path.''.$folder, true, true, false,['html']));                
-            }            
-            //deb($tpls);
-        }
-        {
-            $levels = 7;
-        }
-        {
-            $include_vars = [];
-            foreach ($tpls as $tpl_file){
-                //deb($tpl_file,0);
-                {//remove path part
-                    $remove = '..'.DIRECTORY_SEPARATOR.SIS_FOLDERNAME.DIRECTORY_SEPARATOR;
-                    $tpl_file = str_replace($remove, '', $tpl_file);
-                }
-                
-                $filename = Arquivos::obterNomeArquivo($tpl_file,false);
-                //deb($filename);
-                
-                $path = Arquivos::obterCaminho($tpl_file);                
-                //deb($path,0);
-                
-                for ($level = 0; $level <= $levels; $level++) {                    
-                    {
-                        $filename_tmp = $level==0 ? $filename : $filename.$level;
-                    }
-                    {
-                        $upfolder = str_repeat('..'.DIRECTORY_SEPARATOR, $level);
-                    }
-                    $include_vars[$filename_tmp] = $upfolder . $path . $filename;
-                }                  
-            }
-            //deb($include_vars,0);
-        }        
-        
-        return $include_vars;
-    }*/
-
-    static function TplReferencesFix($html)
-    {
-        if (! defined('ROOT')) {
-            throw new Exception("Constante 'ROOT' não encontrada (definida).");
-        }
-        
-        { // exceptions
-            $exc = [];
-            $exc[] = 'href="http';
-            $exc[] = "href='http";
-            
-            $exc[] = 'src="http';
-            $exc[] = "src='http";
-            
-            $exc[] = 'action="http';
-            $exc[] = "action='http";
-            // --------------------------
-            $exc[] = 'href="javascript';
-            $exc[] = "href='javascript";
-            
-            $exc[] = 'src="javascript';
-            $exc[] = "src='javascript";
-            
-            $exc[] = 'action="javascript';
-            $exc[] = "action='javascript";
-            // --------------------------
-            foreach ($exc as $k => $v) {
-                $html = str_replace($v, '#_' . $k . '_#', $html);
-            }
-        }
-        
-        // --- href
-        $html = str_replace('href="', 'href="' . ROOT, $html);
-        $html = str_replace("href='", "href='" . ROOT, $html);
-        // --- href errors fix
-        $html = str_replace(ROOT . 'javascript', 'javascript', $html); // <a href='javascript:void(0)'>
-        $html = str_replace(ROOT . '#', '#', $html); // <a href='#'>
-                                                     
-        // --- src
-        $html = str_replace('src="', 'src="' . ROOT, $html);
-        $html = str_replace("src='", "src='" . ROOT, $html);
-        
-        // --- action
-        $html = str_replace('action="', 'action="' . ROOT_ACTION, $html);
-        $html = str_replace("action='", "action='" . ROOT_ACTION, $html);
-        
-        { // exception fix
-            foreach ($exc as $k => $v) {
-                $html = str_replace('#_' . $k . '_#', $v, $html);
-            }
-        }
-        
-        return $html;
     }
 
     public function __destruct()

@@ -33,8 +33,10 @@ class CMSStart
         // --------------------------------------
 
         define('ROOT', CMSStart::ROOT());
+        
+        define('ROOT_URL', CMSStart::ROOT_URL());
 
-        define('ROOT_ACTION', CMSStart::ROOT_ACTION());
+        define('ACTION_ROOT', CMSStart::ACTION_ROOT());
 
         define('ROOT_LOCATION', CMSStart::ROOT_LOCATION());
 
@@ -223,7 +225,12 @@ class CMSStart
         return $return;
     }
 
-    private static function ROOT_ACTION()
+    private static function ROOT_URL()
+    {   
+        return str_replace('\\','/',ROOT);
+    }
+
+    private static function ACTION_ROOT()
     {
         if (VIRTUAL_HOST_ACTIVE) {
             $return = '';

@@ -17,7 +17,7 @@ class Logs
 
     const formato_datahora = 'Y-m-d H_i_s';
 
-    const formato_data_arquivo = 'Ymd-Hi';
+    const formato_data_arquivo = 'Ymd';
 
     const formato_data_arquivo_diario = 'Ymd'; //para visualizacao no modulo de LOG (dev)
 
@@ -153,7 +153,13 @@ class Logs
      * @return string
      */
     private static function filenameStruct($complete=true){
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         $return = "DATE_SID_USERID";
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         if($complete){
             $return = self::dir . DIRECTORY_SEPARATOR . $return . '.log';
         }
@@ -218,35 +224,84 @@ class Logs
     static function getDayLogs($day) {
         $dayLogs = [];
         
+        $logs = Diretorios::obterArquivosPastas(Logs::dir, false, true, false,['log']);
+        //deb($logs,0);
+        
+        foreach ($logs as $key=>$filepath) {
+            //deb($log);
+            
+            //evita arquivos que nao tenham o dia (data) informada
+            if(strpos($filepath, $day)!==false){
+                
+                $dayLogs[$key] = self::getLogfileInfo($filepath);
+                
+            }
+        }
+        
+        return $dayLogs;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    
+    static function getYearLogs($year) {
+        //deb($year);
+        $dayLogs = [];
+        
         $logs = Diretorios::obterArquivosPastas(Logs::dir, false, true, false);
         //deb($logs,0);
         
-        foreach ($logs as $key=>$log) {
+        foreach ($logs as $key=>$filepath) {
             //deb($log);
+            
+            $filename = Arquivos::obterNomeArquivo($filepath);
+            //deb($filename);
+            
+            $log_year = substr($filename, 0,4);
+            //deb($log_year);
+            
             //evita arquivos que nao tenham o dia (data) informada
-            if(strpos($log, $day)!==false){
-                
-                {//filename
-                    $dayLogs[$key]['FILENAME'] = $log;
-                }                
-                
-                {//other info
-                    $filename = str_replace(self::dir.DIRECTORY_SEPARATOR, '', $log);
-                    $filename = str_replace('.log', '', $filename);
-                    $logInfo = explode('_', $filename);
-                    //deb($logInfo);
-                    $fileStruct = explode('_',self::filenameStruct(false));
-                    //deb($fileStruct);
-                    foreach ($fileStruct as $index=>$infoName){
-                        $dayLogs[$key][$infoName] = $logInfo[$index];
-                    }
-                }                
+            if(strval($year)==strval($log_year)){                
+               
+                $dayLogs[$key]=self::getLogfileInfo($filepath);                               
+                                
             }
         }
         
         return $dayLogs;
     }
     
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    static private function getLogfileInfo($filepath) {
+        $return=[];
+        
+        {//filename
+            $return['FILENAME'] = $filepath;
+        }
+        
+        {//outras informacoes padrao
+            $logInfo = str_replace(self::dir.DIRECTORY_SEPARATOR, '', $filepath);
+            $logInfo = str_replace('.log', '', $logInfo);            
+            $logInfo = explode('_', $logInfo);
+            //deb($logInfo);
+            
+            $fileStruct = explode('_',self::filenameStruct(false));
+            //deb($fileStruct);
+            
+            foreach ($fileStruct as $index=>$infoName){
+                $return[$infoName] = $logInfo[$index];
+            }
+        }
+        {//informacoes extras
+            $DATE = $return['DATE'];
+            $date_o = new Datas($DATE,self::formato_data_arquivo);
+            
+            $return['YEAR'] = $date_o->getDate('Y');
+            $return['MONTH'] = $date_o->getDate('m');
+            $return['DAY'] = $date_o->getDate('d');
+        }
+        return $return;
+    }
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
 

@@ -84,69 +84,15 @@ class CMSPageOther{
 		
 		$html = $this->tpl->draw($filename,true);
 		
-		$html = self::TplReferencesFix($html);
+		$html = CMSPage_Tools::TplReferencesFix($html);
 		
 		if($toString){
 		    return $html;
-		}else{
-		    echo $html;
-		}		
-	}
-	
-	static function TplReferencesFix($html){
-	    
-	    if(!defined('ROOT')){
-	        throw new Exception("Constante 'ROOT' não encontrada (definida).");
-	    }
-	    
-	    {//exceptions
-	        $exc = [];
-	        $exc[] = 'href="http';
-	        $exc[] = "href='http";
-	        
-	        $exc[] = 'src="http';
-	        $exc[] = "src='http";
-	        
-	        $exc[] = 'action="http';
-	        $exc[] = "action='http";
-	        //--------------------------
-	        $exc[] = 'href="javascript';
-	        $exc[] = "href='javascript";
-	        
-	        $exc[] = 'src="javascript';
-	        $exc[] = "src='javascript";
-	        
-	        $exc[] = 'action="javascript';
-	        $exc[] = "action='javascript";
-	        //--------------------------
-	        foreach ($exc as $k=>$v){
-	            $html = str_replace($v,'#_'.$k.'_#',$html);
-	        }
-	    }
-	    
-	    //--- href
-	    $html = str_replace('href="','href="'.ROOT,$html);
-	    $html = str_replace("href='","href='".ROOT,$html);
-	    //--- href errors fix
-	    $html = str_replace(ROOT.'javascript','javascript',$html); //<a href='javascript:void(0)'>
-	    $html = str_replace(ROOT.'#','#',$html); //<a href='#'>
-	    
-	    //--- src
-	    $html = str_replace('src="','src="'.ROOT,$html);
-	    $html = str_replace("src='","src='".ROOT,$html);
-	    
-	    //--- action
-	    $html = str_replace('action="','action="'.ROOT_ACTION,$html);
-	    $html = str_replace("action='","action='".ROOT_ACTION,$html);
-	    
-	    {//exception fix
-	        foreach ($exc as $k=>$v){
-	            $html = str_replace('#_'.$k.'_#',$v,$html);
-	        }
-	    }
-	    
-	    return $html;
-	}
+        } else {
+            echo $html;
+        }
+    }
+
 	
 	public function __destruct()
 	{

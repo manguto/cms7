@@ -2,13 +2,10 @@
 <section>
 	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
 	<div class="container">
-		<div class="row">
-			<div class="col-10">
+		<div class="row mt-2">
+			<div class="col-12">
 				<h1>Registros do Dia</h1>
-				<h2>{$datashow}</h2>
-			</div>
-			<div class="col-2 text-right">
-				<a href="/dev/log/ano/{$ano}" class="btn btn-outline-dark">Modificar Data</a>
+				<h2><a href="/dev/log/ano/{$ano}" style="color:#000; " title="Modificar Data">{$datashow}</a></h2>				
 			</div>
 		</div>
 		<div class="row logs">
@@ -17,17 +14,17 @@
 					<thead>
 						<tr>
 							<th scope="col" data-sortable="true" data-field="id">#</th>
-							<th scope="col" data-sortable="true" data-field="DATE">Data/Hora</th>
+							<th scope="col" data-sortable="true" data-field="DATE">Data</th>
 							<th scope="col" data-sortable="true" data-field="SID">Session ID</th>
 							<th scope="col" data-sortable="true" data-field="USERID">Usuário (ID)</th>
 							<th scope="col" data-sortable="true" data-field="FILENAME">Arquivo</th>
 						</tr>
 					</thead>
 					<tbody>
-						{loop="$dayLogs"}
+						{loop="$dayLogs"}						
 						<tr scope="row">
 							<td>{$key}</td>
-							<td>{$value.DATE}</td>
+							<td>{$value.DAY}/{$value.MONTH}/{$value.YEAR}</td>							
 							<td>{$value.SID}</td>
 							<td>{$value.USERID}</td>
 							<td>
