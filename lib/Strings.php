@@ -40,6 +40,17 @@ class Strings
         return $return;
     }
     
+    /**
+     * remove as entidades html de uma string html
+     * @param string $string
+     * @param string $replace
+     * @return string
+     */
+    static function html_entity_decode(string $string,string $replace=''):string{        
+        $return = preg_replace("/&#?[a-z0-9]+;/i",$replace,$string);
+        return $return; 
+    }
+    
 
     static function acronimo($string)
     {
