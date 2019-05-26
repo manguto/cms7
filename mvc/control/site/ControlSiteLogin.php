@@ -11,7 +11,7 @@ class ControlSiteLogin extends ControlSite
 {
 
     static function RunRouteAnalisys($app)
-    {
+    {   
         $app->get('/login', function () {
             ControlSiteLogin::get_login();
         });

@@ -11,7 +11,6 @@ use manguto\cms5\mvc\control\site\ControlSite;
 use manguto\cms5\mvc\control\admin\ControlAdmin;
 use manguto\cms5\mvc\control\dev\ControlDev;
 use manguto\cms5\mvc\control\crud\ControlCRUD;
-use manguto\cms5\lib\Logs;
 
 class Control
 {
@@ -33,8 +32,8 @@ class Control
     {   
         
         // ====================================================================================================
-        { // SITE - Front End
-            ControlSite::RunRouteAnalisys($app);
+        { // SITE - Front End            
+            ControlSite::RunRouteAnalisys($app);            
         }
         // ====================================================================================================
         { // SITE - Back End

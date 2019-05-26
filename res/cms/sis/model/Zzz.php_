@@ -1,7 +1,7 @@
 <?php
 namespace sis\model;
 
-use manguto\cms5\lib\repository\Repository;
+use manguto\cms5\lib\database\repository\Repository;
 
 class Zzz extends Repository
 {

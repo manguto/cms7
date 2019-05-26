@@ -6,9 +6,10 @@ require_once 'configurations.php';
 
 use manguto\cms5\mvc\control\Control;
 use manguto\cms5\lib\Exception;
-
+use manguto\cms5\lib\cms\CMSStart;
 try {   
-    
+
+    CMSStart::Run();
     Control::Start();
     
 } catch (\Throwable | Exception | \Error $e) {

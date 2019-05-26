@@ -1,12 +1,11 @@
 <?php
-use manguto\cms5\lib\Arquivos;
 
 // ##################################################################################################
 // ################################ GENERAL CONFIGURATIONS ##########################################
 // ##################################################################################################
 
 // nome do completo do sistema
-define("SIS_NAME_FULL", "Projeto Auxiliar");
+define("SIS_NAME_FULL", "Projeto de Suporte Pessoal");
 
 // nome do reduzido do sistema
 define("SIS_NAME", "Projeto");
@@ -28,13 +27,13 @@ define("SERVER_URL", "http://admin.com");
 define('DATABASE_HOST', 'localhost');
 
 //username
-define('DATABASE_USER', 'root');
+define('DATABASE_USER', 'new');
 
 //password
-define('DATABASE_PASS', '@!#pass');
+define('DATABASE_PASS', 'old');
 
 //database name
-define('DATABASE_NAME', 'banco');
+define('DATABASE_NAME', 'new');
 
 //chartset
 define('DATABASE_CHARTSET', 'utf8');
@@ -59,25 +58,14 @@ setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
 // default_timezone_set
 date_default_timezone_set('America/Recife');
 
-// ##################################################################################################
-// ################################### AUTO CONFIGURATIONS ##########################################
-// ##################################################################################################
-
-// abrev. do sistema
-define("SIS_FOLDERNAME", Arquivos::obterNomePasta(__FILE__));
-
-// sistem url
-define("SIS_URL", SERVER_URL . SIS_FOLDERNAME);
 
 // ##################################################################################################
 // ################################### SERVER CONFIGURATIONS ########################################
 // ##################################################################################################
 
-// Define here if there are virtual hosts active (true/false)
+// Especifica se existem "virtual hosts" (true/false)
 define('VIRTUAL_HOST_ACTIVE', false);
 
-error_reporting(E_ALL);
 
-ini_set('display_errors', 1);
 
 ?>

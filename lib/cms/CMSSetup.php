@@ -9,8 +9,16 @@ use manguto\cms5\lib\Exception;
 class CMSSetup
 {
 
-    static function Run($vendor_manguto_prj_root)
+    /**
+     * informe o nome do projeto do repositorio manguto em questao
+     * ex.: 'manguto','cms3','cms5'
+     * @param string $manguto_prj_name
+     */
+    static function Run($manguto_prj_name = '')
     {
+        
+        $vendor_manguto_prj_root='vendor/manguto/'.$manguto_prj_name.'/';
+        
         try {
             echo "<h1>SETUP</h1>";
             echo "<hr />";
