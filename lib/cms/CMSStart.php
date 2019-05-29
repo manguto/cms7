@@ -260,7 +260,7 @@ class CMSStart
             $return = $DR . VENDOR_MANGUTO_PRJ_ROOT . 'tpl/';
         } else {
             // deb(SIS_FOLDERNAME);
-            $return = '../' . SIS_FOLDERNAME . '/' . VENDOR_MANGUTO_PRJ_ROOT . 'tpl/';
+            $return = '../' . SIS_FOLDERNAME . '/' . VENDOR_MANGUTO_PRJ_ROOT . 'mvc/tpl/';
         }
         // deb($return);
         return $return;

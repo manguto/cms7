@@ -1,27 +1,54 @@
 <?php
 namespace sis\model;
 
-use manguto\cms5\lib\database\repository\Repository;
+use manguto\cms5\lib\model\Model;
+use manguto\cms5\lib\database\ModelDatabase;
+use manguto\cms5\lib\database\repository\ModelRepository;
+use manguto\cms5\lib\model\ModelAttribute;
 
-class Zzz extends Repository
+class Zzz extends Model implements ModelDatabase
 {
-    //chaves primarias
-    protected $primary_keys = [];
-    
-    public function __construct($id=0){
-        $this->preLoad();
-        parent::__construct($id);
-        $this->posLoad();
-    }
-    
-    private function preLoad()
+
+    use ModelRepository;
+
+    public function __construct($id = 0)
     {
-        {// definicao dos atributos do objeto
-            //$this->values['']='';            
+        // atributos basicos (fundamentais)
+        $this->SetFundamentalAttributes($id);
+        // deb($this);
+
+        // definicao dos atributos deste modelo
+        $this->defineAttributes();
+        // deb($this);
+
+        // carregamento de atributos do banco de dados
+        if ($id != 0) {
+            $this->load();
+            // deb($this);
         }
+        // verifica corretude da estrutura dos dados
+        parent::checkSetStruct();
     }
-    
+
+    /**
+     * !IMPORTANT
+     * Função para definicao do atributos do modelo!
+     */
+    private function defineAttributes()
+    {
+        $attributes = [
+            'nome' => [
+                'length' => '64',
+                'value' => ''
+            ],
+            'peso' => [
+                'type' => ModelAttribute::TYPE_FLOAT,
+                'value' => 0,
+                'unit' => 'Kg'
+            ]
+        ];
+        $this->SetAttributes($attributes);
+    }
 }
 
 
-?>

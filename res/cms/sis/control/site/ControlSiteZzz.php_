@@ -1,10 +1,10 @@
 <?php
-namespace sis\control;
+namespace sis\control\site;
 
-use manguto\cms5\mvc\control\site\ControlSite;
 use sis\view\ViewSiteZzz;
+use manguto\cms5\mvc\control\site\ControlSite;
 
-class ControlSiteZzz extends ControlSite  
+class ControlSiteZzz extends ControlSite 
 {
 
     static function RunRouteAnalisys($app)

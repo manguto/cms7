@@ -1,5 +1,5 @@
 <?php
-namespace sis\view;
+namespace sis\view\site;
 
 use manguto\cms5\mvc\view\site\ViewSite;
 

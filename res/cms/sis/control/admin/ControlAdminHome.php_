@@ -1,7 +1,8 @@
 <?php
-namespace manguto\cms5\mvc\control\admin;
+namespace sis\control\admin;
 
-use manguto\cms5\mvc\view\admin\ViewAdminHome;
+use manguto\cms5\mvc\view\admin\ViewAdmin;
+use manguto\cms5\mvc\control\admin\ControlAdmin;
 
 class ControlAdminHome extends ControlAdmin
 {
@@ -10,7 +11,7 @@ class ControlAdminHome extends ControlAdmin
     {
         $app->get('/admin', function () {
             self::PrivativeAdminZone();
-            ViewAdminHome::load('index');
+            ViewAdmin::load('admin_home');
         });
     }
 }

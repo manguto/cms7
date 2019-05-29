@@ -1,9 +1,9 @@
 <?php
-namespace sis\view;
+namespace sis\view\crud;
 
 use manguto\cms5\mvc\view\crud\ViewCRUD;
-use manguto\cms5\lib\html\HTMLPagination;
 use manguto\cms5\lib\cms\CMSPageCRUD;
+use manguto\cms5\lib\html\HTMLPagination;
 
 class ViewCRUDZzz extends ViewCRUD
 {

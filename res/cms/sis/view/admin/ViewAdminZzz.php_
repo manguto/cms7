@@ -1,5 +1,7 @@
 <?php
-namespace sis\view;
+namespace sis\view\admin;
+
+
 
 use manguto\cms5\mvc\view\admin\ViewAdmin;
 
