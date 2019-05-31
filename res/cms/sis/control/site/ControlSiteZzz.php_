@@ -1,7 +1,7 @@
 <?php
 namespace sis\control\site;
 
-use sis\view\ViewSiteZzz;
+use sis\view\site\ViewSiteZzz;
 use manguto\cms5\mvc\control\site\ControlSite;
 
 class ControlSiteZzz extends ControlSite 

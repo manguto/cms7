@@ -1,7 +1,7 @@
 <?php
 namespace sis\control\admin;
 
-use sis\view\ViewAdminZzz;
+use sis\view\admin\ViewAdminZzz;
 use manguto\cms5\mvc\control\admin\ControlAdmin;
 
 class ControlAdminZzz extends ControlAdmin 

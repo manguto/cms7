@@ -1,7 +1,7 @@
 <?php
 namespace sis\control\crud;
 
-use sis\view\ViewCRUDZzz;
+use sis\view\crud\ViewCRUDZzz;
 
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\ProcessResult;
