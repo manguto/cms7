@@ -1,0 +1,43 @@
+{include="../general/__open"} {include="../general/_header"} 
+
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0"> {include="../general/_section_top"} </div>
+	<div class="container">
+		<div class="row">
+			
+			<div class="col-12">
+				<h1>Ferramentas</h1>
+				<h2>Modulos</h2>
+				Ferramenta para gerar os arquivos de um novo módulo a ser implementado para o SITE ou para o ADMIN.					
+			</div>
+			
+		</div>
+		<div class="row mt-5">
+			<form method="post">
+			<div class="col-5">
+				Plataforma:
+				<select name="platform" id="platform" class="form-control" required="required">
+					<option value=""></option>
+					<option value="site">SITE</option>
+					<option value="admin">ADMIN</option>					
+				</select>				
+				<small>Local para inserção do módulo.</small>
+				<br />
+				<br />
+				Nome base do novo módulo:
+				<input type="text" id="modulename" name="modulename" class="form-control" required="required"/>
+				<small>Primeiras letras de cada palavra em frase composta em maiúsculo, e sem caracteres especiais (acentos, coringas, etc.)</small>
+				<br />
+				<br />
+				<input type="submit" value="Gerar" class="btn btn-warning"/>
+			</div>
+			</form>
+		</div>
+	</div>
+</section>
+<script>
+$(document).ready(function(){
+	$('#modulename').val('');
+});
+</script>
+{include="../general/_footer"} {include="../general/__close"}
