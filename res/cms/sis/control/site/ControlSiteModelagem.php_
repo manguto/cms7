@@ -1,0 +1,18 @@
+<?php
+namespace sis\control\site;
+
+use sis\view\site\ViewSiteModelagem;
+use manguto\cms5\mvc\control\site\ControlSite;
+
+class ControlSiteModelagem extends ControlSite 
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/modelagem', function () {            
+            ViewSiteModelagem::modelagem();
+        });
+    }
+}
+
+?>

@@ -1,7 +1,7 @@
 <?php    
-use manguto\cms5\lib\cms\CMSSetup;
 session_start();
 session_unset();    
+use manguto\cms5\lib\cms\CMSSetup;
 require_once "vendor/autoload.php";
-CMSSetup::Run('vendor/manguto/cms5/');
+CMSSetup::Run('cms5');        
 ?>

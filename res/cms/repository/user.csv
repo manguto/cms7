@@ -1,2 +1,0 @@
-id;@creation_user_id;@creation_datetime;@modification_user_id;@modification_datetime;name;login;password;email;phone;adminzoneaccess;devzoneaccess
-1;;;;;Administrador;admin;21232f297a57a5a743894a0e4a801fc3;admin@admin.com;;1;1

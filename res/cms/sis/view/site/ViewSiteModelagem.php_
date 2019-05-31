@@ -1,0 +1,18 @@
+<?php
+namespace sis\view\site;
+
+use manguto\cms5\mvc\view\site\ViewSite;
+
+class ViewSiteModelagem extends ViewSite
+{
+
+    static function modelagem()
+    {
+        self::load('site_modelagem');
+    }
+}
+
+
+
+
+

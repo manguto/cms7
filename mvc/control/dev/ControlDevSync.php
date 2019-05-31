@@ -183,7 +183,7 @@ class ControlDevSync extends ControlDev
                     $prod_dir = Diretorios::fixDirectorySeparator($prod_dir);
                 }
                 { // base
-                    $base_dir = VENDOR_MANGUTO_PRJ_ROOT.'cms/files/';
+                    $base_dir = VENDOR_MANGUTO_PRJ_ROOT.'res/cms/';
                     $base_dir = Diretorios::fixDirectorySeparator($base_dir);
                 }
             }
@@ -327,21 +327,25 @@ class ControlDevSync extends ControlDev
                 $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts.js';
                 $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts_form.js';
                 
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/ControlAdminZzz.php';                
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/ControlSiteZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/ControlCRUDZzz.php';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/control/admin/ControlAdminZzz.php';                
+                $conf['diretorioOuArquivo_critico'][] = 'sis/control/admin/ControlAdminHome.php';                
+                $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteZzz.php';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteHome.php';                
+                $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteModelagem.php';                
+                $conf['diretorioOuArquivo_critico'][] = 'sis/control/crud/ControlCRUDZzz.php';
                 
                 $conf['diretorioOuArquivo_critico'][] = 'sis/model/Zzz.php';
                 
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/ViewAdminZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/ViewSiteZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/ViewCRUDZzz.php';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/view/admin/ViewAdminZzz.php';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteZzz.php';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteModelagem.php';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/view/crud/ViewCRUDZzz.php';
                 
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/admin_zzz.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site_zzz.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud_zzz.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud_zzz_edit.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud_zzz_view.html';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/admin/admin_zzz.html';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site/site_zzz.html';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz.html';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz_edit.html';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz_view.html';
                                
                 
                 // ...
@@ -353,11 +357,19 @@ class ControlDevSync extends ControlDev
                 $conf['diretorioOuArquivo_implementacao'][] = 'configurations.php';
                 $conf['diretorioOuArquivo_implementacao'][] = 'functions.php';
                 
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/_footer_content.html';
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/general/_footer_content.html';
                 
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/_header_title.html';                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/_menu_site.html';               
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/_menu_admin.html';
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/general/_header_title.html';                
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/general/_menu_site.html';               
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/general/_menu_admin.html';
+                
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/_menu.html';
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/site_home.html';
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/site_modelagem_top.html';
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/site_modelagem.html';
+                
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/admin/_menu.html';                
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/admin/admin_home.html';
                 
                 $conf['diretorioOuArquivo_implementacao'][] = 'sis/_footer_content.html';
                 // ...
