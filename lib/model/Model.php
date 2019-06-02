@@ -313,7 +313,7 @@ abstract class Model
      *
      * @param ModelAttribute $attribute
      */
-    private function SetAttribute(ModelAttribute $attribute)
+    protected function SetAttribute(ModelAttribute $attribute)
     {
         // deb($attribute->getName(),0);
         $this->attributes[$attribute->getName()] = $attribute;

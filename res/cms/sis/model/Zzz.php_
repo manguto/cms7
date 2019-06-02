@@ -5,50 +5,36 @@ use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\database\ModelDatabase;
 use manguto\cms5\lib\database\repository\ModelRepository;
 use manguto\cms5\lib\model\ModelAttribute;
+use manguto\cms5\lib\model\ModelTrait;
 
 class Zzz extends Model implements ModelDatabase
 {
-
+    
+    use ModelTrait;
     use ModelRepository;
 
-    public function __construct($id = 0)
-    {
-        // atributos basicos (fundamentais)
-        $this->SetFundamentalAttributes($id);
-        // deb($this);
-
-        // definicao dos atributos deste modelo
-        $this->defineAttributes();
-        // deb($this);
-
-        // carregamento de atributos do banco de dados
-        if ($id != 0) {
-            $this->load();
-            // deb($this);
-        }
-        // verifica corretude da estrutura dos dados
-        parent::checkSetStruct();
-    }
-
     /**
-     * !IMPORTANT
-     * Função para definicao do atributos do modelo!
+     * Função para definicao do atributos do modelo (ModelAttribute's)
      */
     private function defineAttributes()
     {
-        $attributes = [
-            'nome' => [
-                'length' => '64',
-                'value' => ''
-            ],
-            'peso' => [
-                'type' => ModelAttribute::TYPE_FLOAT,
-                'value' => 0,
-                'unit' => 'Kg'
-            ]
-        ];
-        $this->SetAttributes($attributes);
+        { // nome
+            $a = new ModelAttribute('nome');
+            $this->SetAttribute($a);
+        }
+        { // idade
+            $a = new ModelAttribute('idade');
+            $a->setType(ModelAttribute::TYPE_INT);
+            $this->SetAttribute($a);
+        }
+        
+        { // peso
+            $a = new ModelAttribute('peso');
+            $a->setType(ModelAttribute::TYPE_FLOAT);
+            $a->setUnit('Kg');
+            $this->SetAttribute($a);
+        }
     }
 }
 
-
+?>

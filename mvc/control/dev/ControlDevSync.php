@@ -59,7 +59,7 @@ class ControlDevSync extends ControlDev
 
         // deb($_POST);
         $filename = $prod_path;
-        $prod_content = htmlentities(Arquivos::obterConteudo($prod_path, false));
+        $prod_content = htmlentities(Arquivos::obterConteudo($prod_path, false));   
         $base_content = htmlentities(Arquivos::obterConteudo($base_path, false));
 
         { // replaces
@@ -327,18 +327,17 @@ class ControlDevSync extends ControlDev
                 $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts.js';
                 $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts_form.js';
                 
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/admin/ControlAdminZzz.php';                
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/admin/ControlAdminHome.php';                
+                $conf['diretorioOuArquivo_critico'][] = 'sis/control/admin/ControlAdminZzz.php';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteHome.php';                
                 $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteModelagem.php';                
                 $conf['diretorioOuArquivo_critico'][] = 'sis/control/crud/ControlCRUDZzz.php';
                 
                 $conf['diretorioOuArquivo_critico'][] = 'sis/model/Zzz.php';
                 
                 $conf['diretorioOuArquivo_critico'][] = 'sis/view/admin/ViewAdminZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteZzz.php';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteModelagem.php';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteZzz.php';
+                
                 $conf['diretorioOuArquivo_critico'][] = 'sis/view/crud/ViewCRUDZzz.php';
                 
                 $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/admin/admin_zzz.html';
@@ -356,6 +355,9 @@ class ControlDevSync extends ControlDev
                 $conf['diretorioOuArquivo_implementacao'][] = 'index.php';
                 $conf['diretorioOuArquivo_implementacao'][] = 'configurations.php';
                 $conf['diretorioOuArquivo_implementacao'][] = 'functions.php';
+                
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/control/admin/ControlAdminHome.php';
+                $conf['diretorioOuArquivo_implementacao'][] = 'sis/control/site/ControlSiteHome.php';
                 
                 $conf['diretorioOuArquivo_implementacao'][] = 'sis/general/_footer_content.html';
                 

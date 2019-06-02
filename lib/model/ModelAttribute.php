@@ -10,15 +10,15 @@ class ModelAttribute
 
     private $type;
 
-    private $nature;
-
     private $length;
 
-    private $value;
+    private $nature;
 
     private $unit;
 
     private $encrypted;
+
+    private $value;
 
     // ------------------------------------------------------------------------------------------------------------------------
     const TYPE_CHAR = 'char';
@@ -42,6 +42,7 @@ class ModelAttribute
     const TYPE_BOOLEAN = 'boolean';
 
     // -----------------------------------------------------------------
+    
     const NATURE_DEFAULT = 'default';
 
     const NATURE_REFERENCE_SINGLE = 'reference_single';
@@ -50,37 +51,45 @@ class ModelAttribute
 
     const NATURE_EMAIL = 'email';
 
+    // -----------------------------------------------------------------
+    
+    // .
+    // .
+    // .
+    
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
     public function __construct($attributeName, bool $checkAttributeName = true)
     {
-        { // nome do atributo
-            if ($checkAttributeName) {
-                $this->checkAttributeName($attributeName);
-            }
-            $this->setName($attributeName);
-        }
-        // tipo padrao
-        $this->type = self::TYPE_VARCHAR;
-
-        // natureza padrao
-        $this->nature = self::NATURE_DEFAULT;
-
-        // valor padrao
-        $this->value = '';
+        $this->setName($attributeName, $checkAttributeName);
+        
+        $this->setType();
+        
+        $this->setLength();
+        
+        $this->setNature();
+        
+        $this->setUnit();
+        
+        $this->setEncrypted();
+        
+        $this->setValue();
     }
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GETTERS & SETTERS
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GETTERS & SETTERS
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GETTERS & SETTERS
-    private function setName($name)
+    private function setName(string $name, $checkAttributeName = true)
     {
+        if ($checkAttributeName) {
+            $this->checkAttributeName($name);
+        }
         $this->name = $name;
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------
-    public function setType($type)
+    public function setType($type = self::TYPE_VARCHAR)
     {
         $constant_name = 'TYPE_' . strtoupper($type);
         // deb($constant_name);
@@ -91,7 +100,7 @@ class ModelAttribute
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------
-    public function setNature($nature)
+    public function setNature($nature = self::NATURE_DEFAULT)
     {
         $constant_name = 'NATURE_' . strtoupper($nature);
         // deb($constant_name);
@@ -102,6 +111,38 @@ class ModelAttribute
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------
+    public function setLength(int $length = 0)
+    {
+        if ($length < 0) {
+            throw new Exception("Tamanho de atributo não permitido ($length).");
+        }
+        $this->length = $length;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    public function setUnit(string $unit = '')
+    {
+        $this->unit = $unit;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    public function setEncrypted(bool $encrypted = false)
+    {
+        $this->encrypted = $encrypted;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    
+    /**
+     * define o valor do atributo
+     *
+     * @param mixed $value
+     */
+    public function setValue($value = '')
+    {
+        $this->value = $this->shapeValue($value);
+    }
+
     /**
      * retorna o valor do atributo
      *
@@ -112,17 +153,6 @@ class ModelAttribute
         return $this->shapeValue($this->value);
     }
 
-    // ---------------------------------------------------------------------------------------------------------------------------------
-    /**
-     * define o valor do atributo
-     *
-     * @param mixed $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $this->shapeValue($value);
-    }
-
     /**
      * molda o valor informado de acordo com o tipo do atributo atual
      *
@@ -131,7 +161,7 @@ class ModelAttribute
      */
     private function shapeValue($value)
     {
-        // ---------------------------------------------------------------
+        // --------------------------------
         /**
          * const TYPE_CHAR = 'char';
          * const TYPE_VARCHAR = 'varchar';
@@ -144,47 +174,48 @@ class ModelAttribute
          * const TYPE_TIME = 'time';
          * const TYPE_BOOLEAN = 'boolean';
          */
-        // ---------------------------------------------------------------
+        // ----------------------------------
         switch ($this->getType()) {
             case self::TYPE_INT:
                 return intval($value);
                 break;
-
+            
             case self::TYPE_FLOAT:
                 return floatval($value);
                 break;
-
+            
             case self::TYPE_BOOLEAN:
                 return boolval($value);
                 break;
-
+            
             default:
                 return strval($value);
-                ;
                 break;
         }
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------
-    // magic methods GET & SET geral
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------------------------------------------
+    // magic methods GET padrao
     public function __call(string $methodName, $args)
     {
         // metodo aplicado (solicitado)
         $method_nature = substr($methodName, 0, 3);
-
+        
         // garimpa o nome do parametro
         $attributeName = strtolower(substr($methodName, 3));
-
+        
         if ($method_nature == 'get') {
-
+            
             return $this->$attributeName;
-        } elseif ($method_nature == 'set') {
-
-            $value = $args[0];
-
-            $this->$attributeName = $value;
+            
+            // } elseif ($method_nature == 'set') {
+            // $value = $args[0];
+            // $this->$attributeName = $value;
+            
         } else {
-
+            
             throw new Exception("Método não encontrado ou incorreto ($methodName()).");
         }
     }
@@ -204,7 +235,7 @@ class ModelAttribute
         $return = $this->getValue();
         $return = strval($return);
         // deb($return);
-
+        
         return $return;
     }
 
@@ -229,7 +260,7 @@ class ModelAttribute
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
-
+    
     /**
      * verifica se o nome pode ser utilizado como atributo
      *
@@ -246,7 +277,7 @@ class ModelAttribute
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
-
+    
     /**
      * recebe um array de parametros brutos e o converte em um array de ModelAttributes
      *
@@ -257,7 +288,7 @@ class ModelAttribute
     static function Convert_ParameterDataArray_to_ModelAttributeArray(array $attributeArray, bool $checkAttributeName = true): array
     {
         $ModelAttributeArray = [];
-
+        
         foreach ($attributeArray as $attributeName => $parameters) {
             // cria o atributo
             // deb($attributeName,0); deb($parameters,0);
@@ -270,10 +301,10 @@ class ModelAttribute
             // salva no modelo
             $ModelAttributeArray[$attributeName] = $ModelAttribute;
         }
-
+        
         return $ModelAttributeArray;
     }
-
+    
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
