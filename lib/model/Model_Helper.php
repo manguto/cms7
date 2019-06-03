@@ -16,7 +16,7 @@ class Model_Helper
     
     const funcoes_padrao = ['__construct','preLoad','posLoad'];
     
-    
+    const useModelRepositoryFlag = 'use ModelRepository;';
     
     /**
      * obtem o nome da classe do repositorio informado
@@ -28,14 +28,14 @@ class Model_Helper
     static function getObjectClassname(string $tablename): string
     {
         $tablename = ucfirst(strtolower($tablename));
-        //deb($tablename,0);
+        //deb($tablename);
         
         foreach (self::model_class_folders as $model_class_folder) {
             
             $php_files = Diretorios::obterArquivosPastas($model_class_folder, true, true, false, [
                 'php'
             ]);
-            // deb($php_files,0);
+            //deb($php_files);
             foreach ($php_files as $php_file) {
                 $nomeClasse = Arquivos::obterNomeArquivo($php_file, false);
                 $path = Arquivos::obterCaminho($php_file);
@@ -75,7 +75,7 @@ class Model_Helper
         self::loadParameters($models);
         //debc($models);
         
-        self::extendsRepository($models);
+        self::useModelRepository($models);
         //debc($models);
         
         return $models;
@@ -145,6 +145,7 @@ class Model_Helper
         $modelFiles = [];
         foreach (self::model_class_folders as $model_dir){
             $files = Diretorios::obterArquivosPastas($model_dir, false, true, false,['php']);
+            //deb($files,0);
             foreach ($files as $file){
                 if(strpos($file, 'Zzz')) continue;
                 $modelFiles[] = $file;
@@ -153,16 +154,16 @@ class Model_Helper
         return $modelFiles;
     }
     
-    static private function extendsRepository(array &$models){
+    static private function useModelRepository(array &$models){
         //deb($models);
-        foreach ($models as &$model){
-            //deb($model);
+        foreach ($models as $key=>&$model){
+            //deb($key,0);
             $conteudo = $model['conteudo'];
             //debc($conteudo);
-            if(strpos($conteudo, 'extends Repository')!==false){
-                $model['extends_repository'] = true;
+            if(strpos($conteudo, self::useModelRepositoryFlag)!==false){
+                $model['useModelRepository'] = true;
             }else{
-                $model['extends_repository'] = false;
+                $model['useModelRepository'] = false;
             }
         }
         
@@ -243,9 +244,9 @@ class Model_Helper
         $model_array = Model_Helper::get();
         //deb($model_array);
         foreach ($model_array as $tablename=>$model_information){
-            //deb($model);
-            $er = $model_information['extends_repository'];
-            //deb($er);
+            //deb($model_information);
+            $er = $model_information['useModelRepository'];
+            //deb($tablename,0); deb($er,0);
             if($er){
                 $tablename_show = explode('_',$tablename);
                 $tablename_show = array_map('ucfirst',$tablename_show);

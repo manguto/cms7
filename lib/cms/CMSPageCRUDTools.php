@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\mvc;
+namespace manguto\cms5\lib\cms;
 
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\ProcessResult;
@@ -9,6 +9,8 @@ use manguto\cms5\lib\model\Model_Helper;
 
 class CMSPageCRUDTools
 {
+    
+    const models_dir = 'sis/';
 
     static function set_structure($tablename)
     {
@@ -37,7 +39,7 @@ class CMSPageCRUDTools
     static private function set_controler_structure(string $tablename, string $Modelname)
     {
         { // file - name & content
-            $filename = 'sis/control/ControlCRUDZzz.php';
+            $filename = self::models_dir.'control/crud/ControlCRUDZzz.php';
             $content = Arquivos::obterConteudo($filename);
             // debc($content);
         }
@@ -62,7 +64,7 @@ class CMSPageCRUDTools
     static private function set_view_structure(string $tablename, string $Modelname)
     {
         { // file - name & content
-            $filename = 'sis/view/ViewCRUDZzz.php';
+            $filename = self::models_dir.'view/crud/ViewCRUDZzz.php';
             $content = Arquivos::obterConteudo($filename);
             // debc($content);
         }
@@ -155,7 +157,7 @@ class CMSPageCRUDTools
     static private function set_tpl_structures(string $tablename, string $Modelname)
     {
         { // file - name & content
-            $filename = 'sis/tpl/crud_zzz.html';
+            $filename = self::models_dir.'tpl/crud/crud_zzz.html';
             $content = Arquivos::obterConteudo($filename);
             // debc($content);
         }
@@ -310,7 +312,7 @@ class CMSPageCRUDTools
     static private function set_tpl_edit_structures(string $tablename, string $Modelname)
     {
         { // file - name & content
-            $filename = 'sis/tpl/crud_zzz_edit.html';
+            $filename = self::models_dir.'tpl/crud/crud_zzz_edit.html';
             $content = Arquivos::obterConteudo($filename);
             // debc($content);
         }
@@ -338,7 +340,7 @@ class CMSPageCRUDTools
     static private function set_tpl_view_structures(string $tablename, string $Modelname)
     {
         { // file - name & content
-            $filename = 'sis/tpl/crud_zzz_view.html';
+            $filename = self::models_dir.'tpl/crud/crud_zzz_view.html';
             $content = Arquivos::obterConteudo($filename);
             // debc($content);
         }

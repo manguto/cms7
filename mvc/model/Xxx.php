@@ -1,58 +1,43 @@
 <?php
+namespace sis\model;
 
-namespace manguto\cms5\mvc\model;
-
-use manguto\cms5\lib\model\ModelAttribute;
-use manguto\cms5\lib\Strings;
 use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\database\ModelDatabase;
 use manguto\cms5\lib\database\repository\ModelRepository;
+use manguto\cms5\lib\model\ModelAttribute;
+use manguto\cms5\lib\model\ModelTrait;
+use manguto\cms5\lib\Strings;
 
-
-class Zzz extends Model implements ModelDatabase
+class Xxx extends Model implements ModelDatabase
 {
-
-    use ModelRepository;    
     
-    public function __construct($id = 0)
-    {
-        // atributos basicos (fundamentais)
-        $this->SetFundamentalAttributes($id);
-        // deb($this);
-
-        // definicao dos atributos deste modelo
-        $this->defineAttributes();
-        //deb($this);
-
-        //carregamento de atributos do banco de dados
-        if($id!=0){
-            $this->load();
-            //deb($this);
-        }      
-        //verifica corretude da estrutura dos dados
-        parent::checkSetStruct();
-        
-    }
+    use ModelTrait; 
+    use ModelRepository;
 
     /**
-     * !IMPORTANT
-     * Função para definicao do atributos do modelo!
+     * Função para definicao do atributos do modelo (ModelAttribute's)
      */
     private function defineAttributes()
     {
-        $attributes = [
-            'nome' => [
-                'length' => '64',
-                'value' => ''
-            ],
-            'peso' => [
-                'type' => ModelAttribute::TYPE_FLOAT,
-                'value' => 0,
-                'unit' => 'Kg'
-            ]
-        ];
-        $this->SetAttributes($attributes);
+        { // nome
+            $a = new ModelAttribute('nome');
+            $this->SetAttribute($a);
+        }
+        { // idade
+            $a = new ModelAttribute('idade');
+            $a->setType(ModelAttribute::TYPE_INT);
+            $this->SetAttribute($a);
+        }
+        
+        { // peso
+            $a = new ModelAttribute('peso');
+            $a->setType(ModelAttribute::TYPE_FLOAT);
+            $a->setUnit('Kg');
+            $this->SetAttribute($a);
+        }
     }
+    
+    
     
     // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -84,7 +69,7 @@ class Zzz extends Model implements ModelDatabase
         $c = new self();
         //$c->setPeso('54');
         
-        $list = $c->search();        
+        $list = $c->search();
         //deb($list);
         
         $id_list = array_keys($list);
@@ -100,7 +85,7 @@ class Zzz extends Model implements ModelDatabase
     
     static function TEST_UPDATE()
     {
-        $c = self::TEST_RETRIEVE();                
+        $c = self::TEST_RETRIEVE();
         $c->setNome('Xxxxxxxxxxxxx xx Xxxxx');
         $c->setPeso('999');
         $c->save();
@@ -117,27 +102,4 @@ class Zzz extends Model implements ModelDatabase
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+?>

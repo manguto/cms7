@@ -1,8 +1,8 @@
 <?php
 namespace manguto\cms5\mvc\control\dev;
 
-use manguto\cms5\mvc\CMSPageCRUDTools;
 use manguto\cms5\mvc\view\dev\ViewDevToolsCRUD;
+use manguto\cms5\lib\cms\CMSPageCRUDTools;
 
    
 
