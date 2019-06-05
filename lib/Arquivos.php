@@ -3,6 +3,8 @@ namespace manguto\cms5\lib;
 
 class Arquivos
 {
+    
+    const backupCopy_dateMasc = 'Y-m-d_His';
 
     static function obterExtensao($filename)
     {
@@ -25,29 +27,31 @@ class Arquivos
         return $return;
     }
 
-    static function obterNomeArquivo($filepath, $withExtension = true)
+    static function obterNomeArquivo($filenamePath, $withExtension = true)
     {
-        // debug($filepath);
-        $teste = strpos($filepath, chr(47)); // '/'
-                                             // debug($teste);
-        if ($teste !== false) {
-            $separador = chr(47); // '/'
-        } else {
-            $separador = chr(92); // '\';
-        }
-        // debug($separador);
+        
+        {//verificacao de delimitador utilizado (separador de pastas e arquivos)
+            $teste = strpos($filenamePath, chr(47)); // '/'
+            if ($teste !== false) {
+                $delimitador = chr(47); // '/'
+            } else {
+                $delimitador = chr(92); // '\';
+            }
+        }        
 
-        $filepath = explode($separador, $filepath);
-        $filepath = array_pop($filepath);
+        {//obtencao do nome do arquivo completo (sem o caminho)
+            $filenamePath_parts = explode($delimitador, $filenamePath);
+            $filename = array_pop($filenamePath_parts);
+        }        
 
-        { // remove extension
+        { // se solicitado, remocao da extensao
             if ($withExtension === false) {
-                $ext = self::obterExtensao($filepath);
-                $filepath = str_replace('.' . $ext, '', $filepath);
+                $ext = self::obterExtensao($filename);
+                $filename = str_replace('.' . $ext, '', $filename);
             }
         }
 
-        return $filepath;
+        return $filename;
     }
 
     static function obterNomePasta($filepath)
@@ -320,19 +324,22 @@ class Arquivos
      * @throws Exception
      * @return bool
      */
-    static function copiaSeguranca(string $filename,bool $leftSide=true,string $dateMasc='Ymd-His',string $backupFolderName = 'backups',bool $throwException=false):bool{
+    static function copiaSeguranca(string $filename,bool $dateMascSideRight=true,string $dateMasc='',string $backupFolderName = '',bool $throwException=false):bool{
         
         if(file_exists($filename)){
             
             {//backup filepath
-                {//datemasc
+                {//datemasc                    
+                    $dateMasc = $dateMasc=='' ? self::backupCopy_dateMasc : $dateMasc;                    
                     $date = date($dateMasc);
                 }
-                if($leftSide){
+                if($dateMascSideRight){
+                    $date = "_{$date}";
+                    $filename_new = str_replace('.', $date.'.', $filename);                    
+                }else{
+                    $date = "{$date}_";
                     $filename_ext = self::obterNomeArquivo($filename);
                     $filename_new = str_replace($filename_ext, $date.$filename_ext,$filename);
-                }else{
-                    $filename_new = str_replace('.', $date.'.', $filename);
                 }
                 {//folder stuff
                     {

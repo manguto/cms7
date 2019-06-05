@@ -6,7 +6,7 @@ use sis\view\crud\ViewCRUDZzz;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\mvc\control\crud\ControlCRUD;
-use manguto\cms5\mvc\model\Zzz;
+use sis\model\Zzz;
 
 
 class ControlCRUDZzz extends ControlCRUD  
