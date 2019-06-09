@@ -5,7 +5,7 @@ use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\mvc\view\site\ViewSiteProfile; 
 use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Sessions;
+use manguto\cms5\lib\Sessions; 
 use manguto\cms5\mvc\control\admin\ControlAdminProfile;
 
 class ControlSiteProfile extends ControlSite

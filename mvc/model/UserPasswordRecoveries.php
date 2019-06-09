@@ -12,7 +12,7 @@ class UserPasswordRecoveries extends Model
     use ModelRepository;
     
     const deadline = 60*60*2; //prazo de validade da solicitacao de reset de senha (2 horas)
-    
+     
         
     public function __construct($id = 0)
     {

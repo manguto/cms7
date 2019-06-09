@@ -7,7 +7,7 @@ use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Sessions;
 use manguto\cms5\mvc\control\Control;
 use manguto\cms5\mvc\view\admin\ViewAdminProfile;
-
+ 
 class ControlAdminProfile extends ControlAdmin
 {
 

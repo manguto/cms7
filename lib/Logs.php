@@ -26,7 +26,7 @@ class Logs
 
     // Interesting events Examples: User logs in, SQL logs.
     public const TYPE_INFO = 'info';
-
+ 
     // Uncommon events
     public const TYPE_NOTICE = 'notice';
 

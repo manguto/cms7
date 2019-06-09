@@ -9,7 +9,7 @@ use manguto\cms5\lib\Sessions;
 use manguto\cms5\mvc\control\admin\ControlAdminProfile;
 
 class ControlSiteRegister extends ControlSite
-{
+{ 
 
     static function RunRouteAnalisys($app)
     {

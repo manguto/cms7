@@ -14,7 +14,7 @@ trait ModelMysqlPDO
      * informar os dados de conexão neste metodo.
      * @return string[]
      */
-    private function DatabaseInfo():array
+    private function DatabaseInfo():array 
     {
         return [
             'dbhost' => '',

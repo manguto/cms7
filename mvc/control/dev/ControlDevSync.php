@@ -318,7 +318,8 @@ class ControlDevSync extends ControlDev
             $conf = [];
 
             { // PASTAS OU ARQUIVOS ONDE OS MESMOS PRECISAM ESTAR SEMPRE IGUAIS com a BASE
-                $conf['diretorioOuArquivo_critico'] = [];                                                
+                $conf['diretorioOuArquivo_critico'] = [];                                            
+                //============================================================================= res
                 $conf['diretorioOuArquivo_critico'][] = 'res/css/style.css';
                 $conf['diretorioOuArquivo_critico'][] = 'res/css/print.css';
                 
@@ -326,22 +327,27 @@ class ControlDevSync extends ControlDev
                 
                 $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts.js';
                 $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts_form.js';
-                
+                //============================================================================= control
                 $conf['diretorioOuArquivo_critico'][] = 'sis/control/admin/ControlAdminZzz.php';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteZzz.php';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteModelagem.php';                
                 $conf['diretorioOuArquivo_critico'][] = 'sis/control/crud/ControlCRUDZzz.php';
-                
+                //============================================================================= model
                 $conf['diretorioOuArquivo_critico'][] = 'sis/model/Zzz.php';
-                
+                //============================================================================= view
                 $conf['diretorioOuArquivo_critico'][] = 'sis/view/admin/ViewAdminZzz.php';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteModelagem.php';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteZzz.php';
                 
                 $conf['diretorioOuArquivo_critico'][] = 'sis/view/crud/ViewCRUDZzz.php';
                 
+                //============================================================================= tpl
                 $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/admin/admin_zzz.html';
+                
                 $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site/site_zzz.html';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site/site_modelagem.html';
+                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site/modelagem';
+                
                 $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz.html';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz_edit.html';
                 $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz_view.html';

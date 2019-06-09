@@ -11,7 +11,7 @@ use manguto\cms5\lib\database\repository\ModelRepository;
 
 class User extends Model
 {
-
+ 
     use ModelRepository;
 
     const SESSION = "User";

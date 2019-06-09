@@ -11,7 +11,7 @@ trait ModelRepository
         return 'Repository';
     }
     
-    public function save()
+    public function save() 
     {
         { // verificacao/ajuste antes do salvamento
             $id = $this->getId();

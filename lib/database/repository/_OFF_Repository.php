@@ -12,7 +12,7 @@ use manguto\cms5\lib\Datas;
 use manguto\cms5\lib\Arrays;
 use manguto\cms5\lib\model\Model;
 
-class _OFF_Repository extends Model
+class _OFF_Repository extends Model 
 {
 
     // pasta onde serao disponibilizados os arquivos de dados

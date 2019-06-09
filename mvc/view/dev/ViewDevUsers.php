@@ -24,7 +24,7 @@ class ViewDevUsers extends ViewDev
     static function get_dev_user($user)
     {   
         self::PageDev("users-view", get_defined_vars());        
-    }
+    } 
     
     static function get_dev_user_edit($user)
     {   

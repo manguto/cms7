@@ -12,7 +12,7 @@ use manguto\cms5\mvc\model\User;
 
     // ---------------------------------- USER & SESSION
     function checkUserLogged()
-    {
+    {   
         return User::checkUserLogged();
     }
 

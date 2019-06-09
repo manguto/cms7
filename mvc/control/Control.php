@@ -6,7 +6,7 @@ use manguto\cms5\lib\Arquivos;
 use Slim\Slim;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
-use manguto\cms5\mvc\model\User;
+use manguto\cms5\mvc\model\User; 
 use manguto\cms5\mvc\control\site\ControlSite;
 use manguto\cms5\mvc\control\admin\ControlAdmin;
 use manguto\cms5\mvc\control\dev\ControlDev;

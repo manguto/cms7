@@ -1,42 +1,62 @@
 {include="../../../vendor/manguto/cms5/mvc/tpl/general/__open"}
-<!--=====================================================================================================================================-->
-<section id="home">
-	{include="site_modelagem_top"}
+<!----------------------------------------------->
+{loop="$telas"}
+<section id="{$key}" class='tela {$value.type}'>
+	<div class="container">
+		<div class="row">
+			<div class="col-11" id="menu_modelagem">
+				{loop="$menu_administrativo"}
+				<a href="#{$key}" class="small">{$value}</a>
+				{/loop}
+			</div>
+			<div class="col-1">
+				<a href="javascript:history.back(0);" class="btn btn-sm btn-outline-dark btn-voltar mt-1" style="font-size: 11px; padding: 3px 7px 2px 7px;" title="Acessar a página anterior.">Voltar</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<h1>{#SIS_ABREV#} - {#SIS_NAME#}</h1>
+			</div>
+		</div>
+		<div class="row mt-4 mb-4">
+			<div class="col-12" id="menu_principal">
+				{loop="$menu_principal"}
+				<a href="#{$key}" class="btn btn-outline-dark btn-sm">{$value}</a>
+				{/loop}
+			</div>
+		</div>
+	</div>
 	<div class="container">
 		<div class="row">
 			<div class="col-12">
-				<h2>Home</h2>				
+				<h2>{function="strtoupper($value.name)"}</h2>
 			</div>
-			<div class="col-12 text-justify" >
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est neque debitis quam numquam tempora tempore eveniet possimus architecto laudantium repellat error esse cum eos assumenda vero quia placeat laborum hic sunt vel explicabo quas corporis aut officia atque eaque quis dolorum qui blanditiis ratione necessitatibus aperiam tenetur et! Earum asperiores aspernatur harum facere facilis porro tempore labore animi id numquam magnam non a doloremque expedita soluta nesciunt cumque fugit inventore veritatis recusandae molestias libero voluptate voluptatibus molestiae esse impedit dolores quos! Aperiam eius vero a beatae magni fugiat sed debitis ea fugit ut dolorum inventore possimus saepe itaque dicta officiis eos commodi repellat omnis iste facilis molestiae est ab? Veniam quisquam maxime minima itaque provident sapiente natus mollitia libero quos dolore fugit doloribus unde iste veritatis temporibus repudiandae eos obcaecati ab voluptas tenetur illum dolores earum repellendus sint voluptatibus eveniet cum quae deserunt accusamus harum voluptates totam quod debitis voluptatem modi ipsam nesciunt quaerat rerum aliquid delectus cupiditate maiores. Inventore voluptate impedit asperiores dolores totam minus vitae dolorum officia quaerat optio magni vero amet natus enim similique quasi qui nesciunt placeat perferendis unde aliquid hic quia porro dolore laudantium. Ullam nesciunt fugit doloremque ut amet quasi neque! Beatae assumenda molestias!
+		</div>
+		<div class="row">
+			<div class="col-12 text-justify">
+				{include="$value.tpl"}
 			</div>
 		</div>
 	</div>
 </section>
-<!--=====================================================================================================================================-->
-<section id="zzz">
-	{include="site_modelagem_top"}
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-				<h2>Zzz</h2>				
-			</div>
-			<div class="col-12 text-justify" >
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem numquam omnis quaerat hic ut aut praesentium odit tenetur rerum non eaque recusandae laudantium qui in sapiente modi molestiae nam est reprehenderit explicabo dolores sit nulla laborum? Aliquam ipsa eum aut molestiae voluptatum aliquid facere qui dolorem nostrum necessitatibus sequi sed praesentium adipisci numquam corporis maiores vero incidunt aspernatur labore officia mollitia sit veritatis! Voluptatibus doloremque fuga excepturi architecto unde mollitia fugit ratione rerum eligendi officia cupiditate eos libero. Nulla nisi excepturi incidunt cupiditate aperiam natus cum temporibus in non architecto quo fugit earum molestias magni tenetur ipsa inventore repellat officiis.
-			</div>
-		</div>
-	</div>
-</section>
-
-<!--=====================================================================================================================================-->
-<!--=====================================================================================================================================-->
-<!--=====================================================================================================================================-->
-<!--=====================================================================================================================================-->
+{/loop}
+<!----------------------------------------------->
 <style>
 section {
 	height: 1200px;
 	border: solid 1px #aaa;
-	padding-top:10px;
+	padding-top: 10px;
 }
 </style>
+<!----------------------------------------------->
+<script>
+	$(document).ready(
+			function() {
+				var id_tela_principal_inicial = '#'
+						+ jQuery('section.tela.principal').prop('id');
+				//log(id_tela_principal_inicial);
+				document.location = id_tela_principal_inicial;
+			});
+</script>
+<!----------------------------------------------->
 {include="../../../vendor/manguto/cms5/mvc/tpl/general/__close"}

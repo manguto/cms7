@@ -30,5 +30,5 @@ class ControlDevToolsModules extends ControlDevTools
         });
     }    
 }
-
+ 
 ?>

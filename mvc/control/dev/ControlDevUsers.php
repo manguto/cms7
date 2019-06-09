@@ -31,7 +31,7 @@ class ControlDevUsers extends ControlDev
             self::PrivativeDevZone();
             $user = new User($id);
             ViewDevUsers::get_dev_user($user);  
-        });
+        }); 
 
         $app->get('/dev/users/:id/delete', function ($id) {
             self::PrivativeDevZone();
