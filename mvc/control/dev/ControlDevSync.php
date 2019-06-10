@@ -10,11 +10,80 @@ use manguto\cms5\mvc\view\dev\ViewDevSync;
 class ControlDevSync extends ControlDev
 {
 
+    // #########################################################################################################################################
+    // PASTAS OU ARQUIVOS ONDE OS MESMOS PRECISAM ESTAR SEMPRE IGUAIS com a BASE
+    //#########################################################################################################################################
+    const diretorioOuArquivo_criticos = [
+        // ============================================================================= res
+        'res/css/style.css',
+        'res/css/print.css',
+        'res/fonts/index.php',
+        'res/js/scripts.js',
+        'res/js/scripts_form.js',
+        // ============================================================================= control
+        'sis/control/admin/ControlAdminZzz.php',
+        'sis/control/site/ControlSiteZzz.php',
+        'sis/control/site/ControlSiteModelagem.php',
+        'sis/control/crud/ControlCRUDZzz.php',
+        // ============================================================================= model
+        'sis/model/Zzz.php',
+        // ============================================================================= view
+        'sis/view/admin/ViewAdminZzz.php',
+        'sis/view/site/ViewSiteModelagem.php',
+        'sis/view/site/ViewSiteZzz.php',
+        'sis/view/crud/ViewCRUDZzz.php',
+        // ============================================================================= tpl
+        'sis/tpl/admin/admin_zzz.html',
+        'sis/tpl/site/site_zzz.html',
+        'sis/tpl/site/site_modelagem.html',        
+        'sis/tpl/crud/crud_zzz.html',
+        'sis/tpl/crud/crud_zzz_edit.html',
+        'sis/tpl/crud/crud_zzz_view.html'
+    ];
+
+    // #########################################################################################################################################
+    // PASTAS OU ARQUIVOS RESULTADO DE MODIFICACOES IMPLEMENTACIONAIS
+    //#########################################################################################################################################
+    const diretorioOuArquivo_implementacoes = [
+        // ============================================================================= basic
+        //'index.php',
+        'configurations.php',
+        'functions.php',
+        // ============================================================================= control
+        'sis/control/admin/ControlAdminHome.php',
+        'sis/control/site/ControlSiteHome.php',
+        // ============================================================================= tpl
+        'sis/tpl/general/_footer_content.html',
+        'sis/tpl/general/_header_title.html',
+        'sis/tpl/general/_menu',
+        'sis/tpl/site/_menu.html',
+        'sis/tpl/site/site_home.html',
+        //---------------------------------------------------- modelagem        
+        'sis/tpl/site/modelagem/telas/administrativas/01_database.html',
+        'sis/tpl/site/modelagem/telas/principais/01_home.html',
+        'sis/tpl/site/modelagem/telas/principais/info.html',
+        //-------------------------------------------------------------!
+        'sis/tpl/admin/_menu.html',
+        'sis/tpl/admin/admin_home.html'        
+    ];
+
+    // #########################################################################################################################################
+    // PASTAS OU ARQUIVOS DESNECESSARIOS (LIXOS)
+    //#########################################################################################################################################
+    const diretorioOuArquivo_lixos = [
+        'cache'
+    ];
+
+    // #########################################################################################################################################
+    // #########################################################################################################################################
+    // #########################################################################################################################################
+    // #########################################################################################################################################
+    // #########################################################################################################################################
     static function RunRouteAnalisys($app)
     {
         $app->get('/dev/sync', function () {
             self::PrivativeDevZone();
-            //ControlDevSync::get_dev_sync();
+            // ControlDevSync::get_dev_sync();
             headerLocation('/dev/sync/go');
             exit();
         });
@@ -59,7 +128,7 @@ class ControlDevSync extends ControlDev
 
         // deb($_POST);
         $filename = $prod_path;
-        $prod_content = htmlentities(Arquivos::obterConteudo($prod_path, false));   
+        $prod_content = htmlentities(Arquivos::obterConteudo($prod_path, false));
         $base_content = htmlentities(Arquivos::obterConteudo($base_path, false));
 
         { // replaces
@@ -127,31 +196,27 @@ class ControlDevSync extends ControlDev
                 if (trim($info) == '')
                     continue;
                 $info = explode(';', $info);
-                
-                
+
                 if (sizeof($info) == 2) {
                     // ----------------------------------------------
-                    //CRIACAO OU ATUALIZACAO DE ARQUIVO
+                    // CRIACAO OU ATUALIZACAO DE ARQUIVO
                     // ----------------------------------------------
                     $origin_path = $info[0];
                     $destin_path = $info[1];
                     Arquivos::copiarArquivo($origin_path, $destin_path);
                     ProcessResult::setSuccess("Arquivo criado/atualizado com sucesso! <br>$origin_path => $destin_path");
                     // ----------------------------------------------------------------------------------------------
-
-                }else if(sizeof($info) == 1) {
+                } else if (sizeof($info) == 1) {
                     // ----------------------------------------------
-                    //REMOCAO DE ARQUIVO
+                    // REMOCAO DE ARQUIVO
                     // ----------------------------------------------
                     $remove_file_path = $info[0];
                     Arquivos::excluir($remove_file_path);
                     ProcessResult::setSuccess("Arquivo removido com sucesso! <br>[$remove_file_path]");
                     // ----------------------------------------------------------------------------------------------
-                    
-                }else{
+                } else {
                     throw new Exception("Quanditade de parâmetros inadequada a necessária ($info).");
                 }
-                
             }
         } catch (Exception $e) {
             ProcessResult::setError($e);
@@ -183,25 +248,25 @@ class ControlDevSync extends ControlDev
                     $prod_dir = Diretorios::fixDirectorySeparator($prod_dir);
                 }
                 { // base
-                    $base_dir = VENDOR_MANGUTO_PRJ_ROOT.'res/cms/';
+                    $base_dir = VENDOR_MANGUTO_PRJ_ROOT . 'res/cms/';
                     $base_dir = Diretorios::fixDirectorySeparator($base_dir);
                 }
             }
             { // sub-pastas fundamentais
                 $target_folders = [
-                    'sis',                    
+                    'sis',
                     'res'
                 ];
             }
         }
         { // ALL FILES - OBTENCAO DE TODOS OS ARQUIVOS ALVO ENCONTRADOS
             $all_files = self::get_all_files_envolved($prod_dir, $base_dir, $target_folders);
-            //deb($all_files);
+            // deb($all_files);
         }
         { // ANALISES - ANALISE QUANTO A TOMADA DE ACAO
             $analisys = self::get_all_files_analisys($all_files, $base_dir);
-            //deb($analisys);
-        }        
+            // deb($analisys);
+        }
 
         return $analisys;
     }
@@ -223,18 +288,18 @@ class ControlDevSync extends ControlDev
             'php'
         ]);
         foreach ($prod_files_tmp as $prod_file) {
-            $key = str_replace($prod_dir, '', $prod_file);
+            $relative_filepath = str_replace($prod_dir, '', $prod_file);
             $prod_file = str_replace($prod_dir, '', $prod_file);
-            $prod_files[$key] = $prod_file;
+            $prod_files[$relative_filepath] = $prod_file;
         }
 
         foreach ($target_folders as $target_folder) {
             $prod_files_tmp = Diretorios::obterArquivosPastas($prod_dir . $target_folder, true, true, true);
             foreach ($prod_files_tmp as $prod_file) {
 
-                $key = str_replace($prod_dir, '', $prod_file);
+                $relative_filepath = str_replace($prod_dir, '', $prod_file);
                 $prod_file = str_replace($prod_dir, '', $prod_file);
-                $prod_files[$key] = $prod_file;
+                $prod_files[$relative_filepath] = $prod_file;
             }
         }
         // deb($prod_files);
@@ -291,16 +356,15 @@ class ControlDevSync extends ControlDev
 
         { // ALL FILES - REGISTRO DE TODOS OS ARQUIVOS ENCONTRADOS
             $all_files = [];
-            foreach ($prod_files as $key => $prod_file) {
-                if (is_dir($prod_file))
+            foreach ($prod_files as $relative_filename_path => $prod_filename_path) {
+                if (is_dir($prod_filename_path))
                     continue;
-                $all_files[$key]['prod'] = $prod_file;
+                $all_files[$relative_filename_path]['prod'] = $prod_filename_path;
             }
-
-            foreach ($base_files as $key => $base_file) {
-                if (is_dir($base_file))
+            foreach ($base_files as $relative_filename_path => $base_filename_path) {
+                if (is_dir($base_filename_path))
                     continue;
-                $all_files[$key]['base'] = $base_file;
+                $all_files[$relative_filename_path]['base'] = $base_filename_path;
             }
             // deb($all_files);
             ksort($all_files);
@@ -318,75 +382,24 @@ class ControlDevSync extends ControlDev
             $conf = [];
 
             { // PASTAS OU ARQUIVOS ONDE OS MESMOS PRECISAM ESTAR SEMPRE IGUAIS com a BASE
-                $conf['diretorioOuArquivo_critico'] = [];                                            
-                //============================================================================= res
-                $conf['diretorioOuArquivo_critico'][] = 'res/css/style.css';
-                $conf['diretorioOuArquivo_critico'][] = 'res/css/print.css';
-                
-                $conf['diretorioOuArquivo_critico'][] = 'res/fonts/index.php';
-                
-                $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts.js';
-                $conf['diretorioOuArquivo_critico'][] = 'res/js/scripts_form.js';
-                //============================================================================= control
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/admin/ControlAdminZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/site/ControlSiteModelagem.php';                
-                $conf['diretorioOuArquivo_critico'][] = 'sis/control/crud/ControlCRUDZzz.php';
-                //============================================================================= model
-                $conf['diretorioOuArquivo_critico'][] = 'sis/model/Zzz.php';
-                //============================================================================= view
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/admin/ViewAdminZzz.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteModelagem.php';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/site/ViewSiteZzz.php';
-                
-                $conf['diretorioOuArquivo_critico'][] = 'sis/view/crud/ViewCRUDZzz.php';
-                
-                //============================================================================= tpl
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/admin/admin_zzz.html';
-                
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site/site_zzz.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site/site_modelagem.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/site/modelagem';
-                
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz_edit.html';
-                $conf['diretorioOuArquivo_critico'][] = 'sis/tpl/crud/crud_zzz_view.html';
-                               
-                
-                // ...
+                $conf['diretorioOuArquivo_critico'] = [];
+                foreach (self::diretorioOuArquivo_criticos as $diretorioOuArquivo) {
+                    $conf['diretorioOuArquivo_critico'][] = $diretorioOuArquivo;
+                }
             }
 
             { // PASTAS OU ARQUIVOS RESULTADO DE MODIFICACOES IMPLEMENTACIONAIS
                 $conf['diretorioOuArquivo_implementacao'] = [];
-                $conf['diretorioOuArquivo_implementacao'][] = 'index.php';
-                $conf['diretorioOuArquivo_implementacao'][] = 'configurations.php';
-                $conf['diretorioOuArquivo_implementacao'][] = 'functions.php';
-                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/control/admin/ControlAdminHome.php';
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/control/site/ControlSiteHome.php';
-                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/general/_footer_content.html';
-                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/general/_header_title.html';                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/general/_menu_site.html';               
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/general/_menu_admin.html';
-                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/_menu.html';
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/site_home.html';
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/site_modelagem_top.html';
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/site/site_modelagem.html';
-                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/admin/_menu.html';                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/tpl/admin/admin_home.html';
-                
-                $conf['diretorioOuArquivo_implementacao'][] = 'sis/_footer_content.html';
-                // ...
+                foreach (self::diretorioOuArquivo_implementacoes as $diretorioOuArquivo) {
+                    $conf['diretorioOuArquivo_implementacao'][] = $diretorioOuArquivo;
+                }
             }
 
-            { // pastas ou arquivos desnecessarios
+            { // PASTAS OU ARQUIVOS DESNECESSARIOS
                 $conf['diretorioOuArquivo_lixo'] = [];
-                $conf['diretorioOuArquivo_lixo'][] = 'cache';
-                // ...
+                foreach (self::diretorioOuArquivo_lixos as $diretorioOuArquivo) {
+                    $conf['diretorioOuArquivo_lixo'][] = $diretorioOuArquivo;
+                }
             }
         }
 
@@ -399,11 +412,11 @@ class ControlDevSync extends ControlDev
         }
 
         $i = 0;
-        foreach ($all_files as $file => $info) {
+        foreach ($all_files as $relative_filename_path => $info) {
             // deb($file);
 
             { // trash folders files jump
-                $folder = Arquivos::obterCaminho($file);
+                $folder = Arquivos::obterCaminho($relative_filename_path);
                 // deb($folder,0);
                 if (in_array($folder, $conf['diretorioOuArquivo_lixo'])) {
                     continue;
@@ -413,22 +426,22 @@ class ControlDevSync extends ControlDev
             { // parametros necessarios para avaliacao
 
                 { // producao
-                    $prod_found = isset($info['prod']);
-                    $prod_path = $prod_found ? $info['prod'] : $file;
-                    $prod_path_show = $prod_found ? $prod_path : '...';
+                    $found_at_the_production = isset($info['prod']);
+                    $production_path = $found_at_the_production ? $info['prod'] : $relative_filename_path;
+                    $production_path_show = $found_at_the_production ? $production_path : '...';
                 }
 
                 { // base
-                    $base_found = isset($info['base']);
-                    $base_path = $base_found ? $info['base'] : $base_dir . str_replace('.php', '.php_', $file);
-                    $base_path_show = $base_found ? $base_path : '...';
+                    $found_at_the_base = isset($info['base']);
+                    $base_path = $found_at_the_base ? $info['base'] : $base_dir . str_replace('.php', '.php_', $relative_filename_path);
+                    $base_path_show = $found_at_the_base ? $base_path : '...';
                 }
 
                 { // paths (para enviar para analysis)
-                    $paths = urlencode($prod_path . ';' . $base_path);
+                    $paths = urlencode($production_path . ';' . $base_path);
                 }
-                {//
-                    $pathname = $prod_path;
+                { //
+                    $pathname = $production_path;
                 }
             }
 
@@ -438,8 +451,10 @@ class ControlDevSync extends ControlDev
               // MSG
 
                 { // ============================================================================================= ANALISE e LEVANTAMENTO de PARAMETROS
-                    if ($prod_found && ! $base_found) {
-
+                    if ($found_at_the_production && ! $found_at_the_base) {
+                        
+                        
+                        
                         // ======================================================================================== faltando na base (>>)
                         $status_show = 'FALTANDO NA BASE';
                         $status_title = 'Arquivos encontrados na produção e faltando na base.';
@@ -451,7 +466,16 @@ class ControlDevSync extends ControlDev
                             '.',
                             '>>'
                         ];
-                    } else if (! $prod_found && $base_found) {
+                        
+                        {//OBSERVACOES! 
+                            if(in_array($relative_filename_path, $conf['diretorioOuArquivo_implementacao'])){
+                                $class .= ' critico';
+                                $sugestao = '>>';
+                            }
+                        }
+                        
+                        
+                    } else if (! $found_at_the_production && $found_at_the_base) {
 
                         // ======================================================================================== faltando na prod (<<)
                         $status_show = 'FALTANDO NA PRODUÇÃO';
@@ -464,11 +488,11 @@ class ControlDevSync extends ControlDev
                             '<<',
                             '.'
                         ];
-                    } else if ($prod_found && $base_found) {
+                    } else if ($found_at_the_production && $found_at_the_base) {
 
                         // ========================================================================================= encontrado em ambos
 
-                        if (Arquivos::verificarArquivosIdenticos($prod_path, $base_path)) {
+                        if (Arquivos::verificarArquivosIdenticos($production_path, $base_path)) {
 
                             // =============================================================== encontrado em ambos - identicos
                             $status_show = 'IGUAIS';
@@ -481,10 +505,10 @@ class ControlDevSync extends ControlDev
                         } else {
 
                             // =============================================================== encontrado em ambos - diferentes
-                            
-                            if(in_array($pathname, $conf['diretorioOuArquivo_implementacao'])){
-                                
-                                // ======================================  provenientes da implementacao do projeto em questao (manter como estah)
+
+                            if (in_array($pathname, $conf['diretorioOuArquivo_implementacao'])) {
+
+                                // ====================================== provenientes da implementacao do projeto em questao (manter como estah)
                                 $status_show = 'ALTERAÇÕES de PROJETO';
                                 $status_title = 'Arquivos com diferenças encontradas em decorrência do desenvolvimento do projeto.';
                                 $status = 'existente_diferente_implementacao';
@@ -496,10 +520,9 @@ class ControlDevSync extends ControlDev
                                     '.',
                                     '>'
                                 ];
-                                
-                            }else{
-                            
-                                // ======================================  diferentes para analise
+                            } else {
+
+                                // ====================================== diferentes para analise
                                 $status_show = 'DIFERENÇAS ENCONTRADAS';
                                 $status_title = 'Arquivos com diferenças detectadas! Verifique a melhor opção a ser tomada.';
                                 $status = 'existente_diferente';
@@ -512,8 +535,6 @@ class ControlDevSync extends ControlDev
                                     '>'
                                 ];
                             }
-                            
-                            
                         }
                     } else {
 
@@ -528,11 +549,11 @@ class ControlDevSync extends ControlDev
                         foreach ($conf['diretorioOuArquivo_critico'] as $dac) {
 
                             { // montagem das condicoes
-                                { // parmetros necessarios                                    
+                                { // parmetros necessarios
                                     { // file_part = caminho ou nome completo do arquivo
                                         if (is_dir($dac)) {
-                                            //se o item no loop quem questao for um diretorio, entao obtera apenas a parte inicial do conteudo de acordo
-                                            //com a quantidade de caracteres do caminho informado (dfc)
+                                            // se o item no loop quem questao for um diretorio, entao obtera apenas a parte inicial do conteudo de acordo
+                                            // com a quantidade de caracteres do caminho informado (dfc)
                                             $diretorioParte_ou_nomeDoArquivoCompleto = substr($pathname, 0, strlen($dac));
                                         } else if (is_file($dac)) {
                                             $diretorioParte_ou_nomeDoArquivoCompleto = $pathname;
@@ -567,7 +588,7 @@ class ControlDevSync extends ControlDev
                                     }
                                 }
                             }
-                        }
+                        }                       
                     }
                     {
                         // ...
@@ -576,18 +597,18 @@ class ControlDevSync extends ControlDev
             }
 
             { // COMPARISONS RESULT
-                $comparison[$i]['file'] = $file;
+                $comparison[$i]['file'] = $relative_filename_path;
                 $comparison[$i]['base'] = $base_path;
                 $comparison[$i]['base_show'] = $base_path_show;
-                $comparison[$i]['prod'] = $prod_path;
-                $comparison[$i]['prod_show'] = $prod_path_show;
+                $comparison[$i]['prod'] = $production_path;
+                $comparison[$i]['prod_show'] = $production_path_show;
                 $comparison[$i]['status'] = $status;
                 $comparison[$i]['status_show'] = $status_show;
                 $comparison[$i]['status_title'] = $status_title;
                 $comparison[$i]['class'] = $class;
                 $comparison[$i]['sugestao'] = $sugestao;
                 $comparison[$i]['msg'] = $msg;
-                $comparison[$i]['opcoes'] = self::get_dev_sync_go_options_html($file, $opcoes, $sugestao, $prod_path, $base_path);
+                $comparison[$i]['opcoes'] = self::get_dev_sync_go_options_html($relative_filename_path, $opcoes, $sugestao, $production_path, $base_path);
                 $comparison[$i]['paths'] = $paths;
                 $comparison[$i]['lookslike'] = false;
             }
@@ -655,8 +676,8 @@ class ControlDevSync extends ControlDev
                         $return .= "<option value='$base_path;$prod_path' $selected>&#9889; Atualizar PRODUÇÃO &#9664;&#9664;&#9664;</option>";
                         break;
                     // ==========================================================================================================
-                    case '.':                        
-                        $return .= "<option value='' $selected>&#9749; NÃO FAZER NADA!</option>"; //&#9723;
+                    case '.':
+                        $return .= "<option value='' $selected>&#9749; NÃO FAZER NADA!</option>"; // &#9723;
                         break;
                     // ==========================================================================================================
                     case '>':
