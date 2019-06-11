@@ -5,111 +5,60 @@ use manguto\cms5\mvc\view\site\ViewSite;
 use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\Arquivos;
 
-
 class ViewSiteModelagem extends ViewSite
 {
-    static function modelagem() {
-        
-        {
-            $telas_principais = self::obterTelas('principais');
-            $telas_administrativas = self::obterTelas('administrativas');
-            $telas = array_merge($telas_principais,$telas_administrativas);
-            //deb($telas);
-        }
-        
-        {
-            $menus = self::obterMenus($telas);
-            $menu_principal = $menus['menu_principal'];
-            $menu_administrativo = $menus['menu_administrativo'];
-            //deb($menus);
-        }
-        {
-            $gerenciar_creditos_lista[] = [
-                'id' => 1,
-                'alvo' => 'bb_magt',
-                'descricao' => 'Salario A',
-                'valor' => '15000',
-                'data_inicio' => '01-01-2017',
-                'data_fim' => false
-            ];
-            
-            $gerenciar_creditos_lista[] = [
-                'id' => 2,
-                'alvo' => 'bb_mj',
-                'descricao' => 'Salario B',
-                'valor' => '8000',
-                'data_inicio' => '01-01-2016',
-                'data_fim' => false
-            ];
-            
-            $gerenciar_creditos_lista[] = [
-                'id' => 3,
-                'alvo' => 'bb_mj',
-                'descricao' => 'Salario C',
-                'valor' => '11000',
-                'data_inicio' => '01-01-2018',
-                'data_fim' => false
-            ];
-            
-        }
-        {
-            $gerenciar_debitos_lista = [];
-            
-            $gerenciar_debitos_lista[] = [
-                'id' => 1,
-                'alvo' => 'bb_magt',
-                'descricao' => 'CELPE UUUY:097',
-                'valor' => '350',
-                'data_inicio' => '01-01-2017',
-                'data_fim' => false
-            ];
-            
-            $gerenciar_debitos_lista[] = [
-                'id' => 2,
-                'alvo' => 'bb_magt',
-                'descricao' => 'Compesa VXGD-3958',
-                'valor' => '45',
-                'data_inicio' => '01-01-2017',
-                'data_fim' => false
-            ];
-            
-            $gerenciar_debitos_lista[] = [
-                'id' => 3,
-                'alvo' => 'bb_mj',
-                'descricao' => 'SEGUROS - ITC_8990',
-                'valor' => '400',
-                'data_inicio' => '01-01-2019',
-                'data_fim' => '01-01-2020'
-            ];
-        }
-        
+
+    static function modelagem()
+    {
+
+        // --------------------------------------- telas
+        $telas = self::obterTelas();
+        // deb($telas);
+
+        // --------------------------------------- menus
+        $menus = self::obterMenus($telas);
+        extract($menus);
+        // deb($menus);
+
+        // ---------------------------------------
+        // ---------------------------------------
+        // ---------------------------------------
+        // ---------------------------------------
+        // ---------------------------------------
+
         self::load('site_modelagem', get_defined_vars());
     }
-    
-    static private function obterTelas($type='principais'){
-        
+
+    // ...
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    static private function obterTela($type = 'principais')
+    {
         $telas = [];
-        
+
         { // telas
-            
-            $arquivos = Diretorios::obterArquivosPastas('sis/tpl/site/modelagem/telas/'.$type, false, true, false, [
+
+            $arquivos = Diretorios::obterArquivosPastas('sis/tpl/site/modelagem/telas/' . $type, false, true, false, [
                 'html'
             ]);
-            
+
             foreach ($arquivos as $k => $arquivo) {
                 { // parameters
                     $identifier = Arquivos::obterNomeArquivo($arquivo, false);
-                    //deb($identifier,0);
+                    // deb($identifier,0);
                     $left1 = substr($identifier, 0, 1);
                     $left2 = substr($identifier, 1, 1);
                     $left3 = substr($identifier, 2, 1);
                     $tpl = "modelagem/telas/$type/$identifier";
-                    
+
                     $name = explode('_', $identifier);
                     $name = array_pop($name);
-                    
-                    {                        
-                        $exibirNoMenu = $left3=='_';
+
+                    {
+                        $exibirNoMenu = $left3 == '_';
                     }
                 }
                 { // telas
@@ -118,43 +67,60 @@ class ViewSiteModelagem extends ViewSite
                         'tpl' => $tpl,
                         'name' => $name,
                         'menu' => $exibirNoMenu
-                    ];                    
+                    ];
                 }
             }
             asort($telas);
-            //deb($telas,0);
+            // deb($telas,0);
         }
         return $telas;
     }
-    
-    static private function obterMenus($telas) {
+
+    static protected function obterTelas()
+    {
+        $telas_principais = self::obterTela('principais');
+        $telas_administrativas = self::obterTela('administrativas');
+        $telas = array_merge($telas_principais, $telas_administrativas);
+        return $telas;
+    }
+
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    static protected function obterMenus($telas)
+    {
         { // menus
             {
                 $menu_administrativo = [];
                 $menu_principal = [];
-                foreach ($telas as $key=>$info) {
-                    //deb($key,0); deb($info);
+                foreach ($telas as $key => $info) {
+                    // deb($key,0); deb($info);
                     $menu = $info['menu'];
-                    
-                    if($menu){
+
+                    if ($menu) {
                         $type = $info['type'];
-                        //deb($type,0);
-                        if($type=='principais'){
+                        // deb($type,0);
+                        if ($type == 'principais') {
                             $menu_principal[$key] = strtoupper($info['name']);
-                        }else{
+                        } else {
                             $menu_administrativo[$key] = strtoupper($info['name']);
                         }
-                    }                    
+                    }
                 }
-                //deb($menu_principal,0); deb($menu_administrativo);
+                // deb($menu_principal,0); deb($menu_administrativo);
             }
         }
         $menus = [
-            'menu_principal'=>$menu_principal,
-            'menu_administrativo'=>$menu_administrativo
+            'menu_principal' => $menu_principal,
+            'menu_administrativo' => $menu_administrativo
         ];
         return $menus;
     }
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+
+    // ...
 }
 
 

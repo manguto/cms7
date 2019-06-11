@@ -28,8 +28,7 @@ class ControlDevSync extends ControlDev
         // ============================================================================= model
         'sis/model/Zzz.php',
         // ============================================================================= view
-        'sis/view/admin/ViewAdminZzz.php',
-        'sis/view/site/ViewSiteModelagem.php',
+        'sis/view/admin/ViewAdminZzz.php',        
         'sis/view/site/ViewSiteZzz.php',
         'sis/view/crud/ViewCRUDZzz.php',
         // ============================================================================= tpl
@@ -52,6 +51,9 @@ class ControlDevSync extends ControlDev
         // ============================================================================= control
         'sis/control/admin/ControlAdminHome.php',
         'sis/control/site/ControlSiteHome.php',
+        // ============================================================================= model
+        // ============================================================================= view
+        'sis/view/site/ViewSiteModelagem.php',
         // ============================================================================= tpl
         'sis/tpl/general/_footer_content.html',
         'sis/tpl/general/_header_title.html',
