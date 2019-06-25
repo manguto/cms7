@@ -4,6 +4,7 @@ namespace sis\view\site;
 use manguto\cms5\mvc\view\site\ViewSite;
 use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Numbers;
 
 class ViewSiteModelagem extends ViewSite
 {
@@ -54,8 +55,30 @@ class ViewSiteModelagem extends ViewSite
                     $left3 = substr($identifier, 2, 1);
                     $tpl = "modelagem/telas/$type/$identifier";
 
-                    $name = explode('_', $identifier);
-                    $name = array_pop($name);
+                    {//name especificacao
+                        
+                        if(strpos($identifier, '_')!==false){
+                            $name = explode('_', $identifier);
+                            {//verificacao se a tela eh de menu ou oculta
+                                if(Numbers::is_numeric_int($name[0])){
+                                    $telaDeMenu = true;
+                                }else{
+                                    $telaDeMenu = false;
+                                }
+                            }
+                            
+                            if($telaDeMenu){
+                                $name = array_pop($name);
+                            }else{
+                                $name = implode(' ', $name);
+                            }                            
+                            
+                        }else{
+                           $name = $identifier; 
+                        }
+                        
+                    }                    
+                    
 
                     {
                         $exibirNoMenu = $left3 == '_';
