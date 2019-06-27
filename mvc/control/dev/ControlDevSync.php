@@ -34,7 +34,8 @@ class ControlDevSync extends ControlDev
         // ============================================================================= tpl
         'sis/tpl/admin/admin_zzz.html',
         'sis/tpl/site/site_zzz.html',
-        'sis/tpl/site/site_modelagem.html',        
+        'sis/tpl/site/site_modelagem.html',      
+        'sis/tpl/site/modelagem/telas/administrativas/01_database.html',
         'sis/tpl/crud/crud_zzz.html',
         'sis/tpl/crud/crud_zzz_edit.html',
         'sis/tpl/crud/crud_zzz_view.html'
@@ -60,9 +61,10 @@ class ControlDevSync extends ControlDev
         'sis/tpl/general/_menu',
         'sis/tpl/site/_menu.html',
         'sis/tpl/site/site_home.html',
-        //---------------------------------------------------- modelagem        
-        'sis/tpl/site/modelagem/telas/administrativas/01_database.html',
-        'sis/tpl/site/modelagem/telas/principais/01_home.html',
+        //---------------------------------------------------- modelagem
+        'sis/lib/Modelagem.php',
+        //-------------------------------------------------------------!        
+        'sis/tpl/site/modelagem/telas/principais/01_bem_vindo.html',
         'sis/tpl/site/modelagem/telas/principais/info.html',
         //-------------------------------------------------------------!
         'sis/tpl/admin/_menu.html',

@@ -1,8 +1,16 @@
-<pre>			
-	
-	 usuario
-	 - nome
-	 - data_nascimento
-	 - telefone	 
-</pre>
-			
+
+{loop="$database"}
+	<div class="tabela">	
+		<b>{$key}</b><br />
+		{loop="$value"}
+		- {$key} {if="$value!=''"} ({$value}) {/if} <br />
+		{/loop}
+	</div>
+{/loop}
+
+<style>
+#database .tabela{
+	float: left;
+	border: solid 1px #000;
+}
+</style>
