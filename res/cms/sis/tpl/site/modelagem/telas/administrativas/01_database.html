@@ -1,16 +1,28 @@
 
-{loop="$database"}
+{loop="$dbi"}
 	<div class="tabela">	
 		<b>{$key}</b><br />
 		{loop="$value"}
-		- {$key} {if="$value!=''"} ({$value}) {/if} <br />
+		- {$value}<br />
 		{/loop}
 	</div>
 {/loop}
 
 <style>
 #database .tabela{
+	font-size:14px;
 	float: left;
 	border: solid 1px #000;
+	border-radius: 5px;
+	box-shadow:2px 2px 2px #aaa;
+	margin:0px 10px 10px 0px;
+	padding:5px 30px 25px 15px;
+	min-height: 200px;	
+	min-width: 200px;	
+}
+#database .tabela .comment{
+	font-style: italic;
+	font-size:10px;
+	color: #a00;
 }
 </style>

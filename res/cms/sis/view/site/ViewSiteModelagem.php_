@@ -72,7 +72,7 @@ class ViewSiteModelagem extends ViewSite
                             if($telaDeMenu){
                                 $numero = array_shift($name);                                 
                             }
-                            $name = implode(' ', $name);
+                            $name = implode('_', $name);
                             
                         }else{
                            $name = $identifier; 

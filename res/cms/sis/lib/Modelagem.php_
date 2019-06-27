@@ -1,37 +1,192 @@
 <?php
 namespace sis\lib;
 
+use manguto\cms5\lib\Arquivos;
+use manguto\cms5\lib\Diretorios;
+use manguto\cms5\lib\CSV;
+
 class Modelagem
 {
 
-    const database = [
-        'usuario' => [
-            'nome' => '',
-            'idade' => '',
-            'cpf' => '000.000.000-00',
-        ],
-
-        'produto' => [
-            'nome' => '',
-            'descricao' => '',
-            'preco' => 'R$ 0,00',
-        ],
-
-    ];
+    const tabelas_path = 'sis/tpl/site/modelagem/tabelas';
 
     static function obterParametros()
     {
-        //--------------------------------------
-        $database = self::database;
-        //deb($database);
-        //--------------------------------------
-        //...
-        //--------------------------------------
-                
+        // ================================================
+        $db = self::database();
+        ksort($db);
+        // deb($db);
+        // ---------------------------------------------
+        $dbi = self::databaseInfo($db);
+        // deb($databaseInfo);
+        // ---------------------------------------------
+        // ================================================
+        $bem_pesquisa_parametros = self::bem_pesquisa_parametros();
+        // ---------------------------------------------
+        $bem_lista = self::bem_lista();
+        // ---------------------------------------------
+        $bem_registros = self::bem_regitros();
+        // ---------------------------------------------
+        $produtos = self::produtos();
+        // ================================================
+        // ================================================
+        // ================================================
         return get_defined_vars();
     }
+
+    static function databaseInfo($database)
+    {
+        $return = [];
+        foreach ($database as $tablename => $registers) {
+            if (sizeof($registers) > 0) {
+                $return[$tablename] = array_keys($registers[1]);
+            }
+        }
+        return $return;
+    }
+
+    static function database()
+    {
+        $tabelas = Diretorios::obterArquivosPastas(self::tabelas_path, false, true, false, [
+            'csv'
+        ]);
+        // deb($tabelas);
+        $database = [];
+        foreach ($tabelas as $value) {
+            $tabelaNome = Arquivos::obterNomeArquivo($value, false);
+            // deb($tabelaNome);
+            {
+                $csv = Arquivos::obterConteudo($value);
+                $csv = utf8_encode($csv);
+                $array = CSV::CSVToArray($csv);
+            }
+            $database[$tabelaNome] = $array;
+        }
+        // deb($database);
+        return $database;
+    }
+
+    static function produtos()
+    {
+        $return = [];
+
+        // --------------------------------------------------------
+        $return[] = [
+            'categoria' => 'Teclado',
+            'marca' => 'Genérica',
+            'modelo' => 'Generico',
+            'descricao' => 'Serial:KJGH565767-009',
+            'tombavel' => 'N'
+        ];
+        // --------------------------------------------------------
+        $return[] = [
+            'categoria' => 'Teclado',
+            'marca' => 'HP',
+            'modelo' => 'IO-565',
+            'descricao' => 'Serial:K9674465-00',
+            'tombavel' => 'N'
+        ];
+        // --------------------------------------------------------
+        $return[] = [
+            'categoria' => 'Mouse',
+            'marca' => 'HP',
+            'modelo' => 'IO-5',
+            'descricao' => 'Serial:RGTJHJ8787.09-4',
+            'tombavel' => 'N'
+        ];
+        // --------------------------------------------------------
+        $return[] = [
+            'categoria' => 'Computador',
+            'marca' => 'HP',
+            'modelo' => 'EliteDesk',
+            'descricao' => 'Serial:YYHG65.DSF14554.4',
+            'tombavel' => 'S'
+        ];
+        // --------------------------------------------------------
+
+        return $return;
+    }
+
+    static function bem_regitros()
+    {
+        $return = [];
+
+        { // registro
+            $return[] = [
+                'data' => '15:35 12/04/2019',
+                'responsavel' => 'Setor - Almoxarifado',
+                'status' => 'Normal',
+                'perifericos' => 'Teclado HP-T323, Mouse HP-ERTW3',
+                'observacoes' => ''
+            ];
+        }
+
+        { // registro
+            $return[] = [
+                'data' => '10:12 18/04/2019',
+                'responsavel' => 'Setor - NTI',
+                'status' => 'Normal',
+                'perifericos' => 'Teclado HP-T323, Mouse HP-ERTW3',
+                'observacoes' => ''
+            ];
+        }
+
+        { // registro
+            $return[] = [
+                'data' => '16:55 25/06/2019',
+                'responsavel' => 'Setor - NTI',
+                'status' => 'Avariado',
+                'perifericos' => 'Teclado HP-T323, Mouse HP-ERTW3',
+                'observacoes' => 'Placa de Rede queimada'
+            ];
+        }
+
+        return $return;
+    }
+
+    static function bem_lista()
+    {
+        $return = [];
+
+        { // registro
+            $return[] = [
+                'produto' => 'Monitor',
+                'tombamento' => '58748',
+                'tombamento_antigo' => '25412/2014'
+            ];
+        }
+        { // registro
+            $return[] = [
+                'produto' => 'Monitor',
+                'tombamento' => '58755',
+                'tombamento_antigo' => '-'
+            ];
+        }
+        { // registro
+            $return[] = [
+                'produto' => 'CPU',
+                'tombamento' => '31255',
+                'tombamento_antigo' => '8547/2010'
+            ];
+        }
+
+        return $return;
+    }
+
+    static function bem_pesquisa_parametros()
+    {
+        { // pesquisa
+            $return = [];
+            $return['produto_categoria']='Categoria';
+            $return['produto_marca']='Marca';
+            $return['produto']='Produto';            
+            $return['bloco']='Bloco';
+            $return['sala']='Sala';
+        }
+        return $return;
+    }
+
     // ========================================================================================================================================
-    //...
     // ========================================================================================================================================
     // ========================================================================================================================================
 }
