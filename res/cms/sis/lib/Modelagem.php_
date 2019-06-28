@@ -4,11 +4,14 @@ namespace sis\lib;
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\CSV;
+use manguto\cms5\lib\Numbers;
 
 class Modelagem
 {
 
     const tabelas_path = 'sis/tpl/site/modelagem/tabelas';
+    
+    const glue = '|';
 
     static function obterParametros()
     {
@@ -17,23 +20,136 @@ class Modelagem
         ksort($db);
         // deb($db);
         // ---------------------------------------------
+        $db = self::databaseLoadReferences($db);
+        //deb($db);
+        // ---------------------------------------------
         $dbi = self::databaseInfo($db);
         // deb($databaseInfo);
         // ---------------------------------------------
         // ================================================
         $bem_pesquisa_parametros = self::bem_pesquisa_parametros();
         // ---------------------------------------------
-        $bem_lista = self::bem_lista();
-        // ---------------------------------------------
-        $bem_registros = self::bem_regitros();
-        // ---------------------------------------------
-        $produtos = self::produtos();
+
         // ================================================
         // ================================================
         // ================================================
         return get_defined_vars();
     }
 
+    static function databaseLoadReferences($db)
+    {
+        foreach ($db as $tablename => $registers) {
+            // deb($tablename,0); deb($registers);
+
+            foreach ($registers as $id => $elementData) {
+
+                $db[$tablename][$id] = self::elementLoadReferences($db, $id, $elementData);
+            }
+        }
+        return $db;
+    }
+
+    static function elementLoadReferences($db,$id, $element_data,$level=0){
+        $level++;
+        foreach ($element_data as $col => $val) {
+            //deb($col, 0); deb($val);
+            // $col = 'xxxx_id'; $val = '2';
+            // $col = 'yyyy_ids'; $val = '4,5';
+            
+            { // parameters
+                $_id = substr($col, - 3) == '_id';
+                $_ids = substr($col, - 4) == '_ids';
+                // deb($_id,0); deb($_ids);
+            }
+            
+            if ($_id || $_ids) {
+                
+                { // referenced tablename
+                    if ($_id) {
+                        $referenced_tablename = substr($col, 0, - 3);
+                    } else {
+                        $referenced_tablename = substr($col, 0, - 4);
+                    }
+                    {//nickname handlment
+                        if(strpos($referenced_tablename, '___')!==false){
+                            $referenced_tablename = explode('___', $referenced_tablename);
+                            $referenced_tablename = array_pop($referenced_tablename);
+                        }
+                    }
+                }
+                
+                { // identifiers
+                    if ($_id) {
+                        $referenced_ids = [$val];
+                    } else {
+                        $referenced_ids = explode(',', $val);
+                    }
+                    // deb($ids);
+                }
+                
+                { // referenced objects
+                    $referenced_element_array=[];
+                    foreach ($referenced_ids as $referenced_id) {
+                        
+                        if(Numbers::is_numeric_int($referenced_id)){ 
+                            if(isset($db[$referenced_tablename][$referenced_id])){
+                                $referenced_element_data = self::elementLoadReferences($db, $referenced_id, $db[$referenced_tablename][$referenced_id],$level);
+                                $referenced_element_show = self::element_show($referenced_element_data,$level);
+                            }else{                                
+                                $referenced_element_show =  "Referência não encontrada ($referenced_tablename [id=$referenced_id]).";
+                            }
+                        }else{
+                            $referenced_element_show =  $referenced_id;
+                        }
+                        
+                        $referenced_element_array[] = $referenced_element_show;
+                    }
+                    //deb($referenced_element_array);
+                }
+                //<<<<<<<<<<<<<<<<<<<<<
+                $element_data[$col] = implode('<hr/>', $referenced_element_array);
+                //<<<<<<<<<<<<<<<<<<<<<
+            }
+        }
+        return $element_data;
+    }
+    
+    static function element_show($element_data,$level) {
+        $return = [];
+        
+        foreach ($element_data as $col=>$value){
+            if($col=='id'){
+                continue;
+            }
+            { 
+                $colname = $col;
+                $colname = str_replace('_ids', '', $colname);
+                $colname = str_replace('_id', '', $colname);
+                $colname = ucfirst($colname);
+                if($level==1){
+                    $colname = "<b style='color:#aaa; font-size:12px;'>$colname:</b>";
+                }else{
+                    $colname = "<span style='color:#aaa; font-size:12px;'>$colname:</span>";
+                }
+            }
+            {
+                $value = "<span style='color:#000;'>$value</span>";
+            }
+            {
+                $style = "cursor:pointer; margin:0; text-align:left; margin: 0px 0px 10px 5px; padding: 0px 0px 0px 5px; ";
+                $style.=" border-left:solid 1px #aaa; ";
+                if($level>1){
+                    
+                    
+                }
+            }
+            
+            $return[] = "<div title='".$element_data['id']."' style='$style'>$colname $value</div>";
+        }
+        $return = implode('', $return);
+        return $return;
+    }
+    
     static function databaseInfo($database)
     {
         $return = [];
@@ -60,128 +176,26 @@ class Modelagem
                 $csv = utf8_encode($csv);
                 $array = CSV::CSVToArray($csv);
             }
-            $database[$tabelaNome] = $array;
+            foreach ($array as $register){
+                $id = $register['id'];
+                $database[$tabelaNome][$id] = $register;
+            }
+            
         }
-        // deb($database);
+        //deb($database);
+        
         return $database;
-    }
-
-    static function produtos()
-    {
-        $return = [];
-
-        // --------------------------------------------------------
-        $return[] = [
-            'categoria' => 'Teclado',
-            'marca' => 'Genérica',
-            'modelo' => 'Generico',
-            'descricao' => 'Serial:KJGH565767-009',
-            'tombavel' => 'N'
-        ];
-        // --------------------------------------------------------
-        $return[] = [
-            'categoria' => 'Teclado',
-            'marca' => 'HP',
-            'modelo' => 'IO-565',
-            'descricao' => 'Serial:K9674465-00',
-            'tombavel' => 'N'
-        ];
-        // --------------------------------------------------------
-        $return[] = [
-            'categoria' => 'Mouse',
-            'marca' => 'HP',
-            'modelo' => 'IO-5',
-            'descricao' => 'Serial:RGTJHJ8787.09-4',
-            'tombavel' => 'N'
-        ];
-        // --------------------------------------------------------
-        $return[] = [
-            'categoria' => 'Computador',
-            'marca' => 'HP',
-            'modelo' => 'EliteDesk',
-            'descricao' => 'Serial:YYHG65.DSF14554.4',
-            'tombavel' => 'S'
-        ];
-        // --------------------------------------------------------
-
-        return $return;
-    }
-
-    static function bem_regitros()
-    {
-        $return = [];
-
-        { // registro
-            $return[] = [
-                'data' => '15:35 12/04/2019',
-                'responsavel' => 'Setor - Almoxarifado',
-                'status' => 'Normal',
-                'perifericos' => 'Teclado HP-T323, Mouse HP-ERTW3',
-                'observacoes' => ''
-            ];
-        }
-
-        { // registro
-            $return[] = [
-                'data' => '10:12 18/04/2019',
-                'responsavel' => 'Setor - NTI',
-                'status' => 'Normal',
-                'perifericos' => 'Teclado HP-T323, Mouse HP-ERTW3',
-                'observacoes' => ''
-            ];
-        }
-
-        { // registro
-            $return[] = [
-                'data' => '16:55 25/06/2019',
-                'responsavel' => 'Setor - NTI',
-                'status' => 'Avariado',
-                'perifericos' => 'Teclado HP-T323, Mouse HP-ERTW3',
-                'observacoes' => 'Placa de Rede queimada'
-            ];
-        }
-
-        return $return;
-    }
-
-    static function bem_lista()
-    {
-        $return = [];
-
-        { // registro
-            $return[] = [
-                'produto' => 'Monitor',
-                'tombamento' => '58748',
-                'tombamento_antigo' => '25412/2014'
-            ];
-        }
-        { // registro
-            $return[] = [
-                'produto' => 'Monitor',
-                'tombamento' => '58755',
-                'tombamento_antigo' => '-'
-            ];
-        }
-        { // registro
-            $return[] = [
-                'produto' => 'CPU',
-                'tombamento' => '31255',
-                'tombamento_antigo' => '8547/2010'
-            ];
-        }
-
-        return $return;
     }
 
     static function bem_pesquisa_parametros()
     {
         { // pesquisa
             $return = [];
-            $return['produto_categoria']='Categoria';
-            $return['produto_marca']='Marca';
-            $return['produto']='Produto';            
-            $return['bloco']='Bloco';
-            $return['sala']='Sala';
+            $return['produto_categoria'] = 'Categoria';
+            $return['produto_marca'] = 'Marca';
+            $return['produto'] = 'Produto';
+            $return['bloco'] = 'Bloco';
+            $return['sala'] = 'Sala';
         }
         return $return;
     }
