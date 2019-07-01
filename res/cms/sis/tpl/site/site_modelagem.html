@@ -29,7 +29,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-12">
-				<h2>{function="strtoupper($value.name)"}</h2>
+				<h2>{$value.title}</h2>
 			</div>
 		</div>
 		<div class="row">
@@ -53,8 +53,7 @@ section {
 <script>
 	$(document).ready(
 			function() {
-				var id_tela_principal_inicial = '#'
-						+ jQuery('section.tela.principal').prop('id');
+				var id_tela_principal_inicial = '#'+jQuery('section.tela.principais:first').prop('id');
 				//log(id_tela_principal_inicial);
 				document.location = id_tela_principal_inicial;
 			});

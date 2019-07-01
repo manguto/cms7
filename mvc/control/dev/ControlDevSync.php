@@ -27,9 +27,10 @@ class ControlDevSync extends ControlDev
         'sis/control/crud/ControlCRUDZzz.php',
         // ============================================================================= model
         'sis/model/Zzz.php',
-        // ============================================================================= view
-        'sis/view/admin/ViewAdminZzz.php',        
+        // ============================================================================= view        
+        'sis/view/admin/ViewAdminZzz.php',
         'sis/view/site/ViewSiteZzz.php',
+        'sis/view/site/ViewSiteModelagem.php', 
         'sis/view/crud/ViewCRUDZzz.php',
         // ============================================================================= tpl
         'sis/tpl/admin/admin_zzz.html',
@@ -38,7 +39,7 @@ class ControlDevSync extends ControlDev
         'sis/tpl/site/modelagem/telas/administrativas/01_database.html',
         'sis/tpl/crud/crud_zzz.html',
         'sis/tpl/crud/crud_zzz_edit.html',
-        'sis/tpl/crud/crud_zzz_view.html'
+        'sis/tpl/crud/crud_zzz_view.html' 
     ];
 
     // #########################################################################################################################################
@@ -53,8 +54,7 @@ class ControlDevSync extends ControlDev
         'sis/control/admin/ControlAdminHome.php',
         'sis/control/site/ControlSiteHome.php',
         // ============================================================================= model
-        // ============================================================================= view
-        'sis/view/site/ViewSiteModelagem.php',
+        // ============================================================================= view        
         // ============================================================================= tpl
         'sis/tpl/general/_footer_content.html',
         'sis/tpl/general/_header_title.html',

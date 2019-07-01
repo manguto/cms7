@@ -14,7 +14,7 @@ class ViewSiteModelagem extends ViewSite
     {
 
         // --------------------------------------- telas
-        $telas = self::obterTelas();
+        $telas = self::obterTelas(); 
         // deb($telas);
 
         // --------------------------------------- menus
@@ -78,8 +78,15 @@ class ViewSiteModelagem extends ViewSite
                            $name = $identifier; 
                         }
                         
+                    }
+                    {
+                        $title = $name;
+                        $title = explode('_',$title);
+                        foreach ($title as &$t){
+                            $t = ucfirst($t);
+                        }
+                        $title = implode(' ', $title);   
                     }                    
-                    
 
                     {
                         $exibirNoMenu = $left3 == '_';
@@ -90,7 +97,8 @@ class ViewSiteModelagem extends ViewSite
                         'type' => $type,
                         'tpl' => $tpl,
                         'name' => $name,
-                        'menu' => $exibirNoMenu
+                        'title' => $title,
+                        'menu' => $exibirNoMenu                        
                     ];
                 }
             }
@@ -124,14 +132,22 @@ class ViewSiteModelagem extends ViewSite
                         $name = $info['name'];
                         $name = str_replace('_',' ', $name);
                     }
+                    {
+                        $title = $name;
+                        $title = explode('_',$title);
+                        foreach ($title as &$t){
+                            $t = ucfirst($t);
+                        }
+                        $title = implode(' ', $title);                        
+                    }  
                     
                     if ($menu) {
                         $type = $info['type'];
                         // deb($type,0);
                         if ($type == 'principais') {
-                            $menu_principal[$key] = strtoupper($name);
+                            $menu_principal[$key] = $title;
                         } else {
-                            $menu_administrativo[$key] = strtoupper($name);
+                            $menu_administrativo[$key] = $title;
                         }
                     }
                 }
