@@ -6,31 +6,31 @@ class Arquivos
     
     const backupCopy_dateMasc = 'Y-m-d_His';
 
-    static function obterExtensao($filename)
+    static function obterExtensao($path)
     {
-        $extensao = pathinfo($filename, PATHINFO_EXTENSION);
-        // debug($extensao);
-        return $extensao;
+        return pathinfo($path, PATHINFO_EXTENSION);
     }
 
-    static function obterTamanho($filename)
+    static function obterTamanho($path)
     {
-        // debug($filename,0);
-        $return = filesize($filename);
-        // debug($return,0);
-        return $return;
+        return filesize($path);
     }
 
-    static function obterCaminho($filepath)
+    static function obterCaminho($path)
     {
-        $return = str_replace(self::obterNomeArquivo($filepath), '', $filepath);
-        return $return;
+        return pathinfo($path, PATHINFO_DIRNAME).DIRECTORY_SEPARATOR;        
     }
 
-    static function obterNomeArquivo($filenamePath, $withExtension = true)
+    static function obterNomeArquivo($path, $withExtension = true)
     {
         
-        {//verificacao de delimitador utilizado (separador de pastas e arquivos)
+        if($withExtension){
+            return pathinfo($path, PATHINFO_BASENAME);
+        }else{
+            return pathinfo($path, PATHINFO_FILENAME);
+        }
+        
+        /*{//verificacao de delimitador utilizado (separador de pastas e arquivos)
             $teste = strpos($filenamePath, chr(47)); // '/'
             if ($teste !== false) {
                 $delimitador = chr(47); // '/'
@@ -51,27 +51,28 @@ class Arquivos
             }
         }
 
-        return $filename;
+        return $filename;*/
     }
 
-    static function obterNomePasta($filepath)
+    static function obterNomePasta($path)
     {
-        $filepath = Diretorios::fixDirectorySeparator($filepath);
-        $filepath = explode(DIRECTORY_SEPARATOR, $filepath);
+
+        $path = Diretorios::fixDirectorySeparator($path);
+        $path = explode(DIRECTORY_SEPARATOR, $path);
         // debug($filepath);
         { // ---verificacao se parametro eh de uma pasta ou de um arquivo
-            if (strpos($filepath[sizeof($filepath) - 1], '.') !== false) {
+            if (strpos($path[sizeof($path) - 1], '.') !== false) {
                 $arquivo = true;
             } else {
                 $arquivo = false;
             }
         }
         if ($arquivo) {
-            array_pop($filepath);
+            array_pop($path);
         }
 
-        $filepath = array_pop($filepath);
-        return $filepath;
+        $path = array_pop($path);
+        return $path;
     }
 
     /**

@@ -558,16 +558,23 @@ class ControlDevSync extends ControlDev
 
                             { // montagem das condicoes
                                 { // parmetros necessarios
+                                    
                                     { // file_part = caminho ou nome completo do arquivo
-                                        if (is_dir($dac)) {
-                                            // se o item no loop quem questao for um diretorio, entao obtera apenas a parte inicial do conteudo de acordo
+                                        $ext = Arquivos::obterExtensao($dac);                                        
+                                        //deb($dac,0); deb($ext);
+                                        
+                                        if (trim($ext)=='') {
+                                            // se o item no loop em questao for um diretorio, entao obtera apenas a parte inicial do conteudo de acordo
                                             // com a quantidade de caracteres do caminho informado (dfc)
                                             $diretorioParte_ou_nomeDoArquivoCompleto = substr($pathname, 0, strlen($dac));
-                                        } else if (is_file($dac)) {
+                                        } else { // if (is_file($dac))
+                                            // se o item no loop em questao for um arquivo, entao obtera o nome completo do arquivo da base 
                                             $diretorioParte_ou_nomeDoArquivoCompleto = $pathname;
-                                        } else {
-                                            throw new Exception("Tipo de arquivo definido na lista de 'Diretorio ou Arquivo Critico' não permitido (Tipo:" . gettype($dac) . " | Path: $dac).");
                                         }
+                                        
+                                        /*else {
+                                            throw new Exception("Arquivo da lista de 'Diretorio ou Arquivo Critico' não encontrado: '$dac'.");
+                                        }*/
                                         // deb($file_part);
                                     }
                                 }
