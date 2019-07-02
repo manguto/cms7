@@ -33,9 +33,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-12 text-justify">
-				{include="$value.tpl"}
-			</div>
+			<div class="col-12 text-justify">{include="$value.tpl"}</div>
 		</div>
 	</div>
 </section>
@@ -45,17 +43,23 @@
 section {
 	height: 9000px;
 	border: solid 1px #aaa;
-	border-bottom:solid 1000px #000;
+	border-bottom: solid 1000px #000;
 	padding-top: 10px;
 }
 </style>
 <!----------------------------------------------->
 <script>
 	$(document).ready(
+
 			function() {
-				var id_tela_principal_inicial = '#'+jQuery('section.tela.principais:first').prop('id');
-				//log(id_tela_principal_inicial);
-				document.location = id_tela_principal_inicial;
+
+				var url = window.location.href;
+				//caso nao haja uma ancora
+				if (url.indexOf('#') == -1) {
+					var id_tela_principal_inicial = '#'+ jQuery('section.tela.principais:first').prop('id');
+					//log(id_tela_principal_inicial);
+					document.location = id_tela_principal_inicial;	
+				}
 			});
 </script>
 <!----------------------------------------------->
