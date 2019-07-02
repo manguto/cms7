@@ -1,24 +1,26 @@
 
+<div class="row">
 {loop="$dbi"}
-	<div class="tabela">	
+	<div class="col tabela">	
 		<b>{$key}</b><br />
 		{loop="$value"}
-		- {$value}<br />
+		<span style="white-space: nowrap;">- {$value}</span><br />
 		{/loop}
 	</div>
 {/loop}
+</div>
 
 <style>
 #database .tabela{
-	font-size:14px;
-	float: left;
+	font-size:14px;	
 	border: solid 1px #000;
 	border-radius: 5px;
 	box-shadow:2px 2px 2px #aaa;
-	margin:0px 10px 10px 0px;
-	padding:5px 30px 25px 15px;
+	margin:0px 50px 50px 0px;
+	padding:10px 20px 20px 20px;
 	/*min-height: 200px;*/	
-	/*min-width: 200px;*/ 	
+	/*min-width: 200px;*/
+	max-width: 250px; 	
 }
 #database .tabela .comment{
 	font-style: italic;

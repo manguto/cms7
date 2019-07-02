@@ -6,6 +6,7 @@ use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\Numbers;
 use sis\lib\Modelagem;
+use sis\lib\ModelagemExtra;
 
 class ViewSiteModelagem extends ViewSite
 {
@@ -25,7 +26,10 @@ class ViewSiteModelagem extends ViewSite
         // --------------------------------------- parametros
         $parametros = Modelagem::obterParametros();
         extract($parametros);
-        // ---------------------------------------
+        
+        // --------------------------------------- parametros
+        $parametros_extra = ModelagemExtra::obterParametrosExtra($parametros['db']);
+        extract($parametros_extra);
         // ---------------------------------------
         // ---------------------------------------
         // ---------------------------------------        

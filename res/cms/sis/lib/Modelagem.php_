@@ -10,7 +10,7 @@ class Modelagem
 {
 
     const tabelas_path = 'sis/tpl/site/modelagem/tabelas';
-    
+
     const glue = '|';
 
     static function obterParametros()
@@ -19,19 +19,12 @@ class Modelagem
         $db = self::database();
         ksort($db);
         // deb($db);
-        // ---------------------------------------------
+        // ================================================
         $db = self::databaseLoadReferences($db);
-        //deb($db);
-        // ---------------------------------------------
+        // deb($db);
+        // ================================================
         $dbi = self::databaseInfo($db);
         // deb($databaseInfo);
-        // ---------------------------------------------
-        // ================================================
-        $bem_pesquisa_parametros = self::bem_pesquisa_parametros();
-        // ---------------------------------------------
-
-        // ================================================
-        // ================================================
         // ================================================
         return get_defined_vars();
     }
@@ -43,92 +36,125 @@ class Modelagem
 
             foreach ($registers as $id => $elementData) {
 
-                $db[$tablename][$id] = self::elementLoadReferences($db, $id, $elementData);
+                $db[$tablename][$id] = self::elementLoadReferences($db, $tablename, $id, $elementData);
             }
         }
         return $db;
     }
 
-    static function elementLoadReferences($db,$id, $element_data,$level=0){
-        $level++;
+    static function elementLoadReferences($db, $tablename, $id, $level = 0)
+    {
+        $level ++;
+
+        // deb($db,0);
+        // deb($tablename,0);
+        // deb($id);
+
+        $element_data = $db[$tablename][$id];
+
         foreach ($element_data as $col => $val) {
-            //deb($col, 0); deb($val);
+            // deb($col, 0); deb($val);
             // $col = 'xxxx_id'; $val = '2';
             // $col = 'yyyy_ids'; $val = '4,5';
-            
+
             { // parameters
                 $_id = substr($col, - 3) == '_id';
                 $_ids = substr($col, - 4) == '_ids';
                 // deb($_id,0); deb($_ids);
             }
-            
+
             if ($_id || $_ids) {
-                
+
                 { // referenced tablename
                     if ($_id) {
                         $referenced_tablename = substr($col, 0, - 3);
                     } else {
                         $referenced_tablename = substr($col, 0, - 4);
                     }
-                    {//nickname handlment
-                        if(strpos($referenced_tablename, '___')!==false){
+                    { // nickname handlment
+                        if (strpos($referenced_tablename, '___') !== false) {
                             $referenced_tablename = explode('___', $referenced_tablename);
                             $referenced_tablename = array_pop($referenced_tablename);
                         }
                     }
                 }
-                
+
                 { // identifiers
                     if ($_id) {
-                        $referenced_ids = [$val];
+                        $referenced_ids = [
+                            $val
+                        ];
                     } else {
                         $referenced_ids = explode(',', $val);
                     }
                     // deb($ids);
                 }
-                
+
                 { // referenced objects
-                    $referenced_element_array=[];
+                    $referenced_element_array = [];
                     foreach ($referenced_ids as $referenced_id) {
-                        
-                        if(Numbers::is_numeric_int($referenced_id)){ 
-                            if(isset($db[$referenced_tablename][$referenced_id])){
-                                $referenced_element_data = self::elementLoadReferences($db, $referenced_id, $db[$referenced_tablename][$referenced_id],$level);
-                                $referenced_element_show = self::element_show($referenced_element_data,$level);
-                            }else{                                
-                                $referenced_element_show =  "Referência não encontrada ($referenced_tablename [id=$referenced_id]).";
+
+                        if (Numbers::is_numeric_int($referenced_id)) {
+                            if (isset($db[$referenced_tablename][$referenced_id])) {
+                                $referenced_element_data = self::elementLoadReferences($db, $referenced_tablename, $referenced_id, $level);
+                                $referenced_element_show = self::element_show($referenced_tablename, $referenced_element_data, $level);
+                            } else {
+                                $referenced_element_show = "Referência não encontrada ($referenced_tablename [id=$referenced_id]).";
                             }
-                        }else{
-                            $referenced_element_show =  $referenced_id;
+                        } else {
+                            $referenced_element_show = $referenced_id;
                         }
-                        
+
                         $referenced_element_array[] = $referenced_element_show;
                     }
-                    //deb($referenced_element_array);
+                    // deb($referenced_element_array);
                 }
-                //<<<<<<<<<<<<<<<<<<<<<
+                // <<<<<<<<<<<<<<<<<<<<<
                 $element_data[$col] = implode('<hr/>', $referenced_element_array);
-                //<<<<<<<<<<<<<<<<<<<<<
+                // <<<<<<<<<<<<<<<<<<<<<
             }
         }
         return $element_data;
     }
-    
-    static function element_show($element_data,$level) {
+
+    static function element_show($element_tablename, $element_data, $level)
+    {
         $return = [];
-        
-        foreach ($element_data as $col=>$value){
-            if($col=='id'){
+
+        foreach ($element_data as $col => $value) {
+            if ($col == 'id') {
                 continue;
             }
-            { 
+            {
                 $colname = $col;
                 $colname = str_replace('_ids', '', $colname);
                 $colname = str_replace('_id', '', $colname);
                 $colname = ucfirst($colname);
-                if($level==1){
+            }
+            if (trim($value) != '') {
+                $return[] = "<span title='{$element_tablename}[$colname]'>$value</span>";
+            }
+        }
+        $return = implode(', ', $return);
+        return $return;
+    }
+
+    static function element_show_v2($element_data, $level)
+    {
+        $return = [];
+
+        foreach ($element_data as $col => $value) {
+            if ($col == 'id') {
+                continue;
+            }
+            {
+                $colname = $col;
+                $colname = str_replace('_ids', '', $colname);
+                $colname = str_replace('_id', '', $colname);
+                $colname = ucfirst($colname);
+                if ($level == 1) {
                     $colname = "<b style='color:#aaa; font-size:12px;'>$colname:</b>";
-                }else{
+                } else {
                     $colname = "<span style='color:#aaa; font-size:12px;'>$colname:</span>";
                 }
             }
@@ -137,19 +163,16 @@ class Modelagem
             }
             {
                 $style = "cursor:pointer; margin:0; text-align:left; margin: 0px 0px 10px 5px; padding: 0px 0px 0px 5px; ";
-                $style.=" border-left:solid 1px #aaa; ";
-                if($level>1){
-                    
-                    
-                }
+                $style .= " border-left:solid 1px #aaa; ";
+                if ($level > 1) {}
             }
-            
-            $return[] = "<div title='".$element_data['id']."' style='$style'>$colname $value</div>";
+
+            $return[] = "<div title='" . $element_data['id'] . "' style='$style'>$colname $value</div>";
         }
         $return = implode('', $return);
         return $return;
     }
-    
+
     static function databaseInfo($database)
     {
         $return = [];
@@ -176,28 +199,14 @@ class Modelagem
                 $csv = utf8_encode($csv);
                 $array = CSV::CSVToArray($csv);
             }
-            foreach ($array as $register){
+            foreach ($array as $register) {
                 $id = $register['id'];
                 $database[$tabelaNome][$id] = $register;
             }
-            
         }
-        //deb($database);
-        
-        return $database;
-    }
+        // deb($database);
 
-    static function bem_pesquisa_parametros()
-    {
-        { // pesquisa
-            $return = [];
-            $return['produto_categoria'] = 'Categoria';
-            $return['produto_marca'] = 'Marca';
-            $return['produto'] = 'Produto';
-            $return['bloco'] = 'Bloco';
-            $return['sala'] = 'Sala';
-        }
-        return $return;
+        return $database;
     }
 
     // ========================================================================================================================================
