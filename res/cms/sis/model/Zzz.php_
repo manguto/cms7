@@ -9,7 +9,7 @@ use manguto\cms5\lib\model\ModelTrait;
 
 class Zzz extends Model implements ModelDatabase
 {
-    
+
     use ModelTrait;
     use ModelRepository;
 
@@ -18,22 +18,19 @@ class Zzz extends Model implements ModelDatabase
      */
     private function defineAttributes()
     {
-        { // nome
-            $a = new ModelAttribute('nome');
-            $this->SetAttribute($a);
-        }
-        { // idade
-            $a = new ModelAttribute('idade');
-            $a->setType(ModelAttribute::TYPE_INT);
-            $this->SetAttribute($a);
-        }
-        
-        { // peso
-            $a = new ModelAttribute('peso');
-            $a->setType(ModelAttribute::TYPE_FLOAT);
-            $a->setUnit('Kg');
-            $this->SetAttribute($a);
-        }
+        // ---------------------------------------------------
+        $a = new ModelAttribute('nome');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('idade');
+        $a->setType(ModelAttribute::TYPE_INT);
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('peso');
+        $a->setType(ModelAttribute::TYPE_FLOAT);
+        $a->setUnit('Kg');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
     }
 }
 

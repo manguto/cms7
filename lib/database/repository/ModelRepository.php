@@ -59,6 +59,10 @@ trait ModelRepository
         }
     }
      
+    /**
+     * carrega o objeto com base no ID informado
+     * @throws Exception
+     */
     public function load()
     {
         { // params
@@ -66,31 +70,33 @@ trait ModelRepository
             // deb($tablename);
         }
         {//identificador
-            $id = $this->getId();            
-            //deb($parameters);
+            $id = $this->getId();
+            //deb($id);
         }
-        // deb($this);
-        $object_array = self::search(' $id={id} ', $this->getParameters('id'));
-        //deb($object_array);
-        
-        $registerAmount = sizeof($object_array);
-        //deb($registerAmount);
-        if ($registerAmount == 0) {
-            throw new Exception("Não foi encontrado nenhum registro para identificador ($id) na tabela '$tablename'.");
-        } elseif ($registerAmount > 1) {
-            throw new Exception("Forma encontrados mais de um registro ($registerAmount) com o mesmo identificador ($id) na tabela '$tablename'.");
+        //carrega algum objeto caso o id do mesmo tiver sido informado
+        if($id!=0){
+            // deb($this);
+            $object_array = self::search(' $id={id} ', $this->getParameters('id'));
+            //deb($object_array);
+            
+            $registerAmount = sizeof($object_array);
+            //deb($registerAmount);
+            if ($registerAmount == 0) {
+                throw new Exception("Não foi encontrado nenhum registro para identificador ($id) na tabela '$tablename'.");
+            } elseif ($registerAmount > 1) {
+                throw new Exception("Forma encontrados mais de um registro ($registerAmount) com o mesmo identificador ($id) na tabela '$tablename'.");
+            }
+            
+            // obter o primeiro registro obtido
+            $object = array_shift($object_array);
+            // deb($object);
+            
+            $ModelAttribute = $object->GetData(true, true);
+            // deb($ModelAttribute);
+            
+            // definir dados no objeto
+            $this->SetAttributes($ModelAttribute, false);
         }
-        
-        // obter o primeiro registro obtido
-        $object = array_shift($object_array);
-        // deb($object);
-        
-        $ModelAttribute = $object->GetData(true, true);
-        // deb($ModelAttribute);
-        
-        // definir dados no objeto
-        // $this->SetData($data);
-        $this->SetAttributes($ModelAttribute, false); /* */
     }
         
     public function loadReferences()

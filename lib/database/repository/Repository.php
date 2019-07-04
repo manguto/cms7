@@ -6,6 +6,8 @@ use manguto\cms5\lib\model\Model_Helper;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\database\Database; 
 use manguto\cms5\lib\Logs;
+use manguto\cms5\lib\Diretorios;
+use sis;
 
 class Repository implements Database
 {
@@ -232,9 +234,11 @@ class Repository implements Database
         $repositoryCSV = Arquivos::obterConteudo($this->filename, false);
         // debc($repositoryCSV);
 
-        // obtencao ou inicializacao
-        $repositoryCSV = $repositoryCSV == false ? $this->tableInit() : $repositoryCSV;
-        // debc($repositoryCSV);
+        // obtencao ou inicializacao e caso ainda nao exista, cria-o!
+        if($repositoryCSV==false){
+            $repositoryCSV = $this->tableInit();
+            // debc($repositoryCSV);
+        }
 
         // transformar codificacao do texto
         $repositoryCSV = utf8_encode($repositoryCSV);
@@ -306,6 +310,34 @@ class Repository implements Database
 
         // salvar arquivo
         Arquivos::escreverConteudo($this->getFilename(), $repositoryCSV);
+    }
+    
+    static function InitializeRepositories($dir='sis/model') {
+        $modelFiles = Diretorios::obterArquivosPastas($dir, false, true, false,['php']);
+        foreach ($modelFiles as $modelFile){
+            //deb($modelFile);
+            $conteudo = Arquivos::obterConteudo($modelFile);
+            
+            $modelRepositoryFile = strpos($conteudo, 'use ModelRepository')!==false;
+            //deb($modelFile,0); deb($modelRepositoryFile,0);
+            
+            if($modelRepositoryFile){
+                $tablename = strtolower(Arquivos::obterNomeArquivo($modelFile,false));
+                //deb($tablename);
+                
+                //inicializa o modelo repositorial
+                $repository = new Repository($tablename);
+                
+                /*$repositoryFullClassName = Model_Helper::getObjectClassname($tablename);
+                //deb($repositoryFullClassName);
+                $sample = new $repositoryFullClassName();                
+                //deb($sample);
+                if(false){
+                    $sample = new sis\model\Banco();                    
+                }
+                $sample->save();/**/
+            }
+        }
     }
 }
 
