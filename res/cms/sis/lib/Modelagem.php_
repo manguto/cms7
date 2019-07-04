@@ -5,6 +5,7 @@ use manguto\cms5\lib\Arquivos;
 use manguto\cms5\lib\Diretorios;
 use manguto\cms5\lib\CSV;
 use manguto\cms5\lib\Numbers;
+use manguto\cms5\lib\model\Model;
 
 class Modelagem
 {
@@ -178,7 +179,13 @@ class Modelagem
         $return = [];
         foreach ($database as $tablename => $registers) {
             if (sizeof($registers) > 0) {
-                $return[$tablename] = array_keys($registers[1]);
+                $array_keys = array_keys($registers[1]);
+                foreach ($array_keys as $key){                    
+                    if($key=='id' || !in_array($key, Model::fundamentalAttributes)){
+                        $return[$tablename][] = $key;
+                    }                    
+                }
+                
             }
         }
         return $return;
