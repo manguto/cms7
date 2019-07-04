@@ -360,9 +360,27 @@ class Datas
     /**
      * increase or decrease some date according to the arguments informed
      * @param int $quantity
-     * @param string $parameter
+     * @param string $unit (D-days|M-months|Y-years)
      */
-    public function Operation(int $quantity,$parameter='months'){        
+    public function Operation(int $quantity,$unit='M'){        
+        {
+            {
+                $interval_spec = 'P'.abs($quantity).strtoupper($unit);
+            }
+            $dateInterval = new \DateInterval($interval_spec);
+            
+            //inverte a referencia do interval
+            if($quantity<0){
+                $dateInterval->invert=1;
+            }
+            
+        }                
+        $this->date->add($dateInterval);
+    }
+    
+    /*
+    //increase or decrease some date according to the arguments informed     
+    public function Operation_OLD(int $quantity,$parameter='months'){        
         $newDate = self::static_Operation($this,$quantity,$parameter);        
         $this->date = $newDate->date;
         $this->datestr= $newDate->datestr;
@@ -370,16 +388,13 @@ class Datas
         $this->timestamp= $newDate->timestamp;
     }
     
-    /**
-     * get an date and operate it with the args passed
-     * @param Datas $date
-     * @param string $parameter
-     * @param int $quantity
-     * @return Datas
-     */
+    //get an date and operate it with the args passed
     static function static_Operation(Datas $date,int $quantity, string $parameter='months'):Datas{        
         {
-            $timestampNew = strtotime(" $quantity $parameter ",$date->getTimestamp());
+         
+            $time = " $quantity $parameter ";
+            //deb($time,0);
+            $timestampNew = strtotime($time,$date->getTimestamp());
             //deb($timestampNew,0);
         }
         {
@@ -393,7 +408,7 @@ class Datas
         
         $newDate = new Datas($date_str,$date_format);
         return $newDate;
-    }
+    }*/
 }
 
 
