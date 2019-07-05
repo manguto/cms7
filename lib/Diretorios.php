@@ -14,13 +14,20 @@ class Diretorios {
 	 * @param array $allowedExtensionArray
 	 * @return string[]|string[]|mixed[]|string[][]|string[][]|mixed[][]
 	 */	 
-	static function obterArquivosPastas(string $path,bool $recursive,bool $filesAllowed,bool $foldersAllowed,array $allowedExtensionArray = array()) {
+	static function obterArquivosPastas(string $path,bool $recursive,bool $filesAllowed,bool $foldersAllowed,$allowedExtensions = array(),$throwException=true) {
 		//deb($path,0);
 		$path = self::fixDirectorySeparator ( $path );
 		
 		if ($filesAllowed == false) {
-			$allowedExtensionArray = false;
-		}
+			$allowedExtensions = false;
+		}else{
+		    if(is_string($allowedExtensions)){
+		        $allowedExtensions = [$allowedExtensions];
+		    }else if(!is_array($allowedExtensions)){
+		        throw new Exception("O tipo do parâmetro 'allowedExtensions' não é permitido => '".gettype($allowedExtensions)."' (Permitidos: array, string).");
+		    }
+		    //deb($allowedExtensions,0);
+		}		
 		
 		$return = array ();
 		
@@ -44,7 +51,7 @@ class Diretorios {
     				$return [] = $filename . DIRECTORY_SEPARATOR;
     				
     				if ($recursive) {
-    					$filename = Diretorios::obterArquivosPastas ( $filename, $recursive, $filesAllowed, $foldersAllowed, $allowedExtensionArray);
+    					$filename = Diretorios::obterArquivosPastas ( $filename, $recursive, $filesAllowed, $foldersAllowed, $allowedExtensions);
     					if (sizeof ( $filename ) > 0) {
     						foreach ( $filename as $f ) {
     							// --- ADICIONA SUB-FILENAMES
@@ -62,18 +69,22 @@ class Diretorios {
     			if (is_dir ( $filename ) && ! $foldersAllowed) {
     				unset ( $return [$k] );
     			}
-    			if (is_file ( $filename ) && $allowedExtensionArray === false) {
+    			if (is_file ( $filename ) && $allowedExtensions === false) {
     				unset ( $return [$k] );
     			}
-    			if (is_file ( $filename ) && $allowedExtensionArray !== false) {
+    			if (is_file ( $filename ) && $allowedExtensions !== false) {
     				$extension = Arquivos::obterExtensao ( $filename );
-    				// debug($extension,0);
+    				//deb("$path => $extension",0);
     				// debug($allowedExtensionArray,0);
-    				if (sizeof ( $allowedExtensionArray ) > 0 && ! in_array ( $extension, $allowedExtensionArray )) {
+    				if (sizeof ( $allowedExtensions ) > 0 && ! in_array ( $extension, $allowedExtensions )) {
     					unset ( $return [$k] );
     				}
     			}
     		}
+		}else{
+		    if($throwException){
+		        throw new Exception("Diretório não encontrado ($path).");
+		    }
 		}
 		
 		return $return;

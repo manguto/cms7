@@ -10,8 +10,10 @@ trait ModelMysqlPDO
 {
 
     /**
-     * Caso os dados do modelo em questao pertencam a outro banco de dados (externo),
-     * informar os dados de conexão neste metodo.
+     * Caso os dados do modelo em questao pertencam 
+     * a outro banco de dados (externo), SOBRECARREGAR 
+     * este método na classe do modelo e informar os 
+     * dados de conexão no mesmo.
      * @return string[]
      */
     private function DatabaseInfo():array 
