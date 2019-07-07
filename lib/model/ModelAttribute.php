@@ -296,7 +296,7 @@ class ModelAttribute
             foreach ($parameters as $parameterName => $parameterValue) {
                 $setMethod = 'set' . ucfirst($parameterName);
                 // define os parametros
-                $ModelAttribute->$setMethod($parameterValue);
+                $ModelAttribute->$setMethod($parameterValue,$checkAttributeName);
             }
             // salva no modelo
             $ModelAttributeArray[$attributeName] = $ModelAttribute;
