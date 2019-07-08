@@ -64,7 +64,7 @@ class MysqlPDO extends \PDO implements Database
         $statement->bindParam($key, $value, $data_type, $length);
     }
 
-    public function query($rawQuery, $parameters = []): \PDOStatement
+    public function query(string $rawQuery,array $parameters = []): \PDOStatement
     {
         $statement = $this->conn->prepare($rawQuery);
 
