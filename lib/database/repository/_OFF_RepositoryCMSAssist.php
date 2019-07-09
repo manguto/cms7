@@ -165,7 +165,7 @@ class _OFF_RepositoryCMSAssist
 
             if ($quantRegistros == 0) {
 
-                { // nomes dos arquivos envolvidos necessarios
+                { // os nomes dos arquivos envolvidos necessarios
                     $repositoryFilename = Repository::getRepositoryFilename($repositoryname);
                     $repositoryIniFilename = self::ini_foldername . '/' . $repositoryname . '.csv';
                 }

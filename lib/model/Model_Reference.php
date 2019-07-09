@@ -186,7 +186,7 @@ class Model_Reference
      * @param string $attributeName
      * @return bool
      */
-    static function ehParametroReferencial(string $attributeName): bool
+    static function itsReferenceAttribute(string $attributeName): bool
     {
         $return = (self::itsReferenceAttributeSimple($attributeName) || self::itsReferenceAttributeMultiple($attributeName));
         

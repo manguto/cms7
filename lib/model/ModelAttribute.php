@@ -60,7 +60,7 @@ class ModelAttribute
     // ########################################################################################################################
     // ########################################################################################################################
     // ########################################################################################################################
-    public function __construct($attributeName, bool $checkAttributeName = true)
+    public function __construct($attributeName, bool $checkAttributeName = true, bool $quickSet=false)
     {
         $this->setName($attributeName, $checkAttributeName);
         
@@ -75,6 +75,10 @@ class ModelAttribute
         $this->setEncrypted();
         
         $this->setValue();
+        
+        if($quickSet){
+            $this->quickSet();
+        }
     }
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GETTERS & SETTERS
@@ -280,7 +284,6 @@ class ModelAttribute
     
     /**
      * recebe um array de parametros brutos e o converte em um array de ModelAttributes
-     *
      * @param array $attributeArray
      * @param bool $checkAttributeName
      * @return array
@@ -303,6 +306,34 @@ class ModelAttribute
         }
         
         return $ModelAttributeArray;
+    }
+    
+    // ########################################################################################################################
+    // ########################################################################################################################
+    // ########################################################################################################################
+    
+    /**
+     * Realiza predifinicoes conforme determinados padroes pre-estabelecidos
+     */
+    private function quickSet() {
+        
+        //------------------------------------------------------------------------------- REFERENCE ATTRIBUTE
+        if(Model_Reference::itsReferenceAttribute($this->name)){            
+            if(Model_Reference::itsReferenceAttributeSimple($this->name)){
+                $this->setType(self::TYPE_INT);
+                $this->setNature(self::NATURE_REFERENCE_SINGLE);
+            }else if(Model_Reference::itsReferenceAttributeMultiple($this->name)){
+                $this->setType(self::TYPE_TEXT);
+                $this->setNature(self::NATURE_REFERENCE_MULTIPLE);                
+            }
+        }
+        //------------------------------------------------------------------------------- PASSWORD
+        if(strpos($this->name,'password')!==false || strpos($this->name,'senha')!==false){
+            $this->setEncrypted(true);
+        }
+        //------------------------------------------------------------------------------- 
+        //-------------------------------------------------------------------------------
+        
     }
     
     // ########################################################################################################################
