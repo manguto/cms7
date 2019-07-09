@@ -13,10 +13,7 @@ class Model_Reference
     const multiple_reference_indicator_end = '_ids';
 
     // separador de apelido de objeto referenciado quando da criacao do nome da coluna para o repositorio
-    const reference_nick_splitter = '__';
-
-    // separador para insercao na chave do valor de objeto referenciado quando retornado de uma chamada à funcao LOAD()
-    const reference_key_splitter = '___';
+    const reference_nick_splitter = '___';
 
     // ###########################################################################################################################################################################################################################################
     // ###########################################################################################################################################################################################################################################
@@ -24,31 +21,36 @@ class Model_Reference
     // ###########################################################################################################################################################################################################################################
     // ###########################################################################################################################################################################################################################################
     // ###########################################################################################################################################################################################################################################
-    static function Load($repositoryObject)
-    {
-        //deb($tablename=$repositoryObject->getModelname(),0);
-                        
-        $attributes = $repositoryObject->GetData($attribute_extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+    
+    /**
+     * Carregar as possiveis referencias do modelo informado.
+     * @param Model $model_object
+     */
+    static function Load(Model &$model_object)
+    {                   
+        //$attributes = $model_object->GetData($attribute_extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+        $attributes = $model_object->GetData();
 
-        //deb($attributes,0);
+        //deb($attributes);
         foreach ($attributes as $attributeName => $attributeValue_possible_id_or_ids) {
-
+            //deb($attributeName,0); deb($attributeValue_possible_id_or_ids);
+                        
             // caso o array nao possua nenhum conteudo FALSE, ou seja, é um parametro referencial (ex.: pessoa_id, responsavel__pessoa_id, categoria_id)
-            $ehParametroReferencial = self::itsReferenceAttributeSimple($attributeName);
+            $ehParametroReferencial = self::itsReferenceAttributeSimple($attributeName);            
             $itsReferenceAttributeMultiple = self::itsReferenceAttributeMultiple($attributeName);
             // deb($ehParametroReferencial,0); deb($itsReferenceAttributeMultiple,0);
             
             if ($ehParametroReferencial || $itsReferenceAttributeMultiple) {
-
-                // obtem todos os objetos referenciados
+                
+                // obtem todos os objetos referenciados                
                 $referencedObjec_array = self::getReferencedObjects($attributeName, $attributeValue_possible_id_or_ids);                
                 //debc($referencedObjec_array);
-                // percorre cada um dos objetos referenciados
-
-                
+                    
+                //caso tenha encontrado algum objeto referenciado
                 if(sizeof($referencedObjec_array)>0){
                     $referencedObjectTemp_array = [];
                     
+                    // percorre cada um dos objetos referenciados
                     foreach ($referencedObjec_array as $referencedObjectTemp_id=>$referencedObjectTemp) {
                         
                         // LOAD REFERENCES
@@ -67,19 +69,19 @@ class Model_Reference
                     $set_method = "set" . ucfirst(strtolower(self::getReferencedModelName($attributeName)));
                     //deb($set_method,0);
                     
-                    //SET VALUES
-                    $repositoryObject->$set_method($referencedObjectTemp_array, false);
-                }else{
-                    
-                    //nada!
-                    
+                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
+                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
+                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
+                    {   
+                        $model_object->$set_method($referencedObjectTemp_array, true);
+                    }
+                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 }
-                
-                
             }
         }
-        // deb($repositoryObject,0);
-        return $repositoryObject;
+        
     }
 
     /**
@@ -91,20 +93,20 @@ class Model_Reference
      */
     static private function getReferencedObjects($attributeName, $attributeValue_possible_id_or_ids): array
     {
-        //deb($attributeName,0); deb($attributeValue_possible_id_or_ids,0);
+        $attributeValue_possible_id_or_ids = strval($attributeValue_possible_id_or_ids);
+        //deb($attributeName,0); deb($attributeValue_possible_id_or_ids);
         
         $referencedObject_array = [];
 
         // verificacao de apelido para campo referencial (pedreiro__user_id => apelido:pedreiro, objeto:usuario)
         $attributeName = self::removerApelidoSe($attributeName);
-        // deb($attributeName,0);
+        //deb($attributeName,0);
 
-        $possibleRepositoryName = self::getReferencedModelName($attributeName);
-        //deb($possibleRepositoryName,0);
+        $possibleModelName = self::getReferencedModelName($attributeName);
+        //deb($possibleModelName,0);
 
-        //$modelPossibleRepositoryName = Repository::getObjectClassname($possibleRepositoryName);
-        throw new Exception("");
-        // deb($modelPossibleRepositoryName,0);
+        $modelPossibleModelName = Model_Helper::getObjectClassname($possibleModelName);        
+        //deb($modelPossibleModelName);
 
         if (self::itsReferenceAttributeMultiple($attributeName)) {
             $attributeValue_id_array = explode(',', $attributeValue_possible_id_or_ids);
@@ -113,19 +115,19 @@ class Model_Reference
                 $attributeValue_possible_id_or_ids
             ];
         }
-        //deb($attributeValue_id_array,0);
+        //deb($attributeValue_id_array);
 
         foreach ($attributeValue_id_array as $attributeValue_id) {
             if(intval($attributeValue_id)==0) {
                 continue;
             }
             //deb($attributeValue_id,0);
-            $referencedObjectTemp = new $modelPossibleRepositoryName($attributeValue_id);
-            $referencedObjectTemp->loadReferences();             
+            $referencedObjectTemp = new $modelPossibleModelName($attributeValue_id);
+            //$referencedObjectTemp->loadReferences();             
             $referencedObject_array[$attributeValue_id] = $referencedObjectTemp;
             // deb($repositoryObject,0); debc($referencedObjectTemp,0);
         }
-        //deb($referencedObjectTemp,0);
+        //deb($referencedObjectTemp);
         return $referencedObject_array;
     }
     
@@ -139,20 +141,20 @@ class Model_Reference
         
         if(self::itsReferenceAttributeSimple($attributeName)){
             // obtem o possivel nome do repositorio
-            $possibleRepositoryName = ucfirst(str_replace(self::simple_reference_indicator_end, '', $attributeName));
-            // deb($possibleRepositoryName);
+            $possibleModelName = ucfirst(str_replace(self::simple_reference_indicator_end, '', $attributeName));
+            // deb($possibleModelName);
         }else if(self::itsReferenceAttributeMultiple($attributeName)){
             // obtem o possivel nome do repositorio
-            $possibleRepositoryName = ucfirst(str_replace(self::multiple_reference_indicator_end, '', $attributeName));
-            // deb($possibleRepositoryName);
+            $possibleModelName = ucfirst(str_replace(self::multiple_reference_indicator_end, '', $attributeName));
+            // deb($possibleModelName);
         }else{
             if($throwException){
-                throw new Exception("Parâmetro não referencial informado ('$attributeName').");
+                throw new Exception("Atributo não referencial informado ('$attributeName').");
             }else{
-                $possibleRepositoryName = false;
+                $possibleModelName = false;
             }            
         }
-        return $possibleRepositoryName;
+        return $possibleModelName;
     }
     
     /**

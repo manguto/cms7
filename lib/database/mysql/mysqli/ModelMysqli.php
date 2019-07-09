@@ -92,10 +92,7 @@ trait ModelMysqli
             }
         }    
     }
-    
-    public function loadReferences()
-    {}
-    
+        
     public function delete(&$model)    
     {
         {

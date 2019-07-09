@@ -98,10 +98,7 @@ trait ModelRepository
             $this->SetAttributes($ModelAttribute, false);
         }
     }
-        
-    public function loadReferences()
-    {}
-           
+       
     public function delete()
     {
         $id = $this->getId()*-1;

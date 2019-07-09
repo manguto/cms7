@@ -165,9 +165,9 @@ abstract class Model
         foreach ($data as $key => $value) {
             $key = strtolower($key);
             // evita o carregamento de parametros que nao pertencam ao objeto (outros parametros inseridos no <form> p.ex.)
-            if (isset($this->attributes[$key])) {                
-                //chamada do metodo de definicao de cada atributo (generico ou especifico se definido)
-                $this->{'set'.ucfirst($key)}($value);                          
+            if (isset($this->attributes[$key])) {
+                // chamada do metodo de definicao de cada atributo (generico ou especifico se definido)
+                $this->{'set' . ucfirst($key)}($value);
             }
         }
     }
@@ -183,20 +183,22 @@ abstract class Model
      */
     public function GetData(bool $extra_attributes_included = false, bool $control_attributes_included = false): array
     {
+        // ====================================================================================
         $data = $this->attributes;
-        if($control_attributes_included==false){
-            foreach (array_keys($data) as $attributeName){
-                if(in_array($attributeName, $this->attributes_extra)){
+        // ====================================================================================
+        if ($control_attributes_included == false) {
+            foreach (array_keys($data) as $attributeName) {
+                if (in_array($attributeName, self::fundamentalAttributes)) {
                     unset($data[$attributeName]);
                 }
             }
         }
-        
-        if ($extra_attributes_included) {
+
+        if ($extra_attributes_included == true) {
             $attributes_extra = $this->attributes_extra;
             foreach ($attributes_extra as $attrName => $attrValue) {
                 if (isset($data[$attrName])) {
-                    throw new Exception("Foi encontrado um atributo extra com o mesmo nome de um atributo padrão do modelo ($attrName).");
+                    throw new Exception("Foi encontrado um ATRIBUTO EXTRAORDINÁRIO (AE) com o mesmo nome de um ATRIBUTO PADRÃO (AP) do modelo: '$attrName'. Altere o nome do AE e tente novamente.");
                 }
                 $data[$attrName] = $attrValue;
             }
@@ -261,6 +263,17 @@ abstract class Model
             // percorre todos os atributos para expo-los
             foreach ($attribute_array as $attrName => $attrValue) {
 
+                { // ocultacao de parametros fundamentais (de controle)                    
+                    if(in_array($attrName, self::fundamentalAttributes)){
+                        continue;
+                    }                    
+                }
+                { // ocultacao de parametros vazios                    
+                    if(trim($attrValue)==''){
+                        continue;
+                    }                    
+                }
+
                 { // verifica se o atributo eh referencial (ex.: categoria_id, modalidade_ids) para definicao do(s) valor(es) __toString() das referencias
 
                     {
@@ -277,7 +290,6 @@ abstract class Model
                             if ($itsReferenceAttributeSimple) {
                                 $attrValue = $this->attributes_extra[$referencedModelName];
                             }
-
                             if ($itsReferenceAttributeMultiple) {
                                 $attrValueArray = [];
                                 foreach ($this->attributes_extra[$referencedModelName] as $referencedModel) {
@@ -292,7 +304,7 @@ abstract class Model
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                //$return[] = "<span title='$attrName'>$attrValue</span>";
+                // $return[] = "<span title='$attrName'>$attrValue</span>";
                 $return[] = "$attrValue";
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -405,7 +417,7 @@ abstract class Model
     {
         if (isset($arguments[0])) {
 
-            { // obter o tipo de atrubuto a ser definido
+            { // obter o tipo de atributo a ser definido
                 { // valor a ser definido <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                     $value = $arguments[0];
                 }
@@ -417,7 +429,7 @@ abstract class Model
                     } else if (isset($arguments[1]) && $arguments[1] == true) {
                         $setNature = 'extra';
                     } else {
-                        throw new Exception("Definição de atributo de modelo incorreta. Tipo não identificado.");
+                        throw new Exception("Definição de atributo de modelo incorreta ($attributeName). Tipo não identificado.");
                     }
                 }
             }
@@ -427,22 +439,14 @@ abstract class Model
 
                     if (isset($this->attributes[$attributeName])) {
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
-                        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
-                        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                         $this->attributes[$attributeName]->setValue($value);
-                        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
-                        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                     } else {
                         throw new Exception("Parâmetro '$attributeName' não definido para o modelo '" . $this->getModelname() . "'. Defina-o ou utilize-o como um atributo extraordinário.");
                     }
                 } else {
-                    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
-                    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
-                    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
+                    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA                    
                     $this->attributes_extra[$attributeName] = $value;
-                    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
-                    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA
                 }
             }
@@ -451,6 +455,14 @@ abstract class Model
         }
     }
 
+    // ##################################################################################################################################
+    // ##################################################################################################################################
+    // ##################################################################################################################################
+    public function loadReferences()
+    {
+        Model_Reference::Load($this);
+        // deb($this);
+    }
     // ##################################################################################################################################
     // ##################################################################################################################################
     // ##################################################################################################################################

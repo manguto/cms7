@@ -20,12 +20,7 @@ interface ModelDatabase
      * carrega o registro com as informacoes da base de dados
      */
     function load();
-
-    /**
-     * carrega as referencias presentes no registro
-     */
-    function loadReferences();
-
+    
     /**
      * remove o registro da base de dados
      */

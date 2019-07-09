@@ -174,9 +174,6 @@ trait ModelMysqlPDO
         $this->SetAttributes($ModelAttribute, false); /* */
     }
 
-    public function loadReferences()
-    {}
-
     public function delete()
     {
         {

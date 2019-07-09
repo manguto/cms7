@@ -18,8 +18,6 @@ class _OFF_RepositoryReferences
     // separador de apelido de objeto referenciado quando da criacao do nome da coluna para o repositorio
     const reference_nick_splitter = '__';
 
-    // separador para insercao na chave do valor de objeto referenciado quando retornado de uma chamada à funcao LOAD()
-    const reference_key_splitter = '___';
 
     // ###########################################################################################################################################################################################################################################
     // ###########################################################################################################################################################################################################################################
