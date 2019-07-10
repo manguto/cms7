@@ -442,7 +442,7 @@ abstract class Model
                         $this->attributes[$attributeName]->setValue($value);
                         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFAULT
                     } else {
-                        throw new Exception("Parâmetro '$attributeName' não definido para o modelo '" . $this->getModelname() . "'. Defina-o ou utilize-o como um atributo extraordinário.");
+                        throw new Exception("Parâmetro '$attributeName' não definido para o modelo '" . $this->GetClass(). "'. Defina-o ou utilize-o como um atributo extraordinário.");
                     }
                 } else {
                     // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EXTRA                    

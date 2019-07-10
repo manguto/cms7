@@ -10,17 +10,17 @@ class MysqlPDO extends \PDO implements Database
 
     protected $conn;
 
-    public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = '')
+    public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = 'utf8')
     {
         if ($dbhost == '' && $dbuser == '' && $dbpass == '' && $dbname == '') {
             $dbhost = DATABASE_HOST;
             $dbuser = DATABASE_USER;
             $dbpass = DATABASE_PASS;
             $dbname = DATABASE_NAME;
-            $charset = $charset=='' ? 'utf8' : DATABASE_CHARTSET;
+            $charset = DATABASE_CHARTSET;
         }
 
-        $dsn = "mysql:host=$dbhost;dbname=$dbname";
+        $dsn = "mysql:host=$dbhost;dbname=$dbname;charset=$charset";
 
         $this->conn = new \PDO($dsn, $dbuser, $dbpass);
     }
