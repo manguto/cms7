@@ -2,6 +2,8 @@
 namespace manguto\cms5\lib\model;
 
 use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\Numbers;
+use manguto\cms5\lib\Moedas;
 
 class ModelAttribute
 {
@@ -184,7 +186,7 @@ class ModelAttribute
                 return intval($value);
                 break;
             
-            case self::TYPE_FLOAT:
+            case self::TYPE_FLOAT:                
                 return floatval($value);
                 break;
             

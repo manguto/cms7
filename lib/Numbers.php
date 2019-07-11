@@ -46,6 +46,19 @@ class Numbers
         }
     }
     
+    /**
+     * transforma um valor em float BR em float US (())
+     * @param string $value
+     * @return mixed
+     */
+    static function stringBRToFloat(string $value){
+        //$hasPoint = strpos($value, '.');
+        //$hasComma = strpos($value, ',');        
+        $value = str_replace('.', '', $value);
+        $value = str_replace(',', '.', $value);
+        return $value;
+    }
+    
 }
 
 

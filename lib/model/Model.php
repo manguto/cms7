@@ -148,26 +148,30 @@ abstract class Model
         }
     }
 
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GET & SET
     /**
      * define os parametros ou atributos do modelo atraves de um array passado
      * caso estes existam no objeto atual (por segurancao, definir no __construct deste),
      * ou sejam parametros extraordinários (de outro objeto, temporarios, para calculos, etc.).
      *
      * @param array $data
-     * @param bool $valueExtra
+     * @param bool $dataEmptyValueSet
+     *            - utilizar o valor informado mesmo que vazio?
      */
-    public function SetData(array $data)
+    public function SetData(array $data, bool $dataEmptyValueSet = true)
     {
         // deb($data);
         foreach ($data as $key => $value) {
             $key = strtolower($key);
             // evita o carregamento de parametros que nao pertencam ao objeto (outros parametros inseridos no <form> p.ex.)
-            if (isset($this->attributes[$key])) {
-                // chamada do metodo de definicao de cada atributo (generico ou especifico se definido)
-                $this->{'set' . ucfirst($key)}($value);
+            if (isset($this->attributes[$key])) {                
+                //define o valor informado quando este for diferente de vazio ou se definido independentemente
+                if($value!='' || $dataEmptyValueSet==true){
+                    // chamada do metodo de definicao de cada atributo (generico ou especifico se definido)
+                    $this->{'set' . ucfirst($key)}($value);
+                }                
             }
         }
     }

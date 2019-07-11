@@ -30,16 +30,17 @@
 							{loop="$value.rows"}							
 							<tr>								
 								{loop="$value1.cols"}																
-								<td scope="row">									
+								<td scope="row">
+												
 									{if="substr($value,-3,3)=='_id'"} 
-									<select name="registros[0][{$value}]" class="form-control"/>
+									<select name="registros[{$key2}][{$value}]" class="form-control"/>
 										<option value="">-</option>
 										{loop="$db[$value]"}
 										<option value="{$value.id}" {if="$value['id']==$value2[$value3]"} selected="selected" {/if}>{function="implode('-',$value)"}</option>
 										{/loop}								
 									</select>
 									{else} 
-									<input type="text" name="registros[{$value2.id}][{$value}]" class="form-control" value="{$value2[$value]}" {if=" $value=='id' && $value2[$value]==''"}  readonly="readonly" {/if}/>
+									<input type="text" name="registros[{$key2}][{$value}]" class="form-control" value="{$value2[$value]}" {if=" $value=='id' && $value2[$value]==''"}  readonly="readonly" {/if}/>
 									{/if}									
 								</td>							
 								{/loop}								

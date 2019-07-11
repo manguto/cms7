@@ -32,7 +32,7 @@ class ControlDevToolsRepository extends ControlDevTools
                     {//especificacao das colunas                        
                         $cols = explode(chr(10), $repository_content);
                         $cols = array_shift($cols);
-                        $cols = explode(';', $cols);
+                        $cols = explode(';', trim($cols));
                         foreach ($cols as $key=>$col) {
                             if (in_array($col, Model::fundamentalAttributes) && $col != 'id') {
                                 unset($cols[trim($key)]);
@@ -55,8 +55,8 @@ class ControlDevToolsRepository extends ControlDevTools
                         }
                         {//adicao do registro vazio para adicao
                             $n = sizeof($rows);
-                            foreach ($cols as $col){
-                                $rows[$n][$col]='';
+                            foreach ($cols as $col){                                
+                                $rows[$n][trim($col)]='';
                             }                            
                         }
                         //deb($rows,0);
@@ -80,6 +80,7 @@ class ControlDevToolsRepository extends ControlDevTools
                         'rows' => $rows
                     ];
                 }
+                //deb($repository_array);
             }
             //deb($db);
             // deb($textarea_array);
@@ -96,14 +97,15 @@ class ControlDevToolsRepository extends ControlDevTools
                 {
                     $classname = Model_Helper::getObjectClassname($tablename);
                 }
-                // deb($_POST,0);
+                //deb($_POST);
                 $registrosSalvos = 0;
                 foreach ($_POST['registros'] as $register) {
+                    
                     if(trim(implode('', $register))==''){
                         continue;
                     }
                     $obj = new $classname(intval($register['id']));
-                    $obj->SetData($register);
+                    $obj->SetData($register,false);
                     //deb($obj,0);
                     $obj->save();
                     //deb($obj,0);
