@@ -10,13 +10,14 @@ trait ModelMysqlPDO
 {
 
     /**
-     * Caso os dados do modelo em questao pertencam 
-     * a outro banco de dados (externo), SOBRECARREGAR 
-     * este método na classe do modelo e informar os 
+     * Caso os dados do modelo em questao pertencam
+     * a outro banco de dados (externo), SOBRECARREGAR
+     * este método na classe do modelo e informar os
      * dados de conexão no mesmo.
+     *
      * @return string[]
      */
-    private function DatabaseInfo():array 
+    private function DatabaseInfo(): array
     {
         return [
             'dbhost' => '',
@@ -30,12 +31,13 @@ trait ModelMysqlPDO
     /**
      * Conexao com o banco de dados, conforme os dados
      * padrao ou informados no modelo a utiliza-lo
+     *
      * @return \manguto\cms5\lib\database\mysql\pdo\MysqlPDO
      */
     private function NewMysqlPDO()
     {
         $databaseInfo = $this->DatabaseInfo();
-        //deb($databaseInfo);
+        // deb($databaseInfo);
         $dbhost = $databaseInfo['dbhost'];
         $dbuser = $databaseInfo['dbuser'];
         $dbpass = $databaseInfo['dbpass'];
@@ -119,7 +121,7 @@ trait ModelMysqlPDO
                 $query = " UPDATE $tablename SET $column_value_s WHERE id=:id ";
                 $parameters = $this->getParameters();
             }
-            //deb($query,0); deb($parameters);
+            // deb($query,0); deb($parameters);
         }
 
         {
@@ -198,16 +200,26 @@ trait ModelMysqlPDO
 
         { // parametros
             $called_class = get_called_class();
+            { // instanciacao de um objeto para obtencao do nome da tabela
+                $class_sample = new $called_class();
+            }
         }
 
         { // query verificacao
             if ($query == '') {
-                { // instanciacao de um objeto para obtencao do nome da tabela
-                    $class_sample = new $called_class();
+                { // ajuste da query para retorno de todos os registros
+                    $query = "SELECT * FROM " . $class_sample->getTablename() . " WHERE 1 ";
                 }
-                $query = "SELECT * FROM " . $class_sample->getTablename() . " WHERE 1";
+            } else {
+                
+                if (strpos(strtoupper($query), 'SELECT') === false) {
+                    // ajuste da query para complemento inicial do SQL
+                    $query = "SELECT * FROM " . $class_sample->getTablename() . " WHERE " . $query;
+                }                
             }
         }
+
+        Logs::set(Logs::TYPE_NOTICE, $query, $params);
 
         $mysql_pdo = $this->NewMysqlPDO();
         // deb($query,0);
