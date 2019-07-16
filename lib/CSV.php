@@ -17,7 +17,12 @@ class CSV {
 	    return chr(10);
 	}
 	
-	static function CSVToArray($csvContent) {
+	static function CSVToArray($csvContent,$utf8_encode=false) {
+	    
+	    if($utf8_encode){
+	        $csvContent = utf8_encode($csvContent);
+	    }
+	    
 		$csvContentLines = explode ( CSV::separadorRegistros(), $csvContent );
 		
 	    //deb($csvContentLines);
@@ -50,7 +55,7 @@ class CSV {
 		return $return;
 	}
 	
-	static function ArrayToCSV($arrayContent,$header=true) {
+	static function ArrayToCSV($arrayContent,$header=true,$utf8_decode=false) {
 		$colNames = array ();
 		$csvContentLines = array ();
 		foreach ( $arrayContent as $line ) {
@@ -82,6 +87,9 @@ class CSV {
 	
 		$return = implode ( CSV::separadorRegistros(), $csvContentLines );
 	
+		if($utf8_decode){
+		    $return = utf8_decode($return);
+		}
 		return $return;
 	}
 	
