@@ -3,6 +3,8 @@ namespace manguto\cms5\lib\html;
 
 
 use manguto\cms5\lib\Exception;
+use manguto\cms5\lib\model\Model_Helper;
+use manguto\cms5\lib\database\repository\Repository;
 
 class HTMLPagination extends HTML
 {
@@ -43,22 +45,12 @@ class HTMLPagination extends HTML
 
     public $class = 'btn btn-sm ';
 
-    /*
-     * public function __construct(array $GET, int $total, $page_varname = 'p', $length_varname = 'q')
-     * {
-     * $this->page_varname = $page_varname;
-     * $this->length_varname = $length_varname;
-     * $this->total = $total;
-     * $this->load($GET);
-     * }
-     */
+    
     public function __construct(string $tablename, string $conditions_search = '', array $arguments, string $page_varname = 'p', string $length_varname = 'q')
     {
         $this->tablename = $tablename;
-        $this->arguments = $arguments;
-        //$objectClassName = Repository::getObjectClassname($tablename);
-        throw new Exception('$objectClassName = Repository::getObjectClassname($tablename);');
-        $this->objectClassName = $objectClassName;
+        $this->arguments = $arguments;        
+        $this->objectClassName = Model_Helper::getObjectClassname($tablename);
 
         { // repositorio completo
 
@@ -66,7 +58,7 @@ class HTMLPagination extends HTML
                 $conditions_search = $conditions_search == '' ? $this->set_conditions_search() : $conditions_search;
             }
 
-            $object_array_light = $objectClassName::getList($conditions_search, $returnAsObject = true, $loadReferences = false, $loadCtrlParameters = false);
+            $object_array_light = $this->objectClassName::getList($conditions_search, $returnAsObject = true, $loadReferences = false, $loadCtrlParameters = false);
             // deb($produto_array_light);
         }
         {
