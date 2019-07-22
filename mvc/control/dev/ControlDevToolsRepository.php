@@ -30,7 +30,7 @@ class ControlDevToolsRepository extends ControlDevTools
                         $tablename = Arquivos::obterNomeArquivo($repository_filename, false);
                     }
                     {//especificacao das colunas                        
-                        $cols = explode(chr(10), $repository_content);
+                        $cols = explode(chr(10), trim($repository_content));
                         $cols = array_shift($cols);
                         $cols = explode(';', trim($cols));
                         foreach ($cols as $key=>$col) {
