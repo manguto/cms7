@@ -142,6 +142,10 @@ class Datas
         return $return;
     }
     
+    public function getDatetime(){
+        return $this->date;
+    }
+    
     /**
      * retorna se a data representa um dia de final de semana
      * @return boolean
@@ -376,6 +380,14 @@ class Datas
             
         }                
         $this->date->add($dateInterval);
+    }
+    
+    static function getDateDifference(Datas $data1, Datas $data2){
+        $datetime1=$data1->getDatetime();
+        $datetime2=$data2->getDatetime();        
+        $diff = $datetime2->diff($datetime1);
+        //deb($diff);
+        return $diff;
     }
     
     /*
