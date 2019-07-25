@@ -27,8 +27,11 @@ abstract class Model
 
     protected function checkSetStruct()
     {
-        // verifica se na classe filha os atributos deste foram definidos!
+        // verifica se 1 ou mais atributos foram definidos na classe filha
         $this->CheckAttributesSetted();
+        
+        // validacao de dados (caso necessaria)
+        $this->VerifyDataAndStructure();
 
         // ordernar atributos
         $this->SetAttributesOrder();
@@ -363,6 +366,10 @@ abstract class Model
             throw new Exception("Os atributos do modelo '$class' não foram definidos. Defina-os e tente novamente!");
         }
     }
+    
+    /*protected function VerifyDataAndStructure(){
+        Logs::set(Logs::TYPE_INFO, "Validação de dados e estrutura entre atributos do modelo ($this).");
+    }*/
 
     /**
      * ordernar atributos do objeto de maneira

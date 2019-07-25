@@ -57,6 +57,11 @@ trait ModelMysqlPDO
 
     public function save()
     {
+        {
+            // validacao de dados (caso necessaria)
+            $this->VerifyDataAndStructure();
+        }
+        
         { // verificacao/ajuste antes do salvamento
             $id = $this->getId();
             // deb($id,0);
@@ -172,8 +177,10 @@ trait ModelMysqlPDO
         // deb($ModelAttribute);
 
         // definir dados no objeto
-        // $this->SetData($data);
-        $this->SetAttributes($ModelAttribute, false); /* */
+        $this->SetAttributes($ModelAttribute, false);
+        
+        //verificar dados e corretude de sua estrutura
+        $this->VerifyDataAndStructure();
     }
 
     public function delete()
@@ -232,6 +239,7 @@ trait ModelMysqlPDO
             { // deb($register);
                 $object = new $called_class();
                 $object->SetData($register);
+                $object->VerifyDataAndStructure();
             }
             $return[$object->getId()] = $object;
         }

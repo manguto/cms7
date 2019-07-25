@@ -65,8 +65,26 @@ function addRow(tablename,btn){
 $(document).ready(function(){
 	
 	$('table.repository').each(function(){
+
 		$(this).find('tr:last').hide();
+		
+		
+		$(this).find('*').css({				
+			'font-family':'Courier New'	
+		});
+		
+		$(this).find('th,td').css({
+			'padding':'0px',
+			'font-size':'12px'	
+		});
+		
+		$(this).find('td *').css({
+			'padding':'2px 5px 3px 10px',			
+			'font-size':'12px'	
+		});
 	});
+	
+	
 		
 });
 </script>

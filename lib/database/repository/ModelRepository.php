@@ -13,6 +13,11 @@ trait ModelRepository
     
     public function save() 
     {
+        {
+            // validacao de dados (caso necessaria)
+            $this->VerifyDataAndStructure();
+        }
+        
         { // verificacao/ajuste antes do salvamento
             $id = $this->getId();
             // deb($id,0);
@@ -96,6 +101,9 @@ trait ModelRepository
             
             // definir dados no objeto
             $this->SetAttributes($ModelAttribute, false);
+            
+            //verificar dados e corretude de sua estrutura
+            $this->VerifyDataAndStructure();
         }
     }
        
@@ -129,7 +137,8 @@ trait ModelRepository
         foreach ($table as $row) {
             $modelClassName = $this->getClass();
             $registro = new $modelClassName();
-            $registro->SetData($row);
+            $registro->SetData($row);            
+            $registro->VerifyDataAndStructure();
             //deb($registro);
             $return[$registro->getId()] = $registro;
         }

@@ -3,8 +3,9 @@ namespace manguto\cms5\lib;
 
 /**
  * Classe de auxilio quando do tratamento de datas/horas
- * @author Marcos Torres
  *
+ * @author Marcos Torres
+ *        
  */
 class Datas
 {
@@ -12,12 +13,13 @@ class Datas
     private $format;
 
     private $datestr;
-
-    private $date;
-
+    
     private $timestamp;
     
-    //const FormatoDatahora = 'Y-m-d H:i:s';
+    private $date;
+
+
+    // const FormatoDatahora = 'Y-m-d H:i:s';
     const FormatoDatahora = 'd/m/Y H:i';
 
     /**
@@ -27,37 +29,98 @@ class Datas
      * @param string $data
      * @param string $dateFormat
      */
-    public function __construct(string $dateStr,string $dateFormat='d-m-Y')
+    public function __construct(string $dateStr, string $dateFormat = 'd-m-Y')
     {
         self::checkdate($dateFormat, $dateStr);
         $this->format = $dateFormat;
         $this->datestr = $dateStr;
-        $this->verifyTime();
-        $this->date = date_create_from_format($this->format, $this->datestr);
-        $this->timestamp = self::mktime($this->format, $this->datestr);
+        $this->timestamp = self::mktime($this->format, $this->datestr);        
+        $this->date = $this->date_create_from_format();
+        
+    }
+
+    private function date_create_from_format()
+    {
+
+        /**
+         * d - Day of the month; with leading zeros
+         * j - Day of the month; without leading zeros
+         * 
+         * m - Month (01-12)
+         * n - Month (1-12)
+         * 
+         * Y - Year (e.g 2013)
+         * y - Year (e.g 13)
+         *
+         * g - 12 hour format without leading zeros
+         * G - 24 hour format without leading zeros
+         * h - 12 hour format with leading zeros
+         * H - 24 hour format with leading zeros
+         *
+         * i - Minutes with leading zeros
+         *
+         * s - Seconds with leading zeros
+         *
+         * @var Ambiguous $format
+         */
+        $format = $this->format;
+        $datestr = $this->datestr;
+
+        self::date_create_from_format_fix($format, $datestr, [
+            'Y',
+            'y'
+        ], '01');
+        
+        self::date_create_from_format_fix($format, $datestr, [
+            'm',
+            'n'
+        ], '01');
+        
+        self::date_create_from_format_fix($format, $datestr, [
+            'd',
+            'j'
+        ], '01');
+        
+        self::date_create_from_format_fix($format, $datestr, [
+            'H',
+            'h',
+            'G',
+            'g'
+        ], '00');
+        
+        self::date_create_from_format_fix($format, $datestr, [
+            'i'
+        ], '00');
+        
+        self::date_create_from_format_fix($format, $datestr, [
+            's'
+        ], '00');
+
+        return date_create_from_format($format, $datestr);
     }
 
     /**
-     * PRIVATE - verifica se a data informada possui hora no seu conteudo
-     * e em caso negativo, especifica que a data possui hora,min e seg iguais a "00"
+     * ajuste interno dos parametros de FORMATO e de DATA(STRING)
+     * para adequacao a uma data fixa inicial ao invés da atual!
+     *
+     * @param string $format
+     * @param string $datestr
+     * @param array $params
+     * @param string $defaultValue
+     * @return array
      */
-    private function verifyTime()
+    private static function date_create_from_format_fix(string &$format, string &$datestr, array $params, string $defaultValue)
     {
-        $hourSetted = false;
-        $format_hour = [
-            'g',
-            'G',
-            'h',
-            'H'
-        ];
-        foreach ($format_hour as $f) {
-            if (strpos($this->format, $f) !== false) {
-                $hourSetted = true;
+        $paramSetted = false;
+        foreach ($params as $f) {
+            if (strpos($format, $f) !== false) {
+                $paramSetted = true;
             }
         }
-        if ($hourSetted == false) {
-            $this->format .= ' H:i:s';
-            $this->datestr .= ' 00:00:00';
+
+        if ($paramSetted == false) {
+            $format .= ' ' . array_shift($params);
+            $datestr .= ' ' . $defaultValue;
         }
     }
 
@@ -70,6 +133,7 @@ class Datas
     {
         return floatval($this->timestamp);
     }
+    
 
     /**
      * Verifica se a data eh valida
@@ -83,11 +147,11 @@ class Datas
     static function checkdate(string $format, string $datestr, $throwException = true): bool
     {
         $dateArray = date_parse_from_format($format, $datestr);
-        
+
         $month = $dateArray['month'];
-        $day = !$dateArray['day'] ? 1 : $dateArray['day'];
+        $day = ! $dateArray['day'] ? 1 : $dateArray['day'];
         $year = $dateArray['year'];
-        
+
         if (! checkdate($month, $day, $year)) {
             if ($throwException) {
                 throw new Exception("Data incorreta ou inexistente ('$datestr' => DIA:$day | MÊS:$month | ANO:$year).");
@@ -108,17 +172,17 @@ class Datas
      */
     static function mktime(string $format, string $datestr): float
     {
-        //deb($format,0);
-        //deb($datestr,0);
+        // deb($format,0);
+        // deb($datestr,0);
         $dateArray = date_parse_from_format($format, $datestr);
-        
+
         $hour = $dateArray['hour'];
         $minute = $dateArray['minute'];
         $second = $dateArray['second'];
         $month = $dateArray['month'];
         $day = $dateArray['day'];
         $year = $dateArray['year'];
-        
+
         return floatval(mktime($hour, $minute, $second, $month, $day, $year));
     }
 
@@ -132,29 +196,31 @@ class Datas
     public function getDate(string $format = 'd-m-Y'): string
     {
         $object = $this->date;
-        //deb($object,0);
-        //deb($format);        
-        
-        if(!is_object($object)){
+        // deb($object,0);
+        // deb($format);
+
+        if (! is_object($object)) {
             throw new \Exception('Parametro informado nao é um objeto date.');
-        }                
+        }
         $return = date_format($object, $format);
         return $return;
     }
-    
-    public function getDatetime(){
+
+    public function getDatetime()
+    {
         return $this->date;
     }
-    
+
     /**
      * retorna se a data representa um dia de final de semana
+     *
      * @return boolean
      */
-    public function itsWeekend(){        
-        return self::staticItsWeekend($this->datestr,$this->format);
+    public function itsWeekend()
+    {
+        return self::staticItsWeekend($this->datestr, $this->format);
     }
-    
-    
+
     /**
      * Retorna o nome do dia da semana conforme o número do mesmo informado [0-6]
      *
@@ -163,73 +229,73 @@ class Datas
      * @throws Exception
      * @return string
      */
-    static function staticGetWeekDayName_(int $dayNumber, $fullName = false,$utf8_decode=false): string
+    static function staticGetWeekDayName_(int $dayNumber, $fullName = false, $utf8_decode = false): string
     {
         if ($dayNumber < 0 || $dayNumber > 6) {
             throw new Exception("Número inadequado para um dia da semana [0-6]('$dayNumber').");
         }
         $code = $fullName ? '%A' : '%a';
-        if($utf8_decode){
+        if ($utf8_decode) {
             $return = utf8_decode(strftime($code, strtotime("Sunday +{$dayNumber} days")));
-        }else{
+        } else {
             $return = strftime($code, strtotime("Sunday +{$dayNumber} days"));
         }
         return $return;
     }
-    
-    
-    static function staticGetWeekDayName(int $dayNumber, string $size = 'p',bool $uppercase=true,bool $ucfirst=false): string
+
+    static function staticGetWeekDayName(int $dayNumber, string $size = 'p', bool $uppercase = true, bool $ucfirst = false): string
     {
         if ($dayNumber >= 0 && $dayNumber <= 6) {
-            
-            //tamanho ----------------------------------------------------------------------------------------------------
+
+            // tamanho ----------------------------------------------------------------------------------------------------
             $size = strtolower($size);
-            if($size=='p'){                
+            if ($size == 'p') {
                 $return = strftime('%a', strtotime("Sunday +{$dayNumber} days"));
-                $return = substr($return,0,1);
-            }else if($size=='m'){
+                $return = substr($return, 0, 1);
+            } else if ($size == 'm') {
                 $return = strftime('%a', strtotime("Sunday +{$dayNumber} days"));
-            }else if($size=='g'){
+            } else if ($size == 'g') {
                 $return = strftime('%A', strtotime("Sunday +{$dayNumber} days"));
-            }else{
+            } else {
                 throw new Exception("Tamanho inadequado ('$size'). Tamanhos permitidos: P, M e G.");
             }
-            //primeira - maiuscula ----------------------------------------------------------------------------------------
-            if($ucfirst){
+            // primeira - maiuscula ----------------------------------------------------------------------------------------
+            if ($ucfirst) {
                 $return = ucfirst($return);
             }
-            //maiuscula ----------------------------------------------------------------------------------------------------
-            if($uppercase){
+            // maiuscula ----------------------------------------------------------------------------------------------------
+            if ($uppercase) {
                 $return = strtoupper($return);
-                {//fix
-                    $return = str_replace('ç','Ç', $return);
-                    $return = str_replace('á','Á', $return);
+                { // fix
+                    $return = str_replace('ç', 'Ç', $return);
+                    $return = str_replace('á', 'Á', $return);
                 }
-            }            
-        }else{
+            }
+        } else {
             throw new Exception("Número inadequado para um dia da semana [0-6]('$dayNumber').");
         }
-        
+
         return $return;
     }
-    
+
     /**
      * retorna se o dia da data informada eh um final de semana
+     *
      * @param string $dateStr
      * @param string $dateFormat
      * @return boolean
      */
-    public static function staticItsWeekend(string $dateStr,string $dateFormat='d-m-Y'){
-        $date = new Datas($dateStr,$dateFormat);
+    public static function staticItsWeekend(string $dateStr, string $dateFormat = 'd-m-Y')
+    {
+        $date = new Datas($dateStr, $dateFormat);
         $w = $date->getDate('w');
-        if($w=='0' || $w=='6'){            
+        if ($w == '0' || $w == '6') {
             return $date->getWeekDayName();
-        }else{
+        } else {
             return false;
         }
     }
-    
-    
+
     /**
      * Retorna o nome do dia da semana conforme o número do mesmo informado [0-6]
      *
@@ -239,9 +305,9 @@ class Datas
      * @return string
      */
     public function getWeekDayName($fullName = false): string
-    {        
+    {
         $dayNumber = $this->getWeekDayNumber();
-        return self::staticGetWeekDayName_($dayNumber,$fullName);
+        return self::staticGetWeekDayName_($dayNumber, $fullName);
     }
 
     /**
@@ -263,8 +329,8 @@ class Datas
     static function staticGetWeekDayNumber(float $timestamp): int
     {
         $format = 'd-m-Y';
-        self::checkdate($format, date($format,$timestamp));
-        
+        self::checkdate($format, date($format, $timestamp));
+
         $return = strftime('%w', $timestamp);
         $return = intval($return);
         return $return;
@@ -287,143 +353,154 @@ class Datas
         $return = strftime($code, self::mktime('Y-m-d', "2018-$monthNumber-01"));
         return utf8_encode($return);
     }
-        
+
     /**
      * Retorna o nome do mes conforme o número informado [1-12]
-     * @param int $monthNumber [1-12]
-     * @param string $size [P,M,G]
-     * @param bool $uppercase - todo em maiusculo?
-     * @param bool $ucfirst - apenas a primeira letra em maiusculo?
+     *
+     * @param int $monthNumber
+     *            [1-12]
+     * @param string $size
+     *            [P,M,G]
+     * @param bool $uppercase
+     *            - todo em maiusculo?
+     * @param bool $ucfirst
+     *            - apenas a primeira letra em maiusculo?
      * @throws Exception
      * @return string
      */
-    static function static_GetMonthName(int $monthNumber, string $size = 'P',bool $uppercase=true,bool $ucfirst=false): string
-    {   
+    static function static_GetMonthName(int $monthNumber, string $size = 'P', bool $uppercase = true, bool $ucfirst = false): string
+    {
         if ($monthNumber >= 1 && $monthNumber <= 12) {
-            
-            //tamanho ----------------------------------------------------------------------------------------------------
-            $size = strtolower($size);            
-            if($size=='p'){            
-                $return = strftime('%b', self::mktime('Y-m-d', "2018-$monthNumber-01"));                
-                $return = substr($return,0,1);
-            }else if($size=='m'){
-                $return = strftime('%b', self::mktime('Y-m-d', "2018-$monthNumber-01"));                
-            }else if($size=='g'){
-                $return = strftime('%B', self::mktime('Y-m-d', "2018-$monthNumber-01"));                
-            }else{
+
+            // tamanho ----------------------------------------------------------------------------------------------------
+            $size = strtolower($size);
+            if ($size == 'p') {
+                $return = strftime('%b', self::mktime('Y-m-d', "2018-$monthNumber-01"));
+                $return = substr($return, 0, 1);
+            } else if ($size == 'm') {
+                $return = strftime('%b', self::mktime('Y-m-d', "2018-$monthNumber-01"));
+            } else if ($size == 'g') {
+                $return = strftime('%B', self::mktime('Y-m-d', "2018-$monthNumber-01"));
+            } else {
                 throw new Exception("Tamanho inadequado ('$size'). Tamanhos permitidos: P, M e G.");
             }
-            //primeira - maiuscula ----------------------------------------------------------------------------------------
-            if($ucfirst){
+            // primeira - maiuscula ----------------------------------------------------------------------------------------
+            if ($ucfirst) {
                 $return = ucfirst($return);
             }
-            //maiuscula ----------------------------------------------------------------------------------------------------
-            if($uppercase){
+            // maiuscula ----------------------------------------------------------------------------------------------------
+            if ($uppercase) {
                 $return = strtoupper($return);
-            }            
-            
-        }else{
+            }
+        } else {
             throw new Exception("Número inadequado para um mês ('$monthNumber').");
         }
-        
+
         return $return;
     }
-    
+
     static function getMonthNumberOfDays($year, $month)
     {
         $dateFormat = 'Y-m-d';
         $dateStr = "$year-$month-01";
-        //deb($dateStr,0);
+        // deb($dateStr,0);
         return date('t', self::mktime($dateFormat, $dateStr));
     }
-    
-    static function getWeekTimestampStartEnd($dateStr,$dateFormat){
-        $d = new Datas($dateStr,$dateFormat);
-        
-        if($d->getWeekDayNumber()==0){
-            $timestampSemanaInicio = strtotime('today',$d->getTimestamp());
-            //deb(date('d-m-Y H:i:s',$timestampSemanaInicio));
-            $timestampSemanaFim = strtotime('next saturday',$d->getTimestamp())+(24*60*60)-(1);
-            //deb(date('d-m-Y H:i:s',$timestampSemanaFim));
-        }else if($d->getWeekDayNumber()==6){
-            $timestampSemanaInicio = strtotime('last sunday',$d->getTimestamp());
-            //deb(date('d-m-Y H:i:s',$timestampSemanaInicio));
-            $timestampSemanaFim = strtotime('today',$d->getTimestamp())+(24*60*60)-(1);
-            //deb(date('d-m-Y H:i:s',$timestampSemanaFim));
-        }else{
-            $timestampSemanaInicio = strtotime('last sunday',$d->getTimestamp());
-            //deb(date('d-m-Y H:i:s',$timestampSemanaInicio));
-            $timestampSemanaFim = strtotime('next saturday',$d->getTimestamp())+(24*60*60)-(1);
-            //deb(date('d-m-Y H:i:s',$timestampSemanaFim));
+
+    static function getWeekTimestampStartEnd($dateStr, $dateFormat)
+    {
+        $d = new Datas($dateStr, $dateFormat);
+
+        if ($d->getWeekDayNumber() == 0) {
+            $timestampSemanaInicio = strtotime('today', $d->getTimestamp());
+            // deb(date('d-m-Y H:i:s',$timestampSemanaInicio));
+            $timestampSemanaFim = strtotime('next saturday', $d->getTimestamp()) + (24 * 60 * 60) - (1);
+            // deb(date('d-m-Y H:i:s',$timestampSemanaFim));
+        } else if ($d->getWeekDayNumber() == 6) {
+            $timestampSemanaInicio = strtotime('last sunday', $d->getTimestamp());
+            // deb(date('d-m-Y H:i:s',$timestampSemanaInicio));
+            $timestampSemanaFim = strtotime('today', $d->getTimestamp()) + (24 * 60 * 60) - (1);
+            // deb(date('d-m-Y H:i:s',$timestampSemanaFim));
+        } else {
+            $timestampSemanaInicio = strtotime('last sunday', $d->getTimestamp());
+            // deb(date('d-m-Y H:i:s',$timestampSemanaInicio));
+            $timestampSemanaFim = strtotime('next saturday', $d->getTimestamp()) + (24 * 60 * 60) - (1);
+            // deb(date('d-m-Y H:i:s',$timestampSemanaFim));
         }
-        
-        
-        return [$timestampSemanaInicio,$timestampSemanaFim];
+
+        return [
+            $timestampSemanaInicio,
+            $timestampSemanaFim
+        ];
     }
-    
+
     /**
      * increase or decrease some date according to the arguments informed
+     *
      * @param int $quantity
-     * @param string $unit (D-days|M-months|Y-years)
+     * @param string $unit
+     *            (D-days|M-months|Y-years)
      */
-    public function Operation(int $quantity,$unit='M'){        
+    public function Operation(int $quantity, $unit = 'M')
+    {
         {
             {
-                $interval_spec = 'P'.abs($quantity).strtoupper($unit);
+                $interval_spec = 'P' . abs($quantity) . strtoupper($unit);
             }
             $dateInterval = new \DateInterval($interval_spec);
-            
-            //inverte a referencia do interval
-            if($quantity<0){
-                $dateInterval->invert=1;
+
+            // inverte a referencia do interval
+            if ($quantity < 0) {
+                $dateInterval->invert = 1;
             }
-            
-        }                
+        }
         $this->date->add($dateInterval);
+        $this->datestr = $this->getDate($this->format);        
+        $this->timestamp = self::mktime($this->format, $this->datestr);
     }
-    
-    static function getDateDifference(Datas $data1, Datas $data2){
-        $datetime1=$data1->getDatetime();
-        $datetime2=$data2->getDatetime();        
+
+    static function getDateDifference(Datas $data1, Datas $data2)
+    {
+        $datetime1 = $data1->getDatetime();
+        $datetime2 = $data2->getDatetime();
         $diff = $datetime2->diff($datetime1);
-        //deb($diff);
+        // deb($diff);
         return $diff;
     }
-    
+
     /*
-    //increase or decrease some date according to the arguments informed     
-    public function Operation_OLD(int $quantity,$parameter='months'){        
-        $newDate = self::static_Operation($this,$quantity,$parameter);        
-        $this->date = $newDate->date;
-        $this->datestr= $newDate->datestr;
-        $this->format= $newDate->format;
-        $this->timestamp= $newDate->timestamp;
-    }
-    
-    //get an date and operate it with the args passed
-    static function static_Operation(Datas $date,int $quantity, string $parameter='months'):Datas{        
-        {
-         
-            $time = " $quantity $parameter ";
-            //deb($time,0);
-            $timestampNew = strtotime($time,$date->getTimestamp());
-            //deb($timestampNew,0);
-        }
-        {
-            $date_str = date($date->format,$timestampNew);
-            //deb($date_str,0);
-        }
-        {
-            $date_format = $date->format;
-            //deb($date_format,0);
-        }
-        
-        $newDate = new Datas($date_str,$date_format);
-        return $newDate;
-    }*/
+     * //increase or decrease some date according to the arguments informed
+     * public function Operation_OLD(int $quantity,$parameter='months'){
+     * $newDate = self::static_Operation($this,$quantity,$parameter);
+     * $this->date = $newDate->date;
+     * $this->datestr= $newDate->datestr;
+     * $this->format= $newDate->format;
+     * $this->timestamp= $newDate->timestamp;
+     * }
+     *
+     * //get an date and operate it with the args passed
+     * static function static_Operation(Datas $date,int $quantity, string $parameter='months'):Datas{
+     * {
+     *
+     * $time = " $quantity $parameter ";
+     * //deb($time,0);
+     * $timestampNew = strtotime($time,$date->getTimestamp());
+     * //deb($timestampNew,0);
+     * }
+     * {
+     * $date_str = date($date->format,$timestampNew);
+     * //deb($date_str,0);
+     * }
+     * {
+     * $date_format = $date->format;
+     * //deb($date_format,0);
+     * }
+     *
+     * $newDate = new Datas($date_str,$date_format);
+     * return $newDate;
+     * }
+     */
 }
-
-
 
 /**
  * =====================================================================================================================================
@@ -514,67 +591,67 @@ class Datas
 
 /**
  * DATETIME PHP 5.0 Functions Descriptions (http://www.w3schools.com/php/php_ref_date.asp)
- * checkdate()	Validates a Gregorian date
- * date_add()	Adds days, months, years, hours, minutes, and seconds to a date
- * date_create_from_format()	Returns a new DateTime object formatted according to a specified format
- * date_create()	Returns a new DateTime object
- * date_date_set()	Sets a new date
- * date_default_timezone_get()	Returns the default timezone used by all date/time functions
- * date_default_timezone_set()	Sets the default timezone used by all date/time functions
- * date_diff()	Returns the difference between two dates
- * date_format()	Returns a date formatted according to a specified format
- * date_get_last_errors()	Returns the warnings/errors found in a date string
- * date_interval_create_from_date_string()	Sets up a DateInterval from the relative parts of the string
- * date_interval_format()	Formats the interval
- * date_isodate_set()	Sets the ISO date
- * date_modify()	Modifies the timestamp
- * date_offset_get()	Returns the timezone offset
- * date_parse_from_format()	Returns an associative array with detailed info about a specified date, according to a specified format
- * date_parse()	Returns an associative array with detailed info about a specified date
- * date_sub()	Subtracts days, months, years, hours, minutes, and seconds from a date
- * date_sun_info()	Returns an array containing info about sunset/sunrise and twilight begin/end, for a specified day and location
- * date_sunrise()	Returns the sunrise time for a specified day and location
- * date_sunset()	Returns the sunset time for a specified day and location
- * date_time_set()	Sets the time
- * date_timestamp_get()	Returns the Unix timestamp
- * date_timestamp_set()	Sets the date and time based on a Unix timestamp
- * date_timezone_get()	Returns the time zone of the given DateTime object
- * date_timezone_set()	Sets the time zone for the DateTime object
- * date()	Formats a local date and time
- * getdate()	Returns date/time information of a timestamp or the current local date/time
- * gettimeofday()	Returns the current time
- * gmdate()	Formats a GMT/UTC date and time
- * gmmktime()	Returns the Unix timestamp for a GMT date
- * gmstrftime()	Formats a GMT/UTC date and time according to locale settings
- * idate()	Formats a local time/date as integer
- * localtime()	Returns the local time
- * microtime()	Returns the current Unix timestamp with microseconds
- * mktime()	Returns the Unix timestamp for a date
- * strftime()	Formats a local time and/or date according to locale settings
- * strptime()	Parses a time/date generated with strftime()
- * strtotime()	Parses an English textual datetime into a Unix timestamp
- * time()	Returns the current time as a Unix timestamp
- * timezone_abbreviations_list()	Returns an associative array containing dst, offset, and the timezone name
- * timezone_ids_list()	Returns an indexed array with all timezone ids
- * timezone_location_get()	Returns location information for a specified timezone
- * timezone_name_from_ abbr()	Returns the timezone name from abbreviation
- * timezone_name_get()	Returns the name of the timezone
- * timezone_offset_get()	Returns the timezone offset from GMT
- * timezone_open()	Creates new DateTimeZone object
- * timezone_transitions_get()	Returns all transitions for the timezone
- * timezone_version_get()	Returns the version of the timezone db
+ * checkdate() Validates a Gregorian date
+ * date_add() Adds days, months, years, hours, minutes, and seconds to a date
+ * date_create_from_format() Returns a new DateTime object formatted according to a specified format
+ * date_create() Returns a new DateTime object
+ * date_date_set() Sets a new date
+ * date_default_timezone_get() Returns the default timezone used by all date/time functions
+ * date_default_timezone_set() Sets the default timezone used by all date/time functions
+ * date_diff() Returns the difference between two dates
+ * date_format() Returns a date formatted according to a specified format
+ * date_get_last_errors() Returns the warnings/errors found in a date string
+ * date_interval_create_from_date_string() Sets up a DateInterval from the relative parts of the string
+ * date_interval_format() Formats the interval
+ * date_isodate_set() Sets the ISO date
+ * date_modify() Modifies the timestamp
+ * date_offset_get() Returns the timezone offset
+ * date_parse_from_format() Returns an associative array with detailed info about a specified date, according to a specified format
+ * date_parse() Returns an associative array with detailed info about a specified date
+ * date_sub() Subtracts days, months, years, hours, minutes, and seconds from a date
+ * date_sun_info() Returns an array containing info about sunset/sunrise and twilight begin/end, for a specified day and location
+ * date_sunrise() Returns the sunrise time for a specified day and location
+ * date_sunset() Returns the sunset time for a specified day and location
+ * date_time_set() Sets the time
+ * date_timestamp_get() Returns the Unix timestamp
+ * date_timestamp_set() Sets the date and time based on a Unix timestamp
+ * date_timezone_get() Returns the time zone of the given DateTime object
+ * date_timezone_set() Sets the time zone for the DateTime object
+ * date() Formats a local date and time
+ * getdate() Returns date/time information of a timestamp or the current local date/time
+ * gettimeofday() Returns the current time
+ * gmdate() Formats a GMT/UTC date and time
+ * gmmktime() Returns the Unix timestamp for a GMT date
+ * gmstrftime() Formats a GMT/UTC date and time according to locale settings
+ * idate() Formats a local time/date as integer
+ * localtime() Returns the local time
+ * microtime() Returns the current Unix timestamp with microseconds
+ * mktime() Returns the Unix timestamp for a date
+ * strftime() Formats a local time and/or date according to locale settings
+ * strptime() Parses a time/date generated with strftime()
+ * strtotime() Parses an English textual datetime into a Unix timestamp
+ * time() Returns the current time as a Unix timestamp
+ * timezone_abbreviations_list() Returns an associative array containing dst, offset, and the timezone name
+ * timezone_ids_list() Returns an indexed array with all timezone ids
+ * timezone_location_get() Returns location information for a specified timezone
+ * timezone_name_from_ abbr() Returns the timezone name from abbreviation
+ * timezone_name_get() Returns the name of the timezone
+ * timezone_offset_get() Returns the timezone offset from GMT
+ * timezone_open() Creates new DateTimeZone object
+ * timezone_transitions_get() Returns all transitions for the timezone
+ * timezone_version_get() Returns the version of the timezone db
  * PHP 5 Predefined Date/Time Constants
- * Constant	Description
- * DATE_ATOM	Atom (example: 2005-08-15T16:13:03+0000)
- * DATE_COOKIE	HTTP Cookies (example: Sun, 14 Aug 2005 16:13:03 UTC)
- * DATE_ISO8601	ISO-8601 (example: 2005-08-14T16:13:03+0000)
- * DATE_RFC822	RFC 822 (example: Sun, 14 Aug 2005 16:13:03 UTC)
- * DATE_RFC850	RFC 850 (example: Sunday, 14-Aug-05 16:13:03 UTC)
- * DATE_RFC1036	RFC 1036 (example: Sunday, 14-Aug-05 16:13:03 UTC)
- * DATE_RFC1123	RFC 1123 (example: Sun, 14 Aug 2005 16:13:03 UTC)
- * DATE_RFC2822	RFC 2822 (Sun, 14 Aug 2005 16:13:03 +0000)
- * DATE_RSS	RSS (Sun, 14 Aug 2005 16:13:03 UTC)
- * DATE_W3C	World Wide Web Consortium (example: 2005-08-14T16:13:03+0000)
+ * Constant Description
+ * DATE_ATOM Atom (example: 2005-08-15T16:13:03+0000)
+ * DATE_COOKIE HTTP Cookies (example: Sun, 14 Aug 2005 16:13:03 UTC)
+ * DATE_ISO8601 ISO-8601 (example: 2005-08-14T16:13:03+0000)
+ * DATE_RFC822 RFC 822 (example: Sun, 14 Aug 2005 16:13:03 UTC)
+ * DATE_RFC850 RFC 850 (example: Sunday, 14-Aug-05 16:13:03 UTC)
+ * DATE_RFC1036 RFC 1036 (example: Sunday, 14-Aug-05 16:13:03 UTC)
+ * DATE_RFC1123 RFC 1123 (example: Sun, 14 Aug 2005 16:13:03 UTC)
+ * DATE_RFC2822 RFC 2822 (Sun, 14 Aug 2005 16:13:03 +0000)
+ * DATE_RSS RSS (Sun, 14 Aug 2005 16:13:03 UTC)
+ * DATE_W3C World Wide Web Consortium (example: 2005-08-14T16:13:03+0000)
  */
 
 ?>
