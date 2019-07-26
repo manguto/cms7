@@ -1,7 +1,6 @@
 <?php
-
-
-use manguto\cms5\lib\Variables; 
+use manguto\cms5\lib\Variables;
+use manguto\cms5\lib\Logs;
 
 // =============================================================================================================================================
 // =============================================================================================================================================
@@ -11,12 +10,16 @@ use manguto\cms5\lib\Variables;
 
 /**
  * ordena um array por todas as suas chaves
- * @param $array
+ *
+ * @param
+ *            $array
  * @param string $sort_flags
  * @return boolean
  */
-function ksortRecursive(&$array, $sort_flags = SORT_REGULAR) {
-    if (!is_array($array)) return false;
+function ksortRecursive(&$array, $sort_flags = SORT_REGULAR)
+{
+    if (! is_array($array))
+        return false;
     ksort($array, $sort_flags);
     foreach ($array as &$arr) {
         ksortRecursive($arr, $sort_flags);
@@ -26,32 +29,32 @@ function ksortRecursive(&$array, $sort_flags = SORT_REGULAR) {
 
 /**
  * retorna uma string HTML com a representacao do conteudo do array
- * 
+ *
  * @param number $level
  * @return string
  */
-function debv($variable, $die=true, $level = 0)
+function debv($variable, $die = true, $level = 0)
 {
     $type = gettype($variable);
     // boolean, integer, double, string, NULL, array, object, resource, unknown type
-    
+
     { // td key attr
         $td_attr = " title='$type ' style='cursor:pointer; text-align:right;'";
     }
-    
+
     $return = array();
     $return[] = "<table border='0' style='border-left:solid 1px #aaa; border-bottom:solid 1px #aaa; ' '>";
-    { 
+    {
         if ($type == 'boolean' || $type == 'integer' || $type == 'double' || $type == 'string' || $type == 'NULL') {
-            
+
             // ajuste para melhor exibição
             $variable = trim($variable) == '' ? '&nbsp;' : '= ' . $variable;
-            
+
             $return[] = "<tr>";
             $return[] = "<td $td_attr>$variable</td>";
             $return[] = "</tr>";
         } else if ($type == 'array' || $type == 'object') {
-            
+
             // conversao do objeto em array
             if ($type == 'object') {
                 $variable = (array) $variable;
@@ -79,64 +82,61 @@ function debv($variable, $die=true, $level = 0)
     }
     $return[] = "</table>";
     $return = implode(chr(10), $return);
-    
-    if($die){
+
+    if ($die) {
         echo "<pre style='cursor:pointer;'>$return</pre>";
         die();
-    }else{
+    } else {
         return $return;
     }
-    
 }
 
 /**
  * debug
- * 
+ *
  * @param bool $die
  * @param bool $backtrace
  */
 function deb($var, bool $die = true, bool $backtrace = true)
 {
-    
+
     // backtrace show?
     if ($backtrace) {
-        $backtrace = backtraceFix(get_backtrace(),false);
-        
+        $backtrace = backtraceFix(get_backtrace(), false);
     } else {
         $backtrace = '';
     }
-    
+
     // var_dump to string
     ob_start();
     var_dump($var);
     $var = ob_get_clean();
-    
-    //remove a kind of break lines
-    {//values highligth
-        $var = str_replace('=>'.chr(10), ' => <span class="varContent">', $var);
-        $var = str_replace(chr(10), '</span>'.chr(10), $var);        
-    }     
-    {//remove spaces 
-        while(strpos($var, '  ')){
+
+    // remove a kind of break lines
+    { // values highligth
+        $var = str_replace('=>' . chr(10), ' => <span class="varContent">', $var);
+        $var = str_replace(chr(10), '</span>' . chr(10), $var);
+    }
+    { // remove spaces
+        while (strpos($var, '  ')) {
             $var = str_replace('  ', ' ', $var);
         }
     }
-    {//parameter name highligth
+    { // parameter name highligth
         $var = str_replace('["', '[<span class="varName">', $var);
         $var = str_replace('"]', '</span>]', $var);
-                
-    }    
-    {//content highligth
+    }
+    { // content highligth
         $var = str_replace('{', '<div class="varArrayContent">{', $var);
         $var = str_replace(' }', '}</div>', $var);
-    }    
-    {//bold values
-        $var = str_replace(' "', ' "<span class="varContentValue">', $var);
-        $var = str_replace('"</', '</span>"</', $var);        
     }
-    
-    /**/
-    
+    { // bold values
+        $var = str_replace(' "', ' "<span class="varContentValue">', $var);
+        $var = str_replace('"</', '</span>"</', $var);
+    }
+
+    /* */
+
     echo "<pre class='deb' title='$backtrace'>$var</pre>
 <style>
 .deb {
@@ -169,21 +169,37 @@ function deb($var, bool $die = true, bool $backtrace = true)
 }
 </style>
 ";
-    
+
     if ($die)
         die();
 }
 
 /**
+ * debug code if '$deb' isset and is TRUE!
+ *
+ * @param bool $die
+ * @param bool $backtrace
+ */
+function debx($deb, $var, bool $die = true)
+{
+    if ($deb == true) {
+        $backtrace = true;
+        deb($var, $die, $backtrace);
+    }
+}
+
+/**
  * realiza ajustes no backtrace informado para uma melhor apresetnacao
+ *
  * @param string $backtrace
  * @param boolean $sortAsc
  */
-function backtraceFix(string $backtrace,$sortAsc=true){    
+function backtraceFix(string $backtrace, $sortAsc = true)
+{
     $backtrace = str_replace("'", '"', $backtrace);
-    {//revert order
+    { // revert order
         $backtrace_ = explode(chr(10), $backtrace);
-        if($sortAsc==false){
+        if ($sortAsc == false) {
             krsort($backtrace_);
         }
         $backtrace = implode(chr(10), $backtrace_);
@@ -193,20 +209,20 @@ function backtraceFix(string $backtrace,$sortAsc=true){
 
 /**
  * debug code
- * 
+ *
  * @param bool $die
  * @param bool $backtrace
  */
 function debc($var, bool $die = true, bool $backtrace = true)
 {
-    
+
     // backtrace show?
     if ($backtrace) {
-        $backtrace = backtraceFix(get_backtrace(),false);
+        $backtrace = backtraceFix(get_backtrace(), false);
     } else {
         $backtrace = '';
     }
-    
+
     // var_dump to string
     ob_start();
     var_dump($var);
@@ -218,22 +234,23 @@ function debc($var, bool $die = true, bool $backtrace = true)
 
 /**
  * Get Backtrace
+ *
  * @return string
  */
-function get_backtrace():string
+function get_backtrace(): string
 {
     $trace = debug_backtrace();
-    
+
     // removao da primeira linha relativa a chamada a esta mesma funcao
     array_shift($trace);
-    
+
     // inversao da ordem de exibicao
     krsort($trace);
-    
+
     $log = '';
     $step = 1;
     foreach ($trace as $t) {
-        
+
         if (isset($t['file'])) {
             $file = $t['file'];
             $line = $t['line'];
@@ -247,7 +264,7 @@ function get_backtrace():string
         $log = str_replace(';', '', $log);
         // $log=str_replace(' ', '_', $log);
     }
-    
+
     return $log;
 }
 
@@ -256,27 +273,26 @@ function get_backtrace():string
 // ========================================= ERRORS FUNCTIONS ================================================================================
 // =============================================================================================================================================
 // =============================================================================================================================================
-
-function fatal_error_handler(){
-    
+function fatal_error_handler()
+{
     $error = error_get_last();
-    
-    if( $error !== NULL) {
-    
-        $errno   = $error["type"];
+
+    if ($error !== NULL) {
+
+        $errno = $error["type"];
         $errfile = $error["file"];
         $errline = $error["line"];
-        $errstr  = $error["message"];
-        
-        echo format_fatal_error( $errno, $errstr, $errfile, $errline);
+        $errstr = $error["message"];
+
+        echo format_fatal_error($errno, $errstr, $errfile, $errline);
         exit();
     }
 }
 
-function format_fatal_error( $errno, $errstr, $errfile, $errline ) {
-    
-    $trace = print_r( debug_backtrace(), true );
-        
+function format_fatal_error($errno, $errstr, $errfile, $errline)
+{
+    $trace = print_r(debug_backtrace(), true);
+
     $content = "<br />
     <table border='1' style='font-family:Courier New'>        
         <tbody>
@@ -302,7 +318,7 @@ function format_fatal_error( $errno, $errstr, $errfile, $errline ) {
             </tr>
         </tbody>
     </table>";
-    
+
     return $content;
 }
 
@@ -311,25 +327,25 @@ function format_fatal_error( $errno, $errstr, $errfile, $errline ) {
 // ========================================= VARIABLE FUNCTIONS ================================================================================
 // =============================================================================================================================================
 // =============================================================================================================================================
-
-function GET($varname,$default='',bool $throwException=false){
-    return Variables::GET($varname,$default,$throwException);
-}
-function POST($varname,$default='',bool $throwException=false){
-    return Variables::POST($varname,$default,$throwException);
+function GET($varname, $default = '', bool $throwException = false)
+{
+    return Variables::GET($varname, $default, $throwException);
 }
 
+function POST($varname, $default = '', bool $throwException = false)
+{
+    return Variables::POST($varname, $default, $throwException);
+}
 
 // =============================================================================================================================================
 // =============================================================================================================================================
 // ========================================= CSS FUNCTIONS =====================================================================================
 // =============================================================================================================================================
 // =============================================================================================================================================
-
-function css_repeat($input, $multiplier){
-    return str_repeat($input.',', $multiplier-1).$input;    
+function css_repeat($input, $multiplier)
+{
+    return str_repeat($input . ',', $multiplier - 1) . $input;
 }
-
 
 // =============================================================================================================================================
 // =============================================================================================================================================
@@ -344,29 +360,29 @@ function css_repeat($input, $multiplier){
  * @return
  */
 function SCC(string $className, string $methodName)
-{  
-    {//obtem os eventuais parametros do metodo a ser chamado
-        //deb(func_get_args());
-        $args = func_get_args();        
+{
+    { // obtem os eventuais parametros do metodo a ser chamado
+      // deb(func_get_args());
+        $args = func_get_args();
         {
             $evalTextPars = [];
-            if(sizeof($args)>0){                
-                foreach ($args as $key=>$arg){
-                    //remove classname and method name from args
-                    if($key<2){
+            if (sizeof($args) > 0) {
+                foreach ($args as $key => $arg) {
+                    // remove classname and method name from args
+                    if ($key < 2) {
                         continue;
                     }
                     $evalTextPars[] = "\$args[$key]";
-                }                
+                }
             }
             $evalTextPars = implode(',', $evalTextPars);
-            //deb($evalTextPars);
+            // deb($evalTextPars);
         }
     }
-    
+
     $evalText = "\$return = $className::$methodName($evalTextPars);";
-    //deb($evalText);
-    
+    // deb($evalText);
+
     eval($evalText);
     return $return;
 }
