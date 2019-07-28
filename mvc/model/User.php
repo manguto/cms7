@@ -8,10 +8,12 @@ use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\database\repository\ModelRepository;
+use manguto\cms5\lib\model\ModelTrait;
 
 class User extends Model
 {
  
+    use ModelTrait;
     use ModelRepository;
 
     const SESSION = "User";

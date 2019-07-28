@@ -171,7 +171,7 @@ class Repository implements Database
             //<<<<<<<<<<<<<<<<<<<<<<<
             //<<<<<<<<<<<<<<<<<<<<<<<
             //deb($approved,0);
-            if($approved==false){
+            if($approved==false){                
                 unset($table[abs($id)]);
             }
         }
