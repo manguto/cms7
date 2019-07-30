@@ -14,21 +14,21 @@ use OfxParser\Parser;
 class OFXs
 {
 
-    private $filename;
+    public $filename;
 
-    private $parser;
+    public $parser;
 
-    private $ofx;
+    public $ofx;
 
-    private $bankAccount;
+    public $bankAccount;
 
-    private $bankAccountMainInfo;
+    public $bankAccountMainInfo;
 
-    private $transactions;
+    public $transactions;
     
-    private $transactionsResume;
+    public $transactionsResume;
 
-    private $transactionsMainInfo;
+    public $transactionsMainInfo;
 
     const dateFormat = 'Y-m-d H:i:s';
 
@@ -46,16 +46,16 @@ class OFXs
         // deb($this->bankAccount);
         
         $this->bankAccountMainInfo = $this->getBankAccountMainInfo();
-        deb($this->bankAccountMainInfo, 0);
+        //deb($this->bankAccountMainInfo, 0);
         
         $this->transactions = $this->bankAccount->statement->transactions;
         // deb($this->transactions);
         
         $this->transactionsMainInfo = $this->getTransactionsMainInfo();
-        deb($this->transactionsMainInfo,0);
+        //deb($this->transactionsMainInfo,0);
         
         $this->transactionsResume = $this->getTransactionsResume();
-        deb($this->transactionsResume);
+        //deb($this->transactionsResume);
     }
 
     private function getBankAccountMainInfo()

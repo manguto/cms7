@@ -113,7 +113,7 @@ class Repository implements Database
         // troca de aspas simples por duplas
         {
             $conditions = str_replace("'", '"', $conditions);
-            $conditions = str_replace('""', '"', $conditions);
+            //$conditions = str_replace('""', '"', $conditions); ERRO!!! (idade=="" => idade=")
         }        
                 
         { // excecao quando da utilizacao de "=" ao inves de "=="
@@ -146,8 +146,11 @@ class Repository implements Database
     public function select(string $rawQuery='', array $parameters = []): array
     {   
         //query final
-        $conditions = $this->select_getConditions($rawQuery, $parameters);        
-        $conditions = $this->select_conditionsFix($conditions);        
+        //deb($rawQuery,0);       
+        $conditions = $this->select_getConditions($rawQuery, $parameters);
+        //deb($conditions,0);
+        $conditions = $this->select_conditionsFix($conditions);
+        //deb($conditions);
         $conditions = $this->select_conditionsStruct($conditions);
         //deb($conditions,0);
         
@@ -156,20 +159,21 @@ class Repository implements Database
         $table = $this->getTable();
         //deb($table);
         
-        foreach ($table as &$row) {
-            //deb($row);            
+        foreach ($table as &$row) {            
+            //deb($row,0);
             extract($row);
             
-            //<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             $approved = false;
             {
                 eval($conditions);            
             }
-            //<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<
-            //<<<<<<<<<<<<<<<<<<<<<<<
+            //deb($approved,0);
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             //deb($approved,0);
             if($approved==false){                
                 unset($table[abs($id)]);

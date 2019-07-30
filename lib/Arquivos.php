@@ -164,15 +164,15 @@ class Arquivos
      * @throws Exception
      * @return boolean
      */
-    static function copiarArquivo(string $filenameOrigem, string $filenameDestino, $throwException = true)
+    static function copiarArquivo(string $filenameSource, string $filenameDestination, $throwException = true)
     {
-        if(!file_exists($filenameDestino)){
-            self::escreverConteudo($filenameDestino, ' '.chr(10));
+        if(!file_exists($filenameDestination)){
+            self::escreverConteudo($filenameDestination, ' '.chr(10));
         }
         
-        if (copy($filenameOrigem, $filenameDestino) == false) {
+        if (copy($filenameSource, $filenameDestination) == false) {
             if ($throwException) {
-                throw new Exception("Não foi possível copiar o arquivo ($filenameDestino).");
+                throw new Exception("Não foi possível copiar o arquivo ($filenameDestination).");
             } else {
                 return false;
             }
