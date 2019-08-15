@@ -70,7 +70,7 @@ class Strings
     static function abreviacao($strString, $intLength = NULL)
     {
         $defaultAbbrevLength = 8; // Default abbreviation length if none is specified
-
+                                  
         // Set up the string for processing
         $strString = preg_replace("/[^A-Za-z0-9]/", '', $strString); // Remove non-alphanumeric characters
         $strString = ucfirst($strString); // Capitalize the first character (helps with abbreviation calcs)
@@ -512,7 +512,7 @@ class Strings
             'Ж' => 'zh',
             'ж' => 'zh'
         ];
-
+        
         $return = strtr($string, $replace);
         if ($strtolower) {
             $return = strtolower($return);
@@ -565,10 +565,10 @@ class Strings
     {
         $return = array();
         for ($c = 0; $c < strlen($string); $c ++) {
-
+            
             $caracter = $string[$c];
             $ascii = ord($caracter);
-
+            
             $return[] = "<a href='#' title='$caracter($ascii)'>$caracter</a>";
         }
         return implode('', $return);
@@ -730,9 +730,9 @@ class Strings
                     continue;
                 $csvLinhaConteudos = explode(';', $csvLinha);
                 foreach ($csvLinhaConteudos as $coluna => &$csvLinhaConteudo) {
-
+                    
                     $csvLinhaConteudo = trim($csvLinhaConteudo);
-
+                    
                     $csvLinhaConteudo = ' ' . str_pad($csvLinhaConteudo, $quantMaxCaracteresColuna[$coluna] + 1, ' ', STR_PAD_RIGHT);
                 }
                 $return[] = '|' . implode('|', $csvLinhaConteudos) . '|';
@@ -759,7 +759,7 @@ class Strings
         }
         { // SEPARACAO DAS PARTES ( A | B | C )
             $data = explode($searchIni, $subject);
-
+            
             if (sizeof($data) == 2) {
                 $A = $data[0];
                 $BC = $data[0];
@@ -767,7 +767,7 @@ class Strings
                 $A = '';
                 $BC = $data[0];
             }
-
+            
             $data = explode($searchEnd, $BC);
             if (sizeof($BC) == 2) {
                 $B = $data[0];
@@ -785,14 +785,14 @@ class Strings
 
     static function str_inverter($string)
     {
-
+        
         // deb(chr(65));
-
+        
         // 0-255
         for ($c = 0; $c < strlen($string); $c ++) {
-
+            
             { // rotation
-
+                
                 { // actual
                     $chr = $string[$c];
                     $ord = ord($chr);
@@ -803,10 +803,64 @@ class Strings
                 }
                 // deb("'$chr'[$ord] => '$chrNew'[$ordNew] ",0);
             }
-
+            
             $string[$c] = $chrNew;
         }
         return $string;
+    }
+
+    /**
+     * 
+     *
+     * @param string $str1
+     * @param string $str2
+     */
+    
+    
+    /**
+     * retorna o percentual de igualdade entre as strings
+     * @param string $str1
+     * @param string $str2
+     * @param int $length - quantidade de caracteres a partir do inicio a serem utilizados
+     * @param bool $lowercase - transformar para minuculas
+     * @param number $precision - precisao da porcentagem
+     * @return number
+     */
+    static function PercentualIdentical(string $str1, string $str2, int $length = 0, bool $lowercase = false):int
+    {
+        $return = 0;
+        if ($lowercase) {
+            $str1 = strtolower($str1);
+            $str2 = strtolower($str2);
+        }
+        if ($length != 0) {
+            $str1 = substr($str1, 0, $length);
+            $str2 = substr($str2, 0, $length);
+        }
+        //deb("'$str1' x '$str2'",0);
+        $strlen1 = strlen($str1);
+        $strlen2 = strlen($str2);
+        
+        { // especificacao do limite maximo do loop
+            if ($strlen1 < $strlen2) {
+                $max = $strlen2;
+                $min = $strlen1;
+            } else {
+                $max = $strlen1;
+                $min = $strlen2;
+            }
+        }
+        
+        $match = 0;
+        for ($c = 0; $c < $min; $c ++) {
+            if ($str1[$c] == $str2[$c]) {
+                $match ++;
+            }
+        }
+        { // percentual de acerto
+            $return = intval(round(($match / $max) * 100));
+        }
+        return $return;
     }
 }
 
