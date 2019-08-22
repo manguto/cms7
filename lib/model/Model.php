@@ -271,7 +271,7 @@ abstract class Model
             foreach ($attribute_array as $attrName => $attrValue) {
 
                 { // ocultacao de parametros fundamentais (de controle)                    
-                    if(in_array($attrName, self::fundamentalAttributes)){
+                    if($attrName!='id' && in_array($attrName, self::fundamentalAttributes)){
                         continue;
                     }                    
                 }
@@ -312,12 +312,23 @@ abstract class Model
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // $return[] = "<span title='$attrName'>$attrValue</span>";
-                //$return[] = "$attrValue";
+                // $return[] = "$attrValue";
                 $return[] = "$attrName: $attrValue";
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             }
+            
+            // atributos do modelo
+            $attribute_extra_array = $this->attributes_extra;
+            
+            // percorre todos os atributos para expo-los
+            if(sizeof($attribute_extra_array)>0){                
+                foreach ($attribute_extra_array as $attrName => $attrValue) {
+                    $return[] = " $attrName*: $attrValue";
+                }
+            }
+            
         }
         $return = implode(' | ', $return);
         return $return;
