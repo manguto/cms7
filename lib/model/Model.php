@@ -325,7 +325,37 @@ abstract class Model
             // percorre todos os atributos para expo-los
             if(sizeof($attribute_extra_array)>0){                
                 foreach ($attribute_extra_array as $attrName => $attrValue) {
-                    $return[] = " $attrName*: $attrValue";
+                    
+                    if(is_string($attrValue) || is_int($attrValue) || is_double($attrValue)){
+                        $info = " $attrName*: ".strval($attrValue);
+                        
+                    }else if(is_array($attrValue)){
+                        {
+                            if(sizeof($attrValue)==0){
+                                $extra = 'VAZIO';
+                            }else if(sizeof($attrValue)==1){
+                                $extra = '';
+                            }else{
+                                $extra = '('.sizeof($attrValue).')';
+                            }
+                        }
+                        {
+                            $unit = array_shift($attrValue);
+                            
+                            if(is_object($unit)){
+                                $unit = "{ $unit }";
+                            }else if(is_string($unit) ){
+                                $unit = "$unit";
+                            }else{
+                                $unit = gettype($unit);
+                            }
+                        }
+                        
+                        $info = " $attrName*: $unit $extra";
+                    }else{
+                        $info = " $attrName*: ".gettype($attrValue);
+                    }
+                    $return[] = $info;
                 }
             }
             
@@ -419,9 +449,11 @@ abstract class Model
         if (isset($this->attributes[$attributeName])) {
 
             $return = $this->attributes[$attributeName]->getValue();
+            
         } else if (isset($this->attributes_extra[$attributeName])) {
 
-            $return = $this->attributes_extra[$attributeName];
+            $return = $this->attributes_extra[$attributeName];            
+            
         } else {
             throw new Exception("Parâmetro não encontrado/definido ($attributeName).");
         }
@@ -481,9 +513,9 @@ abstract class Model
     // ##################################################################################################################################
     // ##################################################################################################################################
     // ##################################################################################################################################
-    public function loadReferences()
+    public function loadReferences($inArray=true)
     {
-        Model_Reference::Load($this);
+        Model_Reference::Load($this,$inArray);
         // deb($this);
     }
     // ##################################################################################################################################

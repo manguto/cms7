@@ -23,10 +23,16 @@ class Model_Reference
     // ###########################################################################################################################################################################################################################################
     
     /**
-     * Carregar as possiveis referencias do modelo informado.
+     * 
      * @param Model $model_object
      */
-    static function Load(Model &$model_object)
+    
+    /**
+     * Carregar as possiveis referencias do modelo informado.
+     * @param Model $model_object
+     * @param bool $inArray - referencias devem ser inseridas em uma array mesmo que unicas
+     */
+    static function Load(Model &$model_object,bool $inArray=true)
     {                   
         //$attributes = $model_object->GetData($attribute_extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
         $attributes = $model_object->GetData();
@@ -64,6 +70,18 @@ class Model_Reference
                     }
                     //deb($referencedObjectTemp_array,0);
                     //deb(gettype(array_shift($referencedObjectTemp_array)),0);
+                    
+                    //FORMATO DE INSERCAO NO OBJETO
+                    if($inArray==false){
+                        if(sizeof($referencedObjectTemp_array)==1){
+                            /**
+                             * caso o objeto em questao faca referencia a apenas um objeto
+                             * este sera disponibilizado diretamento no parametro criado
+                             * e NAO EM FORMA de array!
+                             */
+                            $referencedObjectTemp_array = array_shift($referencedObjectTemp_array);
+                        }
+                    }                    
                     
                     // METHOD NAME
                     $set_method = "set" . ucfirst(strtolower(self::getReferencedModelName($attributeName)));
