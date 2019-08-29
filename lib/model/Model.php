@@ -270,16 +270,16 @@ abstract class Model
             // percorre todos os atributos para expo-los
             foreach ($attribute_array as $attrName => $attrValue) {
 
-                { // ocultacao de parametros fundamentais (de controle)                    
+                { // ocultacao de parametros fundamentais (de controle) exceto 'id'                
                     if($attrName!='id' && in_array($attrName, self::fundamentalAttributes)){
                         continue;
                     }                    
                 }
-                { // ocultacao de parametros vazios                    
+                /*{ // ocultacao de parametros vazios
                     if(trim($attrValue)==''){
                         continue;
                     }                    
-                }
+                }/**/
 
                 { // verifica se o atributo eh referencial (ex.: categoria_id, modalidade_ids) para definicao do(s) valor(es) __toString() das referencias
 
