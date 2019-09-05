@@ -100,7 +100,7 @@ class Control
         {
             // logged user
             $user = User::getSessionUser();
-            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
             // deb($user);
             $adm = intval($user['adminzoneaccess']);
             // deb($adm);
@@ -112,7 +112,7 @@ class Control
 
         { // target user
             $user = new User($target_user_id);
-            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
             // deb($user);
             $adm = intval($user['adminzoneaccess']);
             // deb($adm);

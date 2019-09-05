@@ -96,7 +96,7 @@ trait ModelRepository
             $object = array_shift($object_array);
             // deb($object);
             
-            $ModelAttribute = $object->GetData(true, true);
+            $ModelAttribute = $object->GET_DATA(true, true);
             // deb($ModelAttribute);
             
             // definir dados no objeto
@@ -130,14 +130,14 @@ trait ModelRepository
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //deb($return);
+            //debc($table,0);
         }
         
         $return=[];
         foreach ($table as $row) {
             $modelClassName = $this->getClass();
             $registro = new $modelClassName();
-            $registro->SetData($row);            
+            $registro->SET_DATA($row);            
             $registro->VerifyDataAndStructure();
             //deb($registro);
             $return[$registro->getId()] = $registro;
@@ -202,7 +202,7 @@ trait ModelRepository
         
         {
             // lista de atributos a serem analisados (processados)
-            $all_attributes = $this->GetData(false, true);
+            $all_attributes = $this->GET_DATA(false, true);
             // deb($attributes);
         }
         

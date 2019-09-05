@@ -48,7 +48,7 @@ class ViewDevRepository extends ViewDev
             // deb($repositoryNameCall);
             $temp = new $repositoryNameCall();
             // deb($temp);
-            $cols = array_keys($temp->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false));
+            $cols = array_keys($temp->GET_DATA($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false));
             // deb($colunas,0);
             foreach ($cols as $k => $coluna) {                
                 $cols[$k] = [
@@ -66,7 +66,7 @@ class ViewDevRepository extends ViewDev
             foreach ($registers as &$register){
                 $register->replaceReferences();
                 //deb($register);                
-                $register = $register->GetData($extraIncluded = FALSE, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+                $register = $register->GET_DATA($extraIncluded = FALSE, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
                 //deb($register);
                 //$register = Arrays::arrayMultiNivelParaSimples($register);
             }
@@ -120,7 +120,7 @@ class ViewDevRepository extends ViewDev
             // deb($repositoryNameCall);
             $temp = new $repositoryNameCall();
             // deb($temp);
-            $cols = array_keys($temp->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false));
+            $cols = array_keys($temp->GET_DATA($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false));
             // deb($colunas,0);
             foreach ($cols as $k => $coluna) {
                 $cols[$k] = [

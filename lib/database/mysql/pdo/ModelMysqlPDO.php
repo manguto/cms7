@@ -87,7 +87,7 @@ trait ModelMysqlPDO
             $id = $this->getId();
         }
         {
-            $attributes = $this->GetData(false, true);
+            $attributes = $this->GET_DATA(false, true);
             {
                 $columns = [];
                 $values = [];
@@ -173,7 +173,7 @@ trait ModelMysqlPDO
         $object = array_shift($object_array);
         // deb($object);
 
-        $ModelAttribute = $object->GetData(true, true);
+        $ModelAttribute = $object->GET_DATA(true, true);
         // deb($ModelAttribute);
 
         // definir dados no objeto
@@ -238,7 +238,7 @@ trait ModelMysqlPDO
         foreach ($register_array as $register) {
             { // deb($register);
                 $object = new $called_class();
-                $object->SetData($register);
+                $object->SET_DATA($register);
                 $object->VerifyDataAndStructure();
             }
             $return[$object->getId()] = $object;
@@ -301,7 +301,7 @@ trait ModelMysqlPDO
 
         {
             // lista de atributos a serem analisados (processados)
-            $all_attributes = $this->GetData(false, true);
+            $all_attributes = $this->GET_DATA(false, true);
             // deb($attributes);
         }
 

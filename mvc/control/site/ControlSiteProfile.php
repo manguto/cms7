@@ -49,7 +49,7 @@ class ControlSiteProfile extends ControlSite
                 $_POST['login'] = $_POST['email'];
             }*/
         }
-        $user->SetData($_POST);
+        $user->SET_DATA($_POST);
         try {
             $user->verifyFieldsToCreateUpdate();
             $user->save();

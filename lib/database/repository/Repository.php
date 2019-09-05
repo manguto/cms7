@@ -285,7 +285,7 @@ class Repository implements Database
     {
         $className = Model_Helper::getObjectClassname($this->tablename);
         $tempObject = new $className();
-        $data = $tempObject->getData(false, true);
+        $data = $tempObject->GET_DATA(false, true);
         $data = array_keys($data);
         // deb($data);
         $titles = implode(RepositoryCSV::valuesDelimiter, $data) . chr(10);

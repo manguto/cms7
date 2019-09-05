@@ -15,7 +15,7 @@ trait ModelMysqli
             //deb($id);
         }
         {
-            $attributes = $model->GetData(false, true);
+            $attributes = $model->GET_DATA(false, true);
             {
                 $columns=[];
                 $values=[];
@@ -88,7 +88,7 @@ trait ModelMysqli
             {
                 $data = array_shift($data_array);
                 //deb($data);
-                $model->SetData($data);
+                $model->SET_DATA($data);
             }
         }    
     }
@@ -170,7 +170,7 @@ trait ModelMysqli
         
         {
             // lista de atributos a serem analisados (processados)
-            $all_attributes = $this->GetData(false, true);
+            $all_attributes = $this->GET_DATA(false, true);
             // deb($attributes);
         }
         

@@ -105,7 +105,7 @@ class ControlDevToolsRepository extends ControlDevTools
                         continue;
                     }
                     $obj = new $classname(intval($register['id']));
-                    $obj->SetData($register,false);
+                    $obj->SET_DATA($register,false);
                     //deb($obj,0);
                     $obj->save();
                     //deb($obj,0);

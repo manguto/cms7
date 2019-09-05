@@ -60,7 +60,7 @@ class ControlDevUsers extends ControlDev
 
         try {
             $user = new User();
-            $user->SetData($_POST);
+            $user->SET_DATA($_POST);
             $user->verifyFieldsToCreateUpdate();
             // deb($user);
             $user->save();
@@ -82,7 +82,7 @@ class ControlDevUsers extends ControlDev
             $user = new User($id);
             //deb("$user",0);
             //deb($_POST,0);
-            $user->SetData($_POST);
+            $user->SET_DATA($_POST);
             //deb("$user");
             //deb($user);
             

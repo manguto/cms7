@@ -34,8 +34,8 @@ class Model_Reference
      */
     static function Load(Model &$model_object,bool $inArray=true)
     {                   
-        //$attributes = $model_object->GetData($attribute_extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
-        $attributes = $model_object->GetData();
+        //$attributes = $model_object->GET_DATA($attribute_extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+        $attributes = $model_object->GET_DATA();
 
         //deb($attributes);
         foreach ($attributes as $attributeName => $attributeValue_possible_id_or_ids) {

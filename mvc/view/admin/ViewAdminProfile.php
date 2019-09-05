@@ -7,7 +7,7 @@ class ViewAdminProfile extends ViewAdmin
     static function get_admin_profile($user)
     {
         self::PageSite("profile", [
-            'user' => $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false),
+            'user' => $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false),
             'form_action' => '/admin/profile',
             'link_change_password' => '/admin/profile/change-password'
         ]);

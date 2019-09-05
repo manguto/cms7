@@ -75,7 +75,7 @@ class ControlAdminUsers extends ControlAdmin
 
         try {
             $user = new User();
-            $user->SetData($_POST);
+            $user->SET_DATA($_POST);
             $user->verifyFieldsToCreateUpdate();
             // deb($user);
             $user->save();
@@ -107,7 +107,7 @@ class ControlAdminUsers extends ControlAdmin
         $_POST['adminzoneaccess'] = ! isset($_POST['adminzoneaccess']) ? 0 : 1;
         try {
             $user = new User($id);
-            $user->SetData($_POST);
+            $user->SET_DATA($_POST);
             $user->verifyFieldsToCreateUpdate();
             $user->save();
             ProcessResult::setSuccess("Usuário atualizado com sucesso!");

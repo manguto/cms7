@@ -30,7 +30,7 @@ class ControlDevRepository extends ControlDev
                 // deb($repositoryNameCall);
                 $register = new $repositoryNameCall($id);
                 $register->replaceReferences();
-                $register = $register->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+                $register = $register->GET_DATA($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
                 // deb($register);
             }
             ViewDevRepository::repository_register_view($repository, $register);
@@ -62,7 +62,7 @@ class ControlDevRepository extends ControlDev
                 // deb($repositoryNameCall);
                 $register = new $repositoryNameCall($id);
                 // deb($register);
-                $register = $register->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+                $register = $register->GET_DATA($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
                 // deb($register);
             }
             ViewDevRepository::repository_register_edit($repository, $register);
@@ -85,7 +85,7 @@ class ControlDevRepository extends ControlDev
                     $msg = "Registro $msg com sucesso!";
                 }
                 $register = new $repositoryNameCall($id);
-                $register->SetData($_POST);
+                $register->SET_DATA($_POST);
                 $register->save();
                 // deb($register);
                 $id = $register->getId();

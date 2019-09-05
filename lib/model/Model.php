@@ -45,7 +45,7 @@ abstract class Model
     protected function SetAttributes(array $attributes_data = [], bool $checkAttributeName = true)
     {
         // deb($attributes_data);
-        Logs::set(Logs::TYPE_INFO, "Definição de ATRIBUTOS: " . implode(', ', array_keys($attributes_data)) . " (verificação do nome do atributo: $checkAttributeName).");
+        //Logs::set(Logs::TYPE_INFO, "Definição de ATRIBUTOS: " . implode(', ', array_keys($attributes_data)) . " (verificação do nome do atributo: $checkAttributeName).");
 
         // recebe uma lista de paramertros e transforma uma lista de model attributes e verifica (caso solicitado) se é permitido
         $attribute_list = ModelAttribute::Convert_ParameterDataArray_to_ModelAttributeArray($attributes_data, $checkAttributeName);
@@ -64,7 +64,7 @@ abstract class Model
     protected function GetAttributes()
     {
         // deb($attributes_data);
-        Logs::set(Logs::TYPE_INFO, "Obtenção de ATRIBUTOS do modelo " . $this->GetClassName());
+        //Logs::set(Logs::TYPE_INFO, "Obtenção de ATRIBUTOS do modelo " . $this->GetClassName());
 
         $attributes = $this->attributes;
 
@@ -97,7 +97,7 @@ abstract class Model
      */
     protected function SetFundamentalAttributes(int $id)
     {
-        Logs::set(Logs::TYPE_INFO, "Definição dos ATRIBUTOS FUNDAMENTAIS do modelo <b>" . $this->GetClassName() . "</b>.");
+        //Logs::set(Logs::TYPE_INFO, "Definição dos ATRIBUTOS FUNDAMENTAIS do modelo <b>" . $this->GetClassName() . "</b>.");
 
         $attributes = [
             'id' => [
@@ -163,7 +163,7 @@ abstract class Model
      * @param bool $dataEmptyValueSet
      *            - utilizar o valor informado mesmo que vazio?
      */
-    public function SetData(array $data, bool $dataEmptyValueSet = true)
+    public function SET_DATA(array $data, bool $dataEmptyValueSet = true)
     {
         // deb($data);
         foreach ($data as $key => $value) {
@@ -188,7 +188,7 @@ abstract class Model
      * @param bool $singleLevelArray
      * @return array
      */
-    public function GetData(bool $extra_attributes_included = false, bool $control_attributes_included = false): array
+    public function GET_DATA(bool $extra_attributes_included = false, bool $control_attributes_included = false): array
     {
         // ====================================================================================
         $data = $this->attributes;
@@ -387,7 +387,7 @@ abstract class Model
      */
     private function CheckAttributesSetted()
     {
-        Logs::set(Logs::TYPE_INFO, "Verificação quanto a atribuição de todos os atributos do modelo.");
+        //Logs::set(Logs::TYPE_INFO, "Verificação quanto a atribuição de todos os atributos do modelo.");
 
         $attributesSetted = false;
         // deb(self::fundamentalAttributes,0);
@@ -420,7 +420,7 @@ abstract class Model
      */
     private function SetAttributesOrder()
     {
-        Logs::set(Logs::TYPE_INFO, "Ordenação dos atributos do modelo.");
+        //Logs::set(Logs::TYPE_INFO, "Ordenação dos atributos do modelo.");
 
         $attributesOrdered = [];
         foreach (self::fundamentalAttributes as $attributeFundamental) {

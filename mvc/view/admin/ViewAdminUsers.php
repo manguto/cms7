@@ -20,14 +20,14 @@ class ViewAdminUsers extends ViewAdmin
     static function get_admin_user($user)
     {   
         self::PageAdmin("users-view", [
-            'user' => $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
+            'user' => $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
         ]);        
     }
     
     static function get_admin_user_edit($user)
     {   
         self::PageAdmin("users-update", [
-            'user' => $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
+            'user' => $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
         ]);
     }
 }

@@ -17,9 +17,9 @@ class Logs
 
     const formato_datahora = 'Y-m-d H_i_s';
 
-    const formato_data_arquivo = 'Ymd';
+    const formato_data_arquivo = 'Ymd_Hi';
 
-    const formato_data_arquivo_diario = 'Ymd'; //para visualizacao no modulo de LOG (dev)
+    const formato_data_arquivo_diario = 'Ymd_Hi'; //para visualizacao no modulo de LOG (dev)
 
     // Detailed debug information
     public const TYPE_DEBUG = 'debug';

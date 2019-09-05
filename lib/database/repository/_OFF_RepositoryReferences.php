@@ -29,7 +29,7 @@ class _OFF_RepositoryReferences
     {
         //deb($tablename=$repositoryObject->getModelname(),0);
                         
-        $parameters = $repositoryObject->GetData($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
+        $parameters = $repositoryObject->GET_DATA($extraIncluded = false, $ctrlParametersIncluded = false, $referencesIncluded = false, $singleLevelArray = false);
 
         //deb($parameters,0);
         foreach ($parameters as $parameterName => $parameterValue_possible_id_or_ids) {

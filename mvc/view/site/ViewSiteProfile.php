@@ -7,7 +7,7 @@ class ViewSiteProfile extends ViewSite
     static function get_profile($user)
     {
         self::PageSite("profile", [
-            'user' => $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false),
+            'user' => $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false),
             'form_action' => '/profile',
             'link_change_password' => '/profile/change-password'
         ]);

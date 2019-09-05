@@ -34,7 +34,7 @@ class ControlCRUDZzz extends ControlCRUD
             try {
                 //save
                 $zzz = new Zzz($id);
-                $zzz->SetData($_POST);
+                $zzz->SET_DATA($_POST);
                 $zzz->save();                
             } catch (Exception $e) {
                 ProcessResult::setError($e);

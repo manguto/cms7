@@ -46,7 +46,7 @@ class ControlSiteRegister extends ControlSite
         // -------------montagem do usuario
         $user = new User();
 
-        $user->SetData([
+        $user->SET_DATA([
             'adminzoneaccess' => 0,
             'name' => $_POST['name'],
             'login' => $_POST['email'],

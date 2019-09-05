@@ -111,7 +111,7 @@ class User extends Model
         if (User::checkUserLogged()) {
 
             $user = self::getSessionUser();
-            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
             if (isset($user['adminzoneaccess']) && ((bool) $user['adminzoneaccess'] == true)) {
                 $return = true;
             } else {
@@ -129,7 +129,7 @@ class User extends Model
 
             $user = self::getSessionUser();
             // deb($user);
-            $user = $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
 
             if (isset($user['devzoneaccess']) && ((bool) $user['devzoneaccess'] == true)) {
                 $return = true;
@@ -372,7 +372,7 @@ class User extends Model
                 throw new Exception("Não foi possível enviar o e-mail de recuperação.<br/>Aguarde alguns instantes e tente novamente.<br/>Caso o problema persista, contate o administrador.");
             }
 
-            return $user->GetData($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            return $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
         }
     }
 
