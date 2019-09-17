@@ -1,0 +1,94 @@
+=========================================================================================================================================
+=========================================================================================================================================
+==============================================  GIT(HUB) - INSTRUCOES BÁSICAS  ==========================================================
+=========================================================================================================================================
+=========================================================================================================================================
+...
+=========================================================================================================================================
+Conceitos ===============================================================================================================================
+=========================================================================================================================================
+= GIT - programa de controle de versão (git-scm.com)
+= Estagios de um projeto: Working Directory(WD) ==[git add]==> Staging Area(SA) ==[git commit]==> Git Directory(GD)
+
+=========================================================================================================================================
+Instalação do Git =======================================================================================================================
+========================================================================================================================================= 
+> Efetue o Download do Git (git-scm.com)
+> Instale o programa
+# Primeira utilização e configuracao
+> Abra o terminal e execute os seguintes comandos:
+$ git config --global user.name "nomedousuario"
+$ git config --global user.email "nomedousuario@email.com"
+
+=========================================================================================================================================
+Instalação do GitBash ===================================================================================================================
+========================================================================================================================================= 
+- Apenas uma interface mais pratica para utilizacao de um prompt de comando (fundamental para uso do git)
+> Procurar instruções na web (tranquilo)
+
+=========================================================================================================================================
+Iniciando um projeto ====================================================================================================================
+========================================================================================================================================= 
+> Abra o prompt
+> Acesse a pasta do projeto (ex: $ cd meuprojeto)
+# Efetue a inicializacao do git no projeto, para a criacao de alguns arquivos e pastas de controle do git
+$ git init
+# Para ver o status atual do projeto via git
+$ git status
+# Passar/espelhar arquivos (adicionados, modificados, deletados) do WD para a SA
+$ git add .
+# Passar/espelhar arquivos da SA para o GD
+$ git commit -m "Detalhes da fase do projeto"
+# Para ignorar arquivos ou pastas, criar um arquivo chamado ".gitignore"
+# e em cada linha do mesmo digite o nome do arquivo (file.txt) ou 
+# das pastas (temp/).
+
+
+=========================================================================================================================================
+Iniciando os trabalhos com o GitHub =====================================================================================================
+========================================================================================================================================= 
+> Realizar cadastro no site (login e senha)
+# Para dar acesso ao GIT instalado no computador ao GITHUB da Web através de uma CHAVE SSH, execute o comando abaixo:
+$ ssh-keygen 
+# Abra a pasta onde o git informou que salvou os arquivos id_rsa e id_rsa.pub
+> abra o arquivo id_rsa.pub e copie a chave (string) existente dentro do mesmo
+> Acesse a pagina do github em : Settings > SSH Keys > Add SSH Key
+> Clique em Add SSH Key
+# Autorizacao de acesso do GITHUB ao GITBASH local realizado!
+
+=========================================================================================================================================
+Trabalhando com um repositorio no GitHub ================================================================================================
+========================================================================================================================================= 
+> Entre no site do github
+> Crie um repositorio
+> Copie o SSH clone URL
+$ git clone git@github.com:xxxxxx/wwww
+# Clonagem deve então ser realizada ao diretorio informado
+> Realize as alteracoes necessarias
+> Faça os procedimentos basicos apos finalizacao das alteracoes (git add . / git commit -m "mmmmmm")
+# Realize então o PUSH para a Web (github.com)
+$ git push origin master
+# Arquivos/Alterações salvos na nuvem  
+ 
+
+
+=========================================================================================================================================
+Tutoriais em video ======================================================================================================================
+========================================================================================================================================= 
+https://www.youtube.com/watch?v=WVLhm1AMeYE&list=PLInBAd9OZCzzHBJjLFZzRl6DgUmOeG3H0&index=1
+
+
+
+
+
+
+
+
+
+=========================================================================================================================================
+... =====================================================================================================================================
+=========================================================================================================================================
+
+
+
+.
