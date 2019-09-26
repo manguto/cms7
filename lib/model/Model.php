@@ -55,20 +55,22 @@ abstract class Model
             $this->SetAttribute($attribute);
         }
     }
-
+    
     /**
-     * obtem um array de parametros de atributos e os define para o modelo atual
-     *
-     * @param array $attributes
+     * obtem um array com os parametros do objeto
+     * @return array
      */
-    protected function GetAttributes()
+    public function GetAttributesArray():array
     {
-        // deb($attributes_data);
-        //Logs::set(Logs::TYPE_INFO, "Obtenção de ATRIBUTOS do modelo " . $this->GetClassName());
-
-        $attributes = $this->attributes;
-
-        return $attributes;
+        $return = [];
+        foreach ($this->attributes as $attribute){
+            $return[$attribute->getName()]=$attribute->getValue();
+        }
+        
+        foreach ($this->attributes_extra as $attribute){
+            $return[$attribute->getName()]=$attribute->getValue();
+        }
+        return $return;
     }
 
     /**
