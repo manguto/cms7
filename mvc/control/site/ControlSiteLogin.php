@@ -33,9 +33,9 @@ class ControlSiteLogin extends ControlSite
     {
         Logs::set(Logs::TYPE_INFO,"Parametros informados para o LOGIN recebidos...");
 
-        try {
-            
-            User::login($_POST['login'], $_POST['password']);
+        
+        try {            
+            User::login($_POST['login'], $_POST['password']);            
             Logs::set(Logs::TYPE_INFO,'Login autorizado! Redirecionamento para página principal...');
             headerLocation('/');            
             exit();

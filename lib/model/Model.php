@@ -251,7 +251,9 @@ abstract class Model
     public function GetTablename(): string
     {
         $className = $this->GetClassName();
-        $tablename = strtolower($className);
+        $tablename = explode('\\', $className);
+        $tablename = array_pop($tablename);
+        $tablename = strtolower($tablename);                
         return $tablename;
     }
 

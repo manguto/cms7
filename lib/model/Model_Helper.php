@@ -27,22 +27,27 @@ class Model_Helper
      */
     static function getObjectClassname(string $tablename): string
     {
+        $tablename = explode('\\', $tablename);
+        $tablename = array_pop($tablename);
         $tablename = ucfirst(strtolower($tablename));
-        //deb($tablename);
+        //deb($tablename,0);  
         
-        foreach (self::model_class_folders as $model_class_folder) {
+        $model_class_folders = self::model_class_folders;
+        //deb($model_class_folders,0);
+        
+        foreach ($model_class_folders as $model_class_folder) {
             
             $php_files = Diretorios::obterArquivosPastas($model_class_folder, true, true, false, [
                 'php'
             ]);
-            //deb($php_files);
+            //deb($php_files,0);
             foreach ($php_files as $php_file) {
                 $nomeClasse = Arquivos::obterNomeArquivo($php_file, false);
                 $path = Arquivos::obterCaminho($php_file);
-                // deb($nomeClasse,0); deb($tablename);
+                //deb($nomeClasse,0); deb($tablename,0);  
                 if ($nomeClasse == $tablename) {
                     
-                    // deb($path);
+                    //deb($path);
                     $objectClassname = '\\' . $path . $tablename;
                     $objectClassname = str_replace('/', '\\', $objectClassname);
                     $objectClassname = str_replace('\vendor', '', $objectClassname);
@@ -51,7 +56,7 @@ class Model_Helper
                 }
             }
         }
-        
+        //deb('+++');
         throw new Exception("Classe não encontrada ($tablename).");
     }
     

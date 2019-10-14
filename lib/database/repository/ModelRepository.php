@@ -119,18 +119,22 @@ trait ModelRepository
         //deb($query,0); deb($parameters);        
         
         {//instanciando objeto para acesso ao repositorio
-            $repository = new Repository($this->GetTablename());
-            //deb($repository);
+            $tablename = $this->GetTablename();
+            //deb($tablename);
+            $repository = new Repository($tablename);
+            //debc($repository);
         }
         {
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            //deb($query,0);
             $table = $repository->select($query, $parameters);
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             //debc($table,0);
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            
         }
         
         $return=[];

@@ -10,6 +10,7 @@ use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\database\repository\ModelRepository;
 use manguto\cms5\lib\model\ModelTrait;
 
+
 class User extends Model
 {
  
@@ -179,29 +180,24 @@ class User extends Model
     }
 
     static function login($login, $password)
-    {
+    {   
         Logs::set(Logs::TYPE_INFO, 'Validação de login/senha de usuário informados...');
-        // deb($login,0); deb($password,0); deb(User::password_crypt($password));
+        //deb($login,0); deb($password,0); deb(User::password_crypt($password));
 
         { // verificacao do repositorio do susuarios
             User::initialize();
         }
 
         {
-            { // usuario de testes
 
-                $usuario_teste = new User();
-                $usuario_teste->setLogin($login);
-                $usuario_teste->setPassword(User::password_crypt($password));
-                // deb($usuario_teste);
-            }
             { // usuario existe
                 {
                     // $query = ' SELECT * FROM user WHERE login=:login ';
-                    $query = ' $login={login} ';
+                    $query = " \$login=='$login' ";
+                    //deb($query,0);
                 }
-                $results = (new self())->search($query, $usuario_teste->getParameters('login'));
-                // deb($results);
+                $results = (new self())->search($query);
+                //deb($results);
 
                 if (count($results) === 0) {
                     throw new Exception("Login não encontrado e/ou senha inválida.");
@@ -212,14 +208,11 @@ class User extends Model
             { // usuario e senha existem
                 {
                     // $query = ' SELECT * FROM user WHERE login=:login AND password=:password ';
-                    $query = ' $login={login} && $password={password} ';
+                    $query = " \$login=='$login' && \$password=='".User::password_crypt($password)."' ";
+                    deb($query,0);
                 }
-                $results = $usuario_teste->search($query, $usuario_teste->getParameters([
-                    'login',
-                    'password'
-                ]));
-
-                // deb($results);
+                $results = (new self())->search($query);
+                //deb($results);
 
                 if (count($results) === 0) {
                     throw new Exception("Senha inválida e/ou login não encontrado.");
