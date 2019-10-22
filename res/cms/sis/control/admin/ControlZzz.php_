@@ -1,0 +1,19 @@
+<?php
+namespace sis\control\admin;
+
+use sis\view\admin\ViewZzz;
+use manguto\cms5\mvc\control\ControlAdmin;
+
+class ControlZzz extends ControlAdmin 
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/admin/zzz', function () {
+            self::PrivativeAdminZone();
+            ViewZzz::zzz();
+        });
+    }
+}
+
+?>

@@ -17,9 +17,9 @@ class Logs
 
     const formato_datahora = 'Y-m-d H_i_s';
 
-    const formato_data_arquivo = 'Ymd_Hi';
+    const formato_data_arquivo = 'Ymd_H';
 
-    const formato_data_arquivo_diario = 'Ymd_Hi'; //para visualizacao no modulo de LOG (dev)
+    const formato_data_arquivo_diario = 'Ymd_H'; //para visualizacao no modulo de LOG (dev)
 
     // Detailed debug information
     public const TYPE_DEBUG = 'debug';
@@ -301,6 +301,16 @@ class Logs
             $return['DAY'] = $date_o->getDate('d');
         }
         return $return;
+    }
+    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    /**
+     * registra um log temporario para testes/visualizacao
+     * @param string $msg
+     */
+    static function temp(string $msg='') {
+        $filename = 'log/temp_'.date('Ymd').'.txt';
+        $msg = date('H:i:s d-m-Y').' | '.$msg.chr(10);        
+        Arquivos::escreverConteudo($filename, $msg,FILE_APPEND);
     }
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 }

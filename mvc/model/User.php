@@ -10,10 +10,9 @@ use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\database\repository\ModelRepository;
 use manguto\cms5\lib\model\ModelTrait;
 
-
 class User extends Model
 {
- 
+
     use ModelTrait;
     use ModelRepository;
 
@@ -31,8 +30,6 @@ class User extends Model
         1 => 'SIM'
     ];
 
-    
-    
     public function __construct($id = 0)
     {
         // atributos basicos (fundamentais)
@@ -110,14 +107,8 @@ class User extends Model
     static function checkUserLoggedAdmin(): bool
     {
         if (User::checkUserLogged()) {
-
             $user = self::getSessionUser();
-            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
-            if (isset($user['adminzoneaccess']) && ((bool) $user['adminzoneaccess'] == true)) {
-                $return = true;
-            } else {
-                $return = false;
-            }
+            $return = $user->getAdminzoneaccess();
         } else {
             $return = false;
         }
@@ -127,16 +118,8 @@ class User extends Model
     static function checkUserLoggedDev(): bool
     {
         if (User::checkUserLogged()) {
-
             $user = self::getSessionUser();
-            // deb($user);
-            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
-
-            if (isset($user['devzoneaccess']) && ((bool) $user['devzoneaccess'] == true)) {
-                $return = true;
-            } else {
-                $return = false;
-            }
+            $return = $user->getDevzoneaccess();
         } else {
             $return = false;
         }
@@ -151,9 +134,10 @@ class User extends Model
           // --------------------------------------------------- set user admin
             $admin = new User();
             $admin->setname('Administrador');
-            $admin->setlogin('admin');
-            $admin->setpassword('21232f297a57a5a743894a0e4a801fc3'); // admin
-            $admin->setemail('admin@admin.com');
+            $admin->setlogin('adm');
+            // $admin->setpassword('21232f297a57a5a743894a0e4a801fc3'); // admin
+            $admin->setpassword(self::password_crypt($admin->getLogin())); // admin
+            $admin->setemail('adm@suporte.com');
             $admin->setphone('(XX) X.XXXX-XXXX');
             $admin->setadminzoneaccess(1);
             $admin->setdevzoneaccess(1);
@@ -180,9 +164,9 @@ class User extends Model
     }
 
     static function login($login, $password)
-    {   
+    {
         Logs::set(Logs::TYPE_INFO, 'Validação de login/senha de usuário informados...');
-        //deb($login,0); deb($password,0); deb(User::password_crypt($password));
+        // deb($login,0); deb($password,0); deb(User::password_crypt($password));
 
         { // verificacao do repositorio do susuarios
             User::initialize();
@@ -194,10 +178,10 @@ class User extends Model
                 {
                     // $query = ' SELECT * FROM user WHERE login=:login ';
                     $query = " \$login=='$login' ";
-                    //deb($query,0);
+                    // deb($query,0);
                 }
                 $results = (new self())->search($query);
-                //deb($results);
+                // deb($results);
 
                 if (count($results) === 0) {
                     throw new Exception("Login não encontrado e/ou senha inválida.");
@@ -208,11 +192,11 @@ class User extends Model
             { // usuario e senha existem
                 {
                     // $query = ' SELECT * FROM user WHERE login=:login AND password=:password ';
-                    $query = " \$login=='$login' && \$password=='".User::password_crypt($password)."' ";
-                    deb($query,0);
+                    $query = " \$login=='$login' && \$password=='" . User::password_crypt($password) . "' ";
+                    // deb($query,0);
                 }
                 $results = (new self())->search($query);
-                //deb($results);
+                // deb($results);
 
                 if (count($results) === 0) {
                     throw new Exception("Senha inválida e/ou login não encontrado.");
@@ -235,9 +219,71 @@ class User extends Model
 
     static function setSessionUser($user)
     {
+        self::setMultipleSystemSessionUser($user);
+
         Sessions::set(User::SESSION, $user);
         Logs::Start('LOGIN EFETUADO');
         Logs::set(Logs::TYPE_INFO, "Usuário logado e definido na sessão ($user).");
+    }
+
+    /**
+     * Realizar o registro na sessão para os modulos (sistemas) cadastrados nos quais o usuario pode ter acesso
+     *
+     * @param User $user
+     */
+    static private function setMultipleSystemSessionUser($user)
+    {
+        /*
+         * debc($_SESSION,0);
+         * deb($user);/*
+         */
+        $user_id = $user->getId();
+        $query = " \$user_id==$user_id ";
+        $user_module_array = (new User_module())->search($query);
+        // debs($module_id_array);
+        
+        {//profile get/set
+            $profiles = [];
+            $modules = [];
+            foreach ($user_module_array as $user_module) {
+                //deb("$user_module");
+                {
+                    $module_id = $user_module->getModule_id();
+                    $nature = $user_module->getNature();
+                }
+                $modules[$module_id] = new Module($module_id); 
+                $profiles[$nature] = $nature; 
+            }
+            //deb($profiles,0);            
+            //deb($modules);            
+        }
+        
+        foreach ($modules as $module_id=>$module) {
+
+            {//USER PROFILE SET!
+                //======================================= DEV
+                if(isset($profiles['dev'])){
+                    $user->setDevzoneaccess(true);
+                }else{
+                    $user->setDevzoneaccess(false);
+                }
+                //======================================= ADMIN
+                if(isset($profiles['admin'])){
+                    $user->setAdminzoneaccess(true);
+                }else{
+                    $user->setAdminzoneaccess(false);
+                }
+                //======================================= USER
+                if(!isset($profiles['dev']) && isset($profiles['admin']) && !isset($profiles['user'])){
+                    continue;
+                }
+            }            
+            {//SIS_FOLDERNAME                
+                $SIS_FOLDERNAME = $module->getPasta();
+                //deb($SIS_FOLDERNAME);
+            }
+            Sessions::set(User::SESSION, $user, false, $SIS_FOLDERNAME);
+        }
     }
 
     static function getSessionUser()
@@ -259,7 +305,8 @@ class User extends Model
 
     static function logout()
     {
-        Sessions::unset(User::SESSION);
+        //Sessions::unset(User::SESSION);
+        Sessions::Reset(false);
         Logs::set(Logs::TYPE_INFO, 'Usuário des-logado e indefinido na sessão.');
     }
 

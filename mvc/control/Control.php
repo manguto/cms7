@@ -6,11 +6,10 @@ use manguto\cms5\lib\Arquivos;
 use Slim\Slim;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
-use manguto\cms5\mvc\model\User; 
-use manguto\cms5\mvc\control\site\ControlSite;
-use manguto\cms5\mvc\control\admin\ControlAdmin;
-use manguto\cms5\mvc\control\dev\ControlDev;
-use manguto\cms5\mvc\control\crud\ControlCRUD;
+use manguto\cms5\mvc\model\User;
+use manguto\cms5\mvc\model\Manutencao;
+use manguto\cms5\lib\Sessions;
+use manguto\cms5\lib\ServerHelp;
 
 class Control
 {
@@ -23,17 +22,18 @@ class Control
             $app->config('debug', true);
             self::PlataformRouteAnalisys($app);
             $app->run();
-        }        
+        }
         // ====================================================================================================
-        
     }
 
     private static function PlataformRouteAnalisys($app)
-    {   
-        
+    {
+
         // ====================================================================================================
-        { // SITE - Front End            
-            ControlSite::RunRouteAnalisys($app);            
+        self::CheckUnderMaintenance();
+        // ====================================================================================================
+        { // SITE - Front End
+            ControlSite::RunRouteAnalisys($app);
         }
         // ====================================================================================================
         { // SITE - Back End
@@ -48,9 +48,8 @@ class Control
             ControlDev::RunRouteAnalisys($app);
         }
         // ====================================================================================================
-        
     }
-    
+
     // ============================================================================================ CONTROLE DE ACESSO
     // ============================================================================================ CONTROLE DE ACESSO
     // ============================================================================================ CONTROLE DE ACESSO
@@ -58,8 +57,7 @@ class Control
      * Realiza o controle de acesso ao conteudo seguinte apenas a usuarios logados
      */
     protected static function PrivativeZone()
-    {
-        
+    {    
         if (! User::checkUserLogged()) {
             ProcessResult::setError("Permissão de acesso negada. Contate o administrador.");
             headerLocation('/');
@@ -72,7 +70,6 @@ class Control
      */
     protected static function PrivativeAdminZone()
     {
-        
         if (! User::checkUserLoggedAdmin()) {
             ProcessResult::setError("Permissão de acesso negada. Contate o administrador.");
             headerLocation('/');
@@ -84,8 +81,7 @@ class Control
      * Realiza o controle de acesso ao conteudo seguinte apenas a usuarios logados e Administradores
      */
     protected static function PrivativeDevZone()
-    {
-        
+    { 
         if (! User::checkUserLoggedDev()) {
             ProcessResult::setError("Permissão de acesso negada. Contate o administrador.");
             headerLocation('/');
@@ -95,7 +91,6 @@ class Control
 
     protected static function PrivateCrudPermission($operation, $target_user_id)
     {
-        
         // deb($operation,0); deb($target_user_id);
         {
             // logged user
@@ -156,60 +151,60 @@ class Control
      */
     static protected function RunChilds(Slim $app, $classObjectSample)
     {
-        
         { // obtencao do nome desta classe e do local onde ela se encontra
             $thisclassname = get_class($classObjectSample);
+            // deb($thisclassname,0);
             $thisclassname = Diretorios::fixDirectorySeparator($thisclassname);
-            $thisclassname_ = explode(DIRECTORY_SEPARATOR, $thisclassname);
-            $thisclassname = array_pop($thisclassname_);
+            $thisclassname_path_array = explode(DIRECTORY_SEPARATOR, $thisclassname);
+            // deb($thisclassname_);
+            $thisclassname = array_pop($thisclassname_path_array);
+            // deb($thisclassname,0);
             { // caminho onde estao todas as classes desta categoria (MVC)
-                $path = implode(DIRECTORY_SEPARATOR, $thisclassname_) . DIRECTORY_SEPARATOR;
-                $path = 'vendor' . DIRECTORY_SEPARATOR . $path;
+                $sub_folder = strtolower(str_replace('Control', '', $thisclassname));
+                $path_vendor = 'vendor' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $thisclassname_path_array) . DIRECTORY_SEPARATOR . $sub_folder . DIRECTORY_SEPARATOR;                
+                $path_sis = 'sis' . DIRECTORY_SEPARATOR . 'control' . DIRECTORY_SEPARATOR . $sub_folder . DIRECTORY_SEPARATOR;
             }
-            // deb($thisclassname);
-            // deb($path);
+            // deb($thisclassname,0); deb($path,0);
         }
         // deb($thisclassname,0);
 
         { // obtencao de todos os arquivos das pastas em questao
-            { // sis
+            { // vendor / sis
 
-                $control_files = Diretorios::obterArquivosPastas($path, false, true, false, [
+                $control_vendor_files = Diretorios::obterArquivosPastas($path_vendor, false, true, false, [
                     'php'
                 ]);
-                // deb($control_files,0);
-            }
-            { // cria uma lista apenas com os arquivos de controle da classe em questao
-                $arquivos = [];
-                foreach ($control_files as $arquivo) {
-                    $arquivo_temp = str_replace($path, '', $arquivo);
-                    // deb($arquivo_temp);
-                    $left = substr($arquivo_temp, 0, strlen($thisclassname));
-                    // deb($path,0); deb($left,0); deb($thisclassname,0); deb('<hr/>',0);
-                    if ($left == $thisclassname && strpos($arquivo, 'Zzz') === false) {
-                        $arquivos[] = $arquivo;
-                    }
-                }
-                // deb($arquivos,0);
-            }
-        }
+                //deb($control_vendor_files);
 
-        // deb($arquivos,0);
-        { // obtencao das classes filhas
-            $classesFilhas = [];
-            foreach ($arquivos as $arquivo) {
-                $classname = Arquivos::obterNomeArquivo($arquivo, false);
-                $path_tmp = Arquivos::obterCaminho($arquivo);
-                // deb($arquivo,0); deb($path_tmp,0); deb($classname);
-                if (substr($classname, 0, strlen($thisclassname)) == $thisclassname && strlen($classname) != strlen($thisclassname)) {
-                    $classesFilhas[] = $path_tmp . $classname;
+                if(file_exists($path_sis)){
+                    $control_sis_files = Diretorios::obterArquivosPastas($path_sis, false, true, false, [
+                        'php'
+                    ]);
+                }else{
+                    $control_sis_files = [];
                 }
+                
+                //deb($control_sis_files);
+
             }
-            // deb($classesFilhas);
+            {//mix
+                $arquivos_classes_filhas = [];
+                foreach ($control_vendor_files as $control_vendor_file) {
+                    $arquivos_classes_filhas[] = $control_vendor_file;
+                }
+                
+                foreach ($control_sis_files as $control_sis_file) {
+                    $arquivos_classes_filhas[] = $control_sis_file;
+                }
+                //deb($arquivos_classes_filhas,0);
+            }            
+            
         }
+        
         // deb($classesFilhas,0);
         { // acionamento das classes filhas desta atraves do metodo "RUN()"
-            foreach ($classesFilhas as $classeFilha) {
+            foreach ($arquivos_classes_filhas as $classeFilha) {
+                $classeFilha = str_replace('.php', '', $classeFilha);
                 $classeFilha = str_replace('/', '\\', $classeFilha);
                 $classeFilha = str_replace('vendor', '', $classeFilha);
                 // deb('CLASSE FILHA >>> '.$classeFilha,0);
@@ -236,7 +231,6 @@ class Control
      */
     static protected function RunChildsModules(Slim $app, $classObjectSample)
     {
-        
         { // obtencao do nome desta classe e do local onde ela se encontra
             $thisclassname = get_class($classObjectSample);
             $thisclassname = Diretorios::fixDirectorySeparator($thisclassname);
@@ -276,6 +270,49 @@ class Control
                 $classeFilha::RunRouteAnalisys($app);
             }
         }
+    }
+    
+    static private function CheckUnderMaintenance() {
+        
+        if(User::checkUserLoggedDev()){
+            //caso o usuario seja um DESENVOLVEDOR, não faz mais nada! pode liberar o acesso!
+            //caso o usuario seja um DESENVOLVEDOR, não faz mais nada! pode liberar o acesso!
+            //caso o usuario seja um DESENVOLVEDOR, não faz mais nada! pode liberar o acesso!
+            
+        }else{
+            //caso seja qualquer outro tipo de usuario (nao logado, logado ou adm) é feito o teste
+            //caso seja qualquer outro tipo de usuario (nao logado, logado ou adm) é feito o teste
+            //caso seja qualquer outro tipo de usuario (nao logado, logado ou adm) é feito o teste
+            $manutencao_array = Manutencao::EmFuncionamento();
+            //deb($manutencao_array);
+            if(sizeof($manutencao_array)>0){
+                
+                foreach ($manutencao_array as $manutencao){
+                    ProcessResult::setWarning($manutencao->getMensagem());
+                    ProcessResult::setError($manutencao->getMotivo());
+                }
+                //limpa a sessao e redireciona para a tela principal com os detalhes para exibicao!
+                //limpa a sessao e redireciona para a tela principal com os detalhes para exibicao!
+                //limpa a sessao e redireciona para a tela principal com os detalhes para exibicao!
+                User::logout();
+                $route = ServerHelp::getURLRoute();
+                //deb($route);
+                $route_home = '/'.SIS_FOLDERNAME.'/';
+                $route_login = '/'.SIS_FOLDERNAME.'/login';
+                if($route != $route_home && $route != $route_login){
+                    //redirecionamento para a home
+                    //redirecionamento para a home
+                    //redirecionamento para a home
+                    headerLocation('/');
+                    exit();
+                }
+                
+            }else{
+                //tudo certo! nenhuma manutencao em andamento!
+                //tudo certo! nenhuma manutencao em andamento!
+                //tudo certo! nenhuma manutencao em andamento!
+            }
+        }        
     }
 }
 

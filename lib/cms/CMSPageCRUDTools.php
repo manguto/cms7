@@ -40,7 +40,7 @@ class CMSPageCRUDTools
     static private function set_controler_structure(string $modelname)
     {
         { // file - name & content
-            $filename = self::models_dir . 'control/crud/ControlCRUDZzz.php';
+            $filename = self::models_dir . 'control/crud/ControlZzz.php';
             $content = Arquivos::obterConteudo($filename);
             // debc($content);
         }
@@ -58,7 +58,7 @@ class CMSPageCRUDTools
     static private function set_view_structure(string $modelname)
     {
         { // file - name & content
-            $filename = self::models_dir . 'view/crud/ViewCRUDZzz.php';
+            $filename = self::models_dir . 'view/crud/ViewZzz.php';
             $content = Arquivos::obterConteudo($filename);
             // debc($content);
         }

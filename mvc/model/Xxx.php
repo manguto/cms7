@@ -8,6 +8,10 @@ use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\model\ModelTrait;
 use manguto\cms5\lib\Strings;
 
+/**
+ * CLASSE MODELO PARA CRIACAO DE UM PADRAO CRUD 
+ *
+ */
 class Xxx extends Model implements ModelDatabase
 {
 

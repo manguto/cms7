@@ -76,12 +76,12 @@ class CMSPage
                 $className = Diretorios::fixDirectorySeparator($className);
                 $thisclassname_ = explode(DIRECTORY_SEPARATOR, $className);
                 $className = array_pop($thisclassname_);
-                // deb($className,0);
+                //deb($className,0);
             }
             { // platform
                 $platform = strtolower($className);
                 $platform = str_replace('cmspage', '', $platform);
-                // deb($platform,0);
+                //deb($platform,0);
             }
         }
         
@@ -106,11 +106,13 @@ class CMSPage
                 // <<<<<<<<<<<<<<<<<<<<
             } else {                
                 //deb("Arquivo NÃO encontrado na biblioteca",0);
-                { // apenas os templates da plataforma em questao serao analisados                    
-                    $sis_tpl_path_array = Diretorios::obterArquivosPastas(ROOT_SIS, true, true, false, [
+                { // apenas os templates da plataforma em questao serao analisados           
+                    $platform_templates_folder = ROOT_SIS.'tpl'.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR;
+                    //deb($platform_templates_folder);
+                    $sis_tpl_path_array = Diretorios::obterArquivosPastas($platform_templates_folder, true, true, false, [
                         'html'
                     ]);
-                    //deb($sis_tpl_path_array,0);
+                    //deb($sis_tpl_path_array);
                 }       
                 $return = [];
                 foreach ($sis_tpl_path_array as $sis_tpl_path) {
@@ -138,7 +140,7 @@ class CMSPage
                         // <<<<<<<<<<<<<<<<<<<<
                     }
                 }
-                if(sizeof($return)>1){
+                if(sizeof($return)>1){                    
                     throw new Exception("Templates não podem ter o mesmo nome de arquivo. Foram encontrados mais de um template com o mesmo nome (".implode(', ' , $return)."). Modifique, atualize o código que fazia a chamada para os mesmos e tente novamente.");
                 }else if(sizeof($return)==1){
                     $return = array_shift($return);

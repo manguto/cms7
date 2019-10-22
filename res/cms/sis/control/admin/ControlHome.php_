@@ -1,0 +1,20 @@
+<?php
+namespace sis\control\admin;
+
+
+use manguto\cms5\mvc\view\ViewAdmin;
+use manguto\cms5\mvc\control\ControlAdmin;
+
+class ControlHome extends ControlAdmin
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/admin', function () {
+            self::PrivativeAdminZone();
+            ViewAdmin::load('home');
+        });
+    }
+}
+
+?>

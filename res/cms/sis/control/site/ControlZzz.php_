@@ -1,0 +1,19 @@
+<?php
+namespace sis\control\site;
+
+use sis\view\site\ViewZzz;
+use manguto\cms5\mvc\control\ControlSite;
+
+class ControlZzz extends ControlSite 
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/zzz', function () {
+            self::PrivativeZone();
+            ViewZzz::zzz();
+        });
+    }
+}
+
+?>

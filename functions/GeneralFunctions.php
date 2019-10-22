@@ -189,6 +189,19 @@ function debx($deb, $var, bool $die = true)
 }
 
 /**
+ * debug objects in a array
+ * @param array $var_array
+ * @param bool $die
+ */
+function debs(array $var_array,bool $die=true,string $sep = '<hr/>'){
+    foreach ($var_array as $var){
+        echo "$var$sep";
+    }
+    if($die) die();
+}
+
+
+/**
  * realiza ajustes no backtrace informado para uma melhor apresetnacao
  *
  * @param string $backtrace

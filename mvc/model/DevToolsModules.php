@@ -63,9 +63,13 @@ class DevToolsModules
     {
         $return = [];
         
-        $return["sis/control/$platform/Control{$Platform}Zzz.php"] = "";
+/*         $return["sis/control/$platform/Control{$Platform}Zzz.php"] = "";
         $return["sis/view/$platform/View{$Platform}Zzz.php"] = "";
         $return["sis/tpl/$platform/{$platform}_zzz.html"] = "";
+         */
+        $return["sis/control/$platform/ControlZzz.php"] = "";
+        $return["sis/view/$platform/ViewZzz.php"] = "";
+        $return["sis/tpl/$platform/zzz.html"] = "";        
         
         foreach (array_keys($return) as $filename) {
             $content = Arquivos::obterConteudo($filename);

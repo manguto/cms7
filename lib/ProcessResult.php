@@ -19,15 +19,15 @@ class ProcessResult
         $return = [];
 
         if (Sessions::isset(self::key)) {
-            $prs = Sessions::get(self::key,false);
+            $process_results = Sessions::get(self::key,false);
             //deb($_SESSION);
             //deb(gettype($prs));
             //deb($prs);
-            $prs = $prs=='' ? [] : $prs;
-            foreach ($prs as $pr) {
+            $process_results = $process_results=='' ? [] : $process_results;
+            foreach ($process_results as $process_result) {
                 {
-                    $type = $pr['type'];
-                    $msg = $pr['msg'];
+                    $type = $process_result['type'];
+                    $msg = $process_result['msg'];
                     {
                         $type = strtolower($type);
                         if ($type == 'error') {
