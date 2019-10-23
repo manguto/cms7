@@ -77,9 +77,9 @@ section {
 
 footer {
 	width: 100%;
-	height: 100px;
+	height: 50px;
 	text-align: center;
-	padding-top: 20px;
+	padding-top: 10px;
 	font-size: 14px;
 	color: #fff;
 	position: relative;
@@ -126,17 +126,17 @@ header.admin {
 header.dev {
 	background-image: linear-gradient(to bottom,#500, #a00 93%, #500) !important;	
 }
-/* ====================================================== */
+/* ============================================================================================= */
 footer.site {
-	background: #27ae60 !important;
+	background-image: linear-gradient(to bottom,#080 10%, #2c7 90%, #080) !important;
 }
 
 footer.admin {
-	background: #c80 !important;
+	background-image: linear-gradient(to bottom,#c80 10%, #ea0 90%, #c80) !important;	
 }
 
 footer.dev {
-	background: #600 !important;
+	background-image: linear-gradient(to bottom,#500 10%, #a00 90%, #500) !important;	
 }
 
 /* =========================================================================================================================== */

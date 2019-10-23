@@ -70,7 +70,7 @@ class Control
      */
     protected static function PrivativeAdminZone()
     {
-        if (! User::checkUserLoggedAdmin()) {
+        if (! User::checkUserLoggedAdmin() && ! User::checkUserLoggedDev()) {
             ProcessResult::setError("Permissão de acesso negada. Contate o administrador.");
             headerLocation('/');
             exit();

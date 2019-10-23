@@ -7,7 +7,7 @@
 
 	{/if}		
 	
-	{if="checkUserLoggedAdmin()"}
+	{if="checkUserLoggedDev() || checkUserLoggedAdmin()"}
 	
 		<a href="/admin" class="btn btn-sm btn-outline-dark warning float-right {if="SIS_PLATFORM=='admin'"} off {/if}" title='Acessar a plataforma ADMINISTRATIVA'><img src="/res/img/icon_admin.png"/></a>
 	    

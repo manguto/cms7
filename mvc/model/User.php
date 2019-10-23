@@ -222,6 +222,7 @@ class User extends Model
         self::setMultipleSystemSessionUser($user);
 
         Sessions::set(User::SESSION, $user);
+        Sessions::set(User::SESSION.'_show', "$user");
         Logs::Start('LOGIN EFETUADO');
         Logs::set(Logs::TYPE_INFO, "Usuário logado e definido na sessão ($user).");
     }
@@ -240,7 +241,7 @@ class User extends Model
         $user_id = $user->getId();
         $query = " \$user_id==$user_id ";
         $user_module_array = (new User_module())->search($query);
-        // debs($module_id_array);
+        //debs($user_module_array);
         
         {//profile get/set
             $profiles = [];
@@ -254,8 +255,8 @@ class User extends Model
                 $modules[$module_id] = new Module($module_id); 
                 $profiles[$nature] = $nature; 
             }
-            //deb($profiles,0);            
-            //deb($modules);            
+            /*deb($modules,0);
+            deb($profiles);/**/
         }
         
         foreach ($modules as $module_id=>$module) {
@@ -274,7 +275,7 @@ class User extends Model
                     $user->setAdminzoneaccess(false);
                 }
                 //======================================= USER
-                if(!isset($profiles['dev']) && isset($profiles['admin']) && !isset($profiles['user'])){
+                if(!isset($profiles['dev']) && !isset($profiles['admin']) && !isset($profiles['user'])){
                     continue;
                 }
             }            
@@ -283,6 +284,7 @@ class User extends Model
                 //deb($SIS_FOLDERNAME);
             }
             Sessions::set(User::SESSION, $user, false, $SIS_FOLDERNAME);
+            Sessions::set(User::SESSION.'_show', "$user", false, $SIS_FOLDERNAME);
         }
     }
 
