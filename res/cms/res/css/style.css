@@ -115,16 +115,16 @@ label {
 /* ====================================================== MODULES STYLES ===================================================== */
 /* =========================================================================================================================== */
 /* =========================================================================================================================== */
-header.site {
-	background: #2ecc71 !important;
+header.site {	
+	background-image: linear-gradient(to bottom,#080, #2c7 93%, #080) !important;	
 }
 
 header.admin {
-	background: #ea0 !important;
+	background-image: linear-gradient(to bottom,#c80, #ea0 93%, #c80) !important;	
 }
 
 header.dev {
-	background: #a00 !important;
+	background-image: linear-gradient(to bottom,#500, #a00 93%, #500) !important;	
 }
 /* ====================================================== */
 footer.site {

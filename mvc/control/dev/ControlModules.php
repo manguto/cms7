@@ -4,7 +4,6 @@ namespace manguto\cms5\mvc\control\dev;
 
 use manguto\cms5\mvc\control\ControlDev;
 use manguto\cms5\mvc\view\dev\ViewModules;
-use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\mvc\model\User_module;
 
 class ControlModules extends ControlDev
@@ -28,26 +27,26 @@ class ControlModules extends ControlDev
                 $nature = $key_array[2];
             }
             
-            
-            if($action=='set'){
-                $um = new User_module();
-                $um->setUser_id($user_id);
-                $um->setModule_id($module_id);
-                $um->setNature($nature);
-                $um->save();                
-                $acao_show = 'adicionado';
-            }else{
-                $query = " \$user_id==$user_id && \$module_id==$module_id && \$nature=='$nature' ";
+            {//remocao de todos os perfis do usuario para um determinado modulo
+                $query = " \$user_id==$user_id && \$module_id==$module_id ";
                 $um_array = (new User_module())->search($query);
                 if(sizeof($um_array)>0){
                     foreach ($um_array as $um){
                         $um->delete();
                     }
                 }
-                $acao_show = 'removido';
             }
-                        
-            //ProcessResult::setSuccess("Registro ($key) $acao_show com sucesso!");
+            
+            {//insercao do perfil informado
+                if($action=='set'){
+                    $um = new User_module();
+                    $um->setUser_id($user_id);
+                    $um->setModule_id($module_id);
+                    $um->setNature($nature);
+                    $um->save();                 
+                }
+            }                                    
+
             headerLocation('/dev/modules');
         });
         

@@ -229,18 +229,14 @@ class Datas
      * @throws Exception
      * @return string
      */
-    static function staticGetWeekDayName_(int $dayNumber, $fullName = false, $utf8_decode = false): string
+    static function staticGetWeekDayName_(int $dayNumber, $fullName = false): string
     {
         if ($dayNumber < 0 || $dayNumber > 6) {
             throw new Exception("Número inadequado para um dia da semana [0-6]('$dayNumber').");
-        }
-        $code = $fullName ? '%A' : '%a';
-        if ($utf8_decode) {
-            $return = utf8_decode(strftime($code, strtotime("Sunday +{$dayNumber} days")));
-        } else {
-            $return = strftime($code, strtotime("Sunday +{$dayNumber} days"));
-        }
-        return $return;
+        }else{            
+            $code = $fullName ? '%A' : '%a';            
+            return strftime($code, strtotime("Sunday +{$dayNumber} days"));           
+        }        
     }
 
     static function staticGetWeekDayName(int $dayNumber, string $size = 'p', bool $uppercase = true, bool $ucfirst = false): string

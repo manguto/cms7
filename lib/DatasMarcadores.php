@@ -19,6 +19,7 @@ class DatasMarcadores{
         $feriado[ 6][24] = 'São João';
         $feriado[ 9][ 7] = 'Dia da Independência'; //Lei nº 662, de 06/04/49
         $feriado[10][12] = 'N. Sª Aparecida'; //Lei nº 6802, de 30/06/80
+        $feriado[10][28] = 'Funcionário Público'; //Lei nº ____, de __/__/__
         $feriado[11][ 2] = 'Finados'; //Lei nº 662, de 06/04/49
         $feriado[11][15] = 'Proc. da Repúclica'; //Lei nº 662, de 06/04/49
         $feriado[12][25] = 'Natal'; //Lei nº 662, de 06/04/49        
