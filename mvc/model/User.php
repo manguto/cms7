@@ -223,6 +223,8 @@ class User extends Model
 
         Sessions::set(User::SESSION, $user);
         Sessions::set(User::SESSION.'_show', "$user");
+        Sessions::set(User::SESSION.'_modules', User_module::obterUsuarioModulosPermitidos($user->getId()));
+        
         Logs::Start('LOGIN EFETUADO');
         Logs::set(Logs::TYPE_INFO, "Usuário logado e definido na sessão ($user).");
     }
@@ -285,6 +287,9 @@ class User extends Model
             }
             Sessions::set(User::SESSION, $user, false, $SIS_FOLDERNAME);
             Sessions::set(User::SESSION.'_show', "$user", false, $SIS_FOLDERNAME);
+            Sessions::set(User::SESSION.'_modules', User_module::obterUsuarioModulosPermitidos($user->getId()), false, $SIS_FOLDERNAME);
+            
+            
         }
     }
 

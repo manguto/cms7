@@ -32,7 +32,15 @@ class User_module extends Model implements ModelDatabase
         // -------------------------------------------------
     }
 
-
+    //=================================================================================
+    static function obterUsuarioModulosPermitidos($user_id):array{
+        $user_modules = (new self())->search(" \$user_id==$user_id ");
+        $return =[];
+        foreach ($user_modules as $user_module){
+            $return[] = new Module($user_module->getModule_id());
+        }
+        return $return; 
+    }
 }
 
 ?>
