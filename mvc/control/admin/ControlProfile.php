@@ -6,7 +6,7 @@ use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Sessions;
 use manguto\cms5\mvc\control\Control;
-use manguto\cms5\mvc\view\admin\ViewAdminProfile;
+use manguto\cms5\mvc\view\admin\ViewProfile;
 use manguto\cms5\mvc\control\ControlAdmin;
  
 class ControlProfile extends ControlAdmin
@@ -37,7 +37,7 @@ class ControlProfile extends ControlAdmin
     static function get_admin_profile()
     {        
         $user = User::getSessionUser();
-        ViewAdminProfile::get_admin_profile($user);
+        ViewProfile::get_admin_profile($user);
     }
 
     static function post_admin_profile()
@@ -68,7 +68,7 @@ class ControlProfile extends ControlAdmin
 
     static function get_admin_profile_change_password()
     {   
-        ViewAdminProfile::get_admin_profile_change_password();
+        ViewProfile::get_admin_profile_change_password();
     }
 
     static function post_admin_profile_change_password()

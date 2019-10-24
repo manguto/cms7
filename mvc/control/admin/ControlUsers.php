@@ -4,7 +4,7 @@ namespace manguto\cms5\mvc\control\admin;
 use manguto\cms5\mvc\model\User;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
-use manguto\cms5\mvc\view\admin\ViewAdminUsers;
+use manguto\cms5\mvc\view\admin\ViewUsers;
 use manguto\cms5\mvc\control\ControlAdmin;
  
 
@@ -57,12 +57,12 @@ class ControlUsers extends ControlAdmin
     {   
         $users = User::getList('',false);        
         
-        ViewAdminUsers::get_admin_users($users);
+        ViewUsers::get_admin_users($users);
     }
 
     static function get_admin_users_create()
     {   
-        ViewAdminUsers::get_admin_users_create();
+        ViewUsers::get_admin_users_create();
     }
 
     static function post_admin_users_create()
@@ -93,13 +93,13 @@ class ControlUsers extends ControlAdmin
     static function get_admin_user($id)
     {
         $user = new User($id);
-        ViewAdminUsers::get_admin_user($user);
+        ViewUsers::get_admin_user($user);
     }
 
     static function get_admin_user_edit($id)
     {
         $user = new User($id);
-        ViewAdminUsers::get_admin_user_edit($user);
+        ViewUsers::get_admin_user_edit($user);
     }
 
     static function post_admin_user_edit($id)

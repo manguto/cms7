@@ -2,7 +2,7 @@
 namespace manguto\cms5\lib;
 
 use OfxParser\Parser;
-
+ 
 /**
  * Classe de suporte ao tratamento de arquivos OFX
  * http://www.ofx.net/downloads/OFX%202.2.pdf
