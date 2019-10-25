@@ -171,9 +171,14 @@ class Control
         { // obtencao de todos os arquivos das pastas em questao
             { // vendor / sis
 
-                $control_vendor_files = Diretorios::obterArquivosPastas($path_vendor, false, true, false, [
-                    'php'
-                ]);
+                //deb($path_vendor,0);
+                if(file_exists($path_vendor)){
+                    $control_vendor_files = Diretorios::obterArquivosPastas($path_vendor, false, true, false, [
+                        'php'
+                    ]);
+                }else{
+                    $control_vendor_files = [];
+                }
                 //deb($control_vendor_files);
 
                 if(file_exists($path_sis)){
@@ -182,8 +187,7 @@ class Control
                     ]);
                 }else{
                     $control_sis_files = [];
-                }
-                
+                }                
                 //deb($control_sis_files);
 
             }

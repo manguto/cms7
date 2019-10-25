@@ -8,6 +8,20 @@
 				<h1 class='display-4'>{#SIS_NAME_FULL#}</h1>
 			</div>
 		</div>
+		<br />
+		<br />
+		<div class="row">
+			<div class="col-12">
+				{if="\manguto\cms5\lib\Sessions::isset(\manguto\cms5\mvc\model\User::SESSION.'_modules')"} 
+					<h3 style="font-style: italic;">Outros módulos disponíveis para este usuário:</h3>
+					{loop="\manguto\cms5\lib\Sessions::get(\manguto\cms5\mvc\model\User::SESSION.'_modules')"}
+						<hr />
+						<a href="http://nti.uast.br/{$value->getPasta()}" target="_blank" class="btn btn-outline-success">{$value->getNome()}</a>						 
+					{/loop}
+					<hr />				
+				{/if} 				
+			</div>
+		</div>
 	</div>
 </section>
 {include="../../../vendor/manguto/cms5/mvc/tpl/general/_footer"} {include="../../../vendor/manguto/cms5/mvc/tpl/general/__close"}
