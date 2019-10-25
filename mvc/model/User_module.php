@@ -6,6 +6,7 @@ use manguto\cms5\lib\database\ModelDatabase;
 use manguto\cms5\lib\database\repository\ModelRepository;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\model\ModelTrait;
+use manguto\cms5\lib\Sessions;
 
 class User_module extends Model implements ModelDatabase
 {
@@ -48,6 +49,37 @@ class User_module extends Model implements ModelDatabase
         }
         return $return; 
     }
+    //=================================================================================
+    static function obterUsuarioHomeModulosMenu(){
+        $return = [];
+        
+        if(Sessions::isset(User::SESSION.'_modules')){            
+            foreach (Sessions::get(User::SESSION.'_modules') as $module){                
+                if($module->getPasta()!=SIS_FOLDERNAME){
+                    if(sizeof($return)==0){
+                        $return[] = "<h3 style='font-style: italic;'>Outros módulos disponíveis para este usuário:</h3>";
+                    }
+                    $return[] = "<hr />
+                    <a href='http://nti.uast.br/".$module->getPasta()."' class='btn btn-outline-success'>".$module->getNome()."</a>";
+                }
+            }
+        }
+        
+        $return=implode(chr(10), $return);
+        //debc($return,0);        
+        return $return;
+    }
+    
 }
+
+
+
+
+
+
+
+
+
+
 
 ?>

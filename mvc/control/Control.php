@@ -2,14 +2,12 @@
 namespace manguto\cms5\mvc\control;
 
 use manguto\cms5\lib\Diretorios;
-use manguto\cms5\lib\Arquivos;
 use Slim\Slim;
 use manguto\cms5\lib\ProcessResult;
 use manguto\cms5\lib\Exception;
 use manguto\cms5\mvc\model\User;
-use manguto\cms5\mvc\model\Manutencao;
-use manguto\cms5\lib\Sessions;
 use manguto\cms5\lib\ServerHelp;
+use manguto\cms5\mvc\model\Manutencao;
 
 class Control
 {
@@ -94,24 +92,22 @@ class Control
         // deb($operation,0); deb($target_user_id);
         {
             // logged user
-            $user = User::getSessionUser();
-            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = User::getSessionUser();            
             // deb($user);
-            $adm = intval($user['adminzoneaccess']);
+            $adm = intval($user->getAdminzoneaccess());
             // deb($adm);
-            $dev = intval($user['devzoneaccess']);
+            $dev = intval($user->getDevzoneaccess());
             // deb($dev);
             $level_user = 1 + $adm + $dev;
         }
         // deb($userLevel);
 
         { // target user
-            $user = new User($target_user_id);
-            $user = $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false);
+            $user = new User($target_user_id);            
             // deb($user);
-            $adm = intval($user['adminzoneaccess']);
+            $adm = intval($user->getAdminzoneaccess());
             // deb($adm);
-            $dev = intval($user['devzoneaccess']);
+            $dev = intval($user->getDevzoneaccess());
             // deb($dev);
             $level_user_target = 1 + $adm + $dev;
         }
