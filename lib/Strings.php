@@ -10,6 +10,20 @@ class Strings
         'do'
     ];
 
+    const textosNaoMaiusculantes = [
+        'da',
+        'das',
+        'de',        
+        'do',
+        'dos',
+        'e',
+        'o',
+        'os',
+        'em',        
+        'a',
+        'as',
+    ];
+
     const textosNaoAbreviaveis = [
         'da',
         'de',
@@ -862,6 +876,28 @@ class Strings
         }
         return $return;
     }
+    
+    /**
+     * retorna a frase informada com as primeiras letras maiusculas
+     * @param string $string
+     * @return string
+     */
+    static function ucfirst_frases(string $string):string{
+        $string = trim($string);
+        $string_array = explode(' ', $string);
+        $return = [];
+        foreach ($string_array as $s) {
+            $s = mb_convert_case($s,MB_CASE_LOWER);
+            if (in_array(strtolower($s), self::textosNaoMaiusculantes)){
+                $return[]= $s;
+            }else{
+                $return[]= mb_convert_case($s,MB_CASE_TITLE);
+            }
+        }
+        $return = implode(' ', $return);
+        return $return;
+    }
+    
 }
 
 ?>
