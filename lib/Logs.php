@@ -310,7 +310,7 @@ class Logs
     static function temp(string $msg='') {
         $filename = 'log/temp_'.date('Ymd').'.txt';
         $msg = date('H:i:s d-m-Y').' | '.$msg.chr(10);        
-        Arquivos::escreverConteudo($filename, $msg,FILE_APPEND);
+        Arquivos::escreverConteudo($filename, $msg, FILE_APPEND);
     }
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 }

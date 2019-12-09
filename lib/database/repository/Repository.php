@@ -7,7 +7,6 @@ use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\database\Database; 
 use manguto\cms5\lib\Logs;
 use manguto\cms5\lib\Diretorios;
-use sis;
 
 class Repository implements Database
 {
@@ -290,7 +289,7 @@ class Repository implements Database
         // deb($data);
         $titles = implode(RepositoryCSV::valuesDelimiter, $data) . chr(10);
         //deb($titles);
-        Arquivos::escreverConteudo($this->filename, $titles);
+        Arquivos::escreverConteudoControlado($this->filename, $titles);
     }
 
     /**
@@ -312,9 +311,11 @@ class Repository implements Database
         $repositoryCSV = utf8_decode($repositoryCSV);
         // deb($repositoryCSV);
 
+        
         // salvar arquivo
-        Arquivos::escreverConteudo($this->getFilename(), $repositoryCSV);
+        Arquivos::escreverConteudoControlado($this->getFilename(), $repositoryCSV);
     }
+    
     
     static function InitializeRepositories($dir='sis/model') {
         $modelFiles = Diretorios::obterArquivosPastas($dir, false, true, false,['php']);

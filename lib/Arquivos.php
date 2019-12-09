@@ -363,6 +363,55 @@ class Arquivos
             return false;
         }
     }
+    
+    //###################################################################################################################################################
+    //###################################################################################################################################################
+    //###################################################################################################################################################
+    
+    /**
+     * escreve um arquivo tendo o cuidado de que este não seja escrito durante o processo.
+     * @param string $filename
+     * @param string $data
+     * @param $flags
+     * @param boolean $throwException
+     */
+    static function escreverConteudoControlado(string $filename, string $data, $flags = NULL, $throwException = true)
+    {
+        if(self::arquivoEstaTravado($filename)==false){            
+            self::arquivoTravar($filename);
+            self::escreverConteudo($filename, $data,$flags,$throwException);
+            self::arquivoDestravar($filename);            
+        }else{            
+            sleep(1);            
+            self::escreverConteudoControlado($filename, $data,$flags,$throwException);
+        }       
+    }
+    
+    static private function arquivoTravar($filename){
+        $filename_temp = $filename.'_';
+        self::escreverConteudo($filename_temp, "TRAVA CONTRA ESCRITA DO ARQUIVO: $filename");
+    }
+    
+    static private function arquivoEstaTravado($filename){
+        $filename_temp = $filename.'_';
+        if(file_exists($filename_temp)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    static private function arquivoDestravar($filename){
+        $filename_temp = $filename.'_';
+        if(self::arquivoEstaTravado($filename)){
+            self::excluir($filename_temp);
+        }        
+    }
+    
+    
+    //###################################################################################################################################################
+    //###################################################################################################################################################
+    //###################################################################################################################################################
 }
 
 ?>
