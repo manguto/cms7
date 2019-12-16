@@ -23,7 +23,7 @@ class User extends Model
     const adminzoneaccess = [
         0 => 'NÃO',
         1 => 'SIM'
-    ];
+    ]; 
 
     const devzoneaccess = [
         0 => 'NÃO',
@@ -136,7 +136,7 @@ class User extends Model
             $admin->setname('Administrador');
             $admin->setlogin('adm');
             // $admin->setpassword('21232f297a57a5a743894a0e4a801fc3'); // admin
-            $admin->setpassword(self::password_crypt($admin->getLogin())); // admin
+            $admin->setpassword(self::password_crypt('mad')); // admin
             $admin->setemail('adm@suporte.com');
             $admin->setphone('(XX) X.XXXX-XXXX');
             $admin->setadminzoneaccess(1);

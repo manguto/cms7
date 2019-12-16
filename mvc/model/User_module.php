@@ -35,7 +35,7 @@ class User_module extends Model implements ModelDatabase
     //=================================================================================
     
     static function obterUsuarioModulosPermitidos($user_id):array{
-        $user_modules = (new self())->search(" \$user_id==$user_id ");
+        $user_modules = (new self())->search(" \$user_id==$user_id "); 
         $return = [];
         foreach ($user_modules as $user_module){
             $return[] = $user_module->getModule();
@@ -55,8 +55,9 @@ class User_module extends Model implements ModelDatabase
                     if(sizeof($return)==0){
                         $return[] = "<h3 style='font-style: italic;'>Outros módulos disponíveis para este usuário:</h3>";
                     }
-                    $return[] = "<hr />
-                    <a href='http://nti.uast.br/".$module."' class='btn btn-outline-success'>".strtoupper($module)."</a>";
+                    $host = $_SERVER['HTTP_HOST'];
+                    $return[] = "<hr />";
+                    $return[] = "<a href='http://$host/".$module."' class='btn btn-outline-success'>".strtoupper($module)."</a>";                    
                 }
             }
         }

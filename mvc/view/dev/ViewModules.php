@@ -12,12 +12,12 @@ class ViewModules extends ViewDev
     static function modules()
     {
         
-        $diretorios = Diretorios::obterArquivosPastas('../', false, false, true);
+        $diretorios = Diretorios::obterArquivosPastas('..'.DIRECTORY_SEPARATOR, false, false, true);
         //deb($diretorios);
         $modules=[];
         foreach ($diretorios as $dir){
-            $dir = str_replace('../', '', $dir);
-            $dir = str_replace('/', '', $dir);
+            $dir = str_replace('..'.DIRECTORY_SEPARATOR, '', $dir); 
+            $dir = str_replace(DIRECTORY_SEPARATOR, '', $dir);
             $esq = SIS_FOLDERNAME.'_';
             $dir_esq = substr($dir, 0,strlen($esq));
             if($dir_esq==$esq){
