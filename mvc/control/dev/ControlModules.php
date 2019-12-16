@@ -21,14 +21,14 @@ class ControlModules extends ControlDev
             /*deb($action,0);
             deb($key);/**/
             {
-                $key_array = explode('_', $key);
+                $key_array = explode('___', $key);
                 $user_id = $key_array[0];
-                $module_id = $key_array[1];
+                $module = $key_array[1];
                 $nature = $key_array[2];
             }
             
             {//remocao de todos os perfis do usuario para um determinado modulo
-                $query = " \$user_id==$user_id && \$module_id==$module_id ";
+                $query = " \$user_id==$user_id && \$module=='$module' ";
                 $um_array = (new User_module())->search($query);
                 if(sizeof($um_array)>0){
                     foreach ($um_array as $um){
@@ -41,7 +41,7 @@ class ControlModules extends ControlDev
                 if($action=='set'){
                     $um = new User_module();
                     $um->setUser_id($user_id);
-                    $um->setModule_id($module_id);
+                    $um->setModule($module);
                     $um->setNature($nature);
                     $um->save();                 
                 }

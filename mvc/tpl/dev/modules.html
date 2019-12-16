@@ -14,32 +14,28 @@
 						<tr>
 							<th scope="col" class="user">Usuários</th>
 							{loop="$modules"}
-							<th scope="col" class="text-center" title="{$value->getPasta()}">
-								{$value->getNome()}
-								<a href="/dev/remove/{$value->getId()}" class="" title="REMOVER ESTE MÓDULO DO CONTROLE" style="color:#f00;">[-]</a>
+							<th scope="col" class="text-center" title="{$value}">								
+								{function="strtoupper($value)"}								
 							</th>
-							{/loop}
-							<th scope="col" rowspan="{function="ceil(sizeof($users)+1)"}" class="text-center" style="vertical-align: middle;">
-								<a href="/dev/modules/new" class="" title="ADICIONAR NOVO MÓDULO AO CONTROLE" style="color:#0c0">[+]</a>
-							</th>
+							{/loop}							
 						</tr>
 						{loop="$users"}
-							<tr>
-								<td scope="row" class='user'>{$value->getName()}</td>
-								{loop="$modules"}
-								<td scope="row" class="text-center">
-									{loop="$profiles"}
-									<label for="{$key1}_{$key2}_{$key3}" style="width: 30%;">
-									<div {if="isset($user_module_set[$key1][$key2][$key3])"} class="perfil {$value.class} on"  {else} class="perfil {$value.class} off" {/if} title="CLIQUE PARA ATIVAR/DESATIVAR PERFIL">
-										<input id="{$key1}_{$key2}_{$key3}" type="checkbox" {if="isset($user_module_set[$key1][$key2][$key3])"} checked="checked" class="" {/if}/>
-										{$value.show}
-									</div>
-									</label>
-									{/loop}
-								</th>
+						<tr>
+							<td scope="row" class='user'>{$value->getName()}</td>
+							{loop="$modules"}
+							<td scope="row" class="text-center">
+								{loop="$profiles"}
+								<label for="{$key1}___{$value2}___{$key3}" style="width: 30%;">
+								<div {if="isset($user_module_set[$key1][$value2][$key3])"} class="perfil {$value.class} on"  {else} class="perfil {$value.class} off" {/if} title="Clique para ativar/desativar perfil de {$value.title}">
+									<input id="{$key1}___{$value2}___{$key3}" type="checkbox" {if="isset($user_module_set[$key1][$value2][$key3])"} checked="checked" class="" {/if}/>
+									{$value.show}
+								</div>
+								</label>
 								{/loop}
-							</tr>
+							</th>
 							{/loop}
+						</tr>
+						{/loop}
 						
 					</table>
 				</form>

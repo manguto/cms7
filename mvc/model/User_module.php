@@ -24,8 +24,7 @@ class User_module extends Model implements ModelDatabase
         $a->setType(ModelAttribute::TYPE_INT);
         $this->SetAttribute($a);
         // -------------------------------------------------
-        $a = new ModelAttribute('module_id'); 
-        $a->setType(ModelAttribute::TYPE_INT);
+        $a = new ModelAttribute('module');
         $this->SetAttribute($a);
         // -------------------------------------------------
         $a = new ModelAttribute('nature');
@@ -39,13 +38,10 @@ class User_module extends Model implements ModelDatabase
         $user_modules = (new self())->search(" \$user_id==$user_id ");
         $return = [];
         foreach ($user_modules as $user_module){
-            $return[] = new Module($user_module->getModule_id());
+            $return[] = $user_module->getModule();
         }
-        {
-            $self =  new Module();
-            $self->setNome(SIS_NAME);
-            $self->setPasta(SIS_FOLDERNAME);
-            $return[] = $self;
+        {//adicionar o proprio sistema em questao   
+            $return[] = SIS_FOLDERNAME;
         }
         return $return; 
     }
@@ -55,12 +51,12 @@ class User_module extends Model implements ModelDatabase
         
         if(Sessions::isset(User::SESSION.'_modules')){            
             foreach (Sessions::get(User::SESSION.'_modules') as $module){                
-                if($module->getPasta()!=SIS_FOLDERNAME){
+                if($module!=SIS_FOLDERNAME){
                     if(sizeof($return)==0){
                         $return[] = "<h3 style='font-style: italic;'>Outros módulos disponíveis para este usuário:</h3>";
                     }
                     $return[] = "<hr />
-                    <a href='http://nti.uast.br/".$module->getPasta()."' class='btn btn-outline-success'>".$module->getNome()."</a>";
+                    <a href='http://nti.uast.br/".$module."' class='btn btn-outline-success'>".strtoupper($module)."</a>";
                 }
             }
         }

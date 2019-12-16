@@ -251,17 +251,17 @@ class User extends Model
             foreach ($user_module_array as $user_module) {
                 //deb("$user_module");
                 {
-                    $module_id = $user_module->getModule_id();
+                    $module = $user_module->getModule();
                     $nature = $user_module->getNature();
                 }
-                $modules[$module_id] = new Module($module_id); 
+                $modules[] = $module; 
                 $profiles[$nature] = $nature; 
             }
             /*deb($modules,0);
             deb($profiles);/**/
         }
         
-        foreach ($modules as $module_id=>$module) {
+        foreach ($modules as $module) {
 
             {//USER PROFILE SET!
                 //======================================= DEV
@@ -282,7 +282,7 @@ class User extends Model
                 }
             }            
             {//SIS_FOLDERNAME                
-                $SIS_FOLDERNAME = $module->getPasta();
+                $SIS_FOLDERNAME = $module;
                 //deb($SIS_FOLDERNAME);
             }
             Sessions::set(User::SESSION, $user, false, $SIS_FOLDERNAME);
