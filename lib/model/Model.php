@@ -293,6 +293,8 @@ abstract class Model
                     }
 
                     if ($itsReferenceAttributeSimple || $itsReferenceAttributeMultiple) {
+                        
+                        $this->loadReferences();
 
                         $referencedModelName = Model_Reference::getReferencedModelName($attrName);
 
@@ -331,7 +333,7 @@ abstract class Model
                 foreach ($attribute_extra_array as $attrName => $attrValue) {
                     
                     if(is_string($attrValue) || is_int($attrValue) || is_double($attrValue)){
-                        $info = " $attrName*: ".strval($attrValue);
+                        $info = " $attrName* => ".strval($attrValue);
                         
                     }else if(is_array($attrValue)){
                         {
@@ -347,7 +349,7 @@ abstract class Model
                             $unit = array_shift($attrValue);
                             
                             if(is_object($unit)){
-                                $unit = "{ $unit }";
+                                $unit = "( $unit )";
                             }else if(is_string($unit) ){
                                 $unit = "$unit";
                             }else{
@@ -355,16 +357,16 @@ abstract class Model
                             }
                         }
                         
-                        $info = " $attrName*: $unit $extra";
+                        $info = " $attrName* => $unit $extra";
                     }else{
-                        $info = " $attrName*: ".gettype($attrValue);
+                        $info = " $attrName* => ".gettype($attrValue);
                     }
                     $return[] = $info;
                 }
             }
             
         }
-        $return = implode(' | ', $return);
+        $return = implode(', ', $return);
         return $return;
     }
 

@@ -16,6 +16,16 @@ class ControlToolsRepository extends ControlTools
     {
         $app->get('/dev/tools/repository', function () {
             self::PrivativeDevZone();
+            
+            {//inicializacao dos modelos existentes 
+                $model_filename_array = Diretorios::obterArquivosPastas('sis/model', false, true, false, 'php');
+                // deb($r);
+                foreach ($model_filename_array as $model_filename){
+                    $model_name = str_replace('.php', '', $model_filename);
+                    $array = (new $model_name())->search();
+                }
+            }
+            
             {
                 $repository_filename_array = Diretorios::obterArquivosPastas('repository', false, true, false, 'csv');
                 // deb($r);
@@ -111,7 +121,7 @@ class ControlToolsRepository extends ControlTools
                     //deb($obj,0);
                     $registrosSalvos++;
                 }
-            }
+            }            
             if($registrosSalvos>0){
                 ProcessResult::setSuccess("$registrosSalvos registro(s) salvo(s) com sucesso!");
             }else{
