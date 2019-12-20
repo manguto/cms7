@@ -53,7 +53,7 @@ class CMSPageCRUDToolsView
                 $return[] = "\$filter_" . $fieldname . "_array = $Modelname::$$fieldname;";
             }
             
-            if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+            if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
                 
                 $repositoryName = Model_Reference::getReferencedModelName($fieldname);
                 // deb($repositoryName);

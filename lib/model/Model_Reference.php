@@ -42,11 +42,11 @@ class Model_Reference
             //deb($attributeName,0); deb($attributeValue_possible_id_or_ids);
                         
             // caso o array nao possua nenhum conteudo FALSE, ou seja, é um parametro referencial (ex.: pessoa_id, responsavel__pessoa_id, categoria_id)
-            $ehParametroReferencial = self::itsReferenceAttributeSimple($attributeName);            
+            $itsReferenceAttributeSingle = self::itsReferenceAttributeSingle($attributeName);            
             $itsReferenceAttributeMultiple = self::itsReferenceAttributeMultiple($attributeName);
             // deb($ehParametroReferencial,0); deb($itsReferenceAttributeMultiple,0);
             
-            if ($ehParametroReferencial || $itsReferenceAttributeMultiple) {
+            if ($itsReferenceAttributeSingle || $itsReferenceAttributeMultiple) {
                 
                 // obtem todos os objetos referenciados                
                 $referencedObjec_array = self::getReferencedObjects($attributeName, $attributeValue_possible_id_or_ids);                
@@ -116,8 +116,8 @@ class Model_Reference
         
         $referencedObject_array = [];
 
-        // verificacao de apelido para campo referencial (pedreiro__user_id => apelido:pedreiro, objeto:usuario)
-        $attributeName = self::removerApelidoSe($attributeName);
+        // verificacao de apelido para campo referencial (pedreiro__user_id => apelido:pedreiro, objeto:user)
+        $attributeName = self::removeNickname($attributeName);
         //deb($attributeName,0);
 
         $possibleModelName = self::getReferencedModelName($attributeName);
@@ -157,7 +157,7 @@ class Model_Reference
      */
     static function getReferencedModelName(string $attributeName, bool $throwException = true):string{
         
-        if(self::itsReferenceAttributeSimple($attributeName)){
+        if(self::itsReferenceAttributeSingle($attributeName)){
             // obtem o possivel nome do repositorio
             $possibleModelName = ucfirst(str_replace(self::simple_reference_indicator_end, '', $attributeName));
             // deb($possibleModelName);
@@ -176,16 +176,28 @@ class Model_Reference
     }
     
     /**
-     * verifica se o nome do parametro eh composto por um apelido,
-     * retornando apenas o nome do modelo referenciado sem o apelido
+     * verifica se o nome do atributo informado possui num apelido
+     * @param string $attributeName
+     * @return bool
+     */
+    static function itsNickedAttribute(string $attributeName):bool{
+        if (strpos($attributeName, self::reference_nick_splitter) !== false) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    /**
+     * retornando o nome do modelo referenciado sem o apelido
      * ex.: pedreiro__usuario_id => usuario_id
      *
      * @param string $attributeName
      */
-    static private function removerApelidoSe(string $attributeName)
+    static function removeNickname(string $attributeName)
     {
         { // verificacao de apelido para campo referencial (pedreiro__user_id => apelido:pedreiro, objeto:usuario)
-            if (strpos($attributeName, self::reference_nick_splitter) !== false) {
+            if (self::itsNickedAttribute($attributeName)) {
                 $attributeName = explode(self::reference_nick_splitter, $attributeName);
                 if (sizeof($attributeName) > 2) {
                     throw new Exception("Definição incorreta para parâmetro de objeto. Este não pode conter mais do que 1 'reference_nick_splitters' (" . self::reference_nick_splitter . ").");
@@ -199,6 +211,32 @@ class Model_Reference
         }
         return $attributeName;
     }
+    
+    
+    /**
+     * retornando o apelido do atributo referenciado
+     * ex.: pedreiro__usuario_id => pedreiro
+     *
+     * @param string $attributeName
+     */
+    static function getNickname(string $attributeName)
+    {
+        { // verificacao de apelido para campo referencial (pedreiro__user_id => apelido:pedreiro, objeto:usuario)
+            if (self::itsNickedAttribute($attributeName)) {
+                $attributeName = explode(self::reference_nick_splitter, $attributeName);
+                if (sizeof($attributeName) > 2) {
+                    throw new Exception("Definição incorreta para parâmetro de objeto. Este não pode conter mais do que 1 'reference_nick_splitters' (" . self::reference_nick_splitter . ").");
+                } else {
+                    // apelido do campo (ex.:pedreiro)
+                    // $nick = $key[0];
+                    // chave padrao (ex.:user_id)
+                    $attributeName = $attributeName[0];
+                }
+            }
+        }
+        return $attributeName;
+    }
+    
 
     /**
      * verifica se o nome do parametro indica que seja um campo que faca referencia a outro objeto do sistema
@@ -208,7 +246,7 @@ class Model_Reference
      */
     static function itsReferenceAttribute(string $attributeName): bool
     {
-        $return = (self::itsReferenceAttributeSimple($attributeName) || self::itsReferenceAttributeMultiple($attributeName));
+        $return = (self::itsReferenceAttributeSingle($attributeName) || self::itsReferenceAttributeMultiple($attributeName));
         
         return $return;
     }
@@ -219,7 +257,7 @@ class Model_Reference
      * @param string $attributeName
      * @return bool
      */
-    static function itsReferenceAttributeSimple(string $attributeName): bool
+    static function itsReferenceAttributeSingle(string $attributeName): bool
     {
         { // parametro eh uma referencia?
             $attributeNameFinalPart = substr($attributeName, (- 1) * strlen(self::simple_reference_indicator_end));

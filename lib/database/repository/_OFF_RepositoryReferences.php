@@ -35,7 +35,7 @@ class _OFF_RepositoryReferences
         foreach ($parameters as $parameterName => $parameterValue_possible_id_or_ids) {
 
             // caso o array nao possua nenhum conteudo FALSE, ou seja, é um parametro referencial (ex.: pessoa_id, responsavel__pessoa_id, categoria_id)
-            $ehParametroReferencial = self::itsReferenceAttributeSimple($parameterName);
+            $ehParametroReferencial = self::itsReferenceAttributeSingle($parameterName);
             $itsReferenceAttributeMultiple = self::itsReferenceAttributeMultiple($parameterName);
             // deb($ehParametroReferencial,0); deb($itsReferenceAttributeMultiple,0);
             
@@ -97,7 +97,7 @@ class _OFF_RepositoryReferences
         $referencedObject_array = [];
 
         // verificacao de apelido para campo referencial (pedreiro__user_id => apelido:pedreiro, objeto:usuario)
-        $parameterName = self::removerApelidoSe($parameterName);
+        $parameterName = self::removeNickname($parameterName);
         // deb($parameterName,0);
 
         $possibleRepositoryName = self::getReferencedModelName($parameterName);
@@ -136,7 +136,7 @@ class _OFF_RepositoryReferences
      * @return string
      */
     static function getReferencedModelName(string $parameterName):string{
-        if(self::itsReferenceAttributeSimple($parameterName)){
+        if(self::itsReferenceAttributeSingle($parameterName)){
             // obtem o possivel nome do repositorio
             $possibleRepositoryName = ucfirst(str_replace(self::simple_reference_indicator_end, '', $parameterName));
             // deb($possibleRepositoryName);
@@ -157,7 +157,7 @@ class _OFF_RepositoryReferences
      *
      * @param string $parameterName
      */
-    static private function removerApelidoSe(string $parameterName)
+    static private function removeNickname(string $parameterName)
     {
         { // verificacao de apelido para campo referencial (pedreiro__user_id => apelido:pedreiro, objeto:usuario)
             if (strpos($parameterName, self::reference_nick_splitter) !== false) {

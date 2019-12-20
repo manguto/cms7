@@ -116,10 +116,11 @@ class Repository implements Database
         }        
                 
         { // excecao quando da utilizacao de "=" ao inves de "=="
-            $conditions = str_replace('==', '=', $conditions);
+            $conditions = str_replace('!=', '<>', $conditions);
+            $conditions = str_replace('==', '=', $conditions);            
             $conditions = str_replace('=', '==', $conditions);
             $conditions = str_replace('<==', '<=', $conditions);
-            $conditions = str_replace('>==', '>=', $conditions); /* */
+            $conditions = str_replace('>==', '>=', $conditions); /**/
         }
         
         // deb($conditions);

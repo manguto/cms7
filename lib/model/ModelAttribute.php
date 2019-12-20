@@ -321,7 +321,7 @@ class ModelAttribute
         
         //------------------------------------------------------------------------------- REFERENCE ATTRIBUTE
         if(Model_Reference::itsReferenceAttribute($this->name)){            
-            if(Model_Reference::itsReferenceAttributeSimple($this->name)){
+            if(Model_Reference::itsReferenceAttributeSingle($this->name)){
                 $this->setType(self::TYPE_INT);
                 $this->setNature(self::NATURE_REFERENCE_SINGLE);
             }else if(Model_Reference::itsReferenceAttributeMultiple($this->name)){

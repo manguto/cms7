@@ -95,7 +95,7 @@ class ViewRepository extends ViewDev
         {
             foreach ($register as $k=>$id){
                 throw new Exception('Atualização necessária a partir deste ponto...');
-                /*if(RepositoryReferences::itsReferenceAttributeSimple($k)){
+                /*if(RepositoryReferences::itsReferenceAttributeSingle($k)){
                     $tablename = substr($k, 0,-3);
                     //deb($tablename,0);
                     $register[$k] = HTMLForm::HTML_Combo($id,$tablename);

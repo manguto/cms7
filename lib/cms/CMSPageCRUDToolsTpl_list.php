@@ -82,7 +82,7 @@ class CMSPageCRUDToolsTpl_list
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+        if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "<select class='form-control' id='$fieldname' name='{$fieldname}[]' multiple='multiple'>
                     {loop=\"\$filter_" . $fieldname . "_array\"}
@@ -143,7 +143,7 @@ class CMSPageCRUDToolsTpl_list
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+        if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "combo_ordenar('#$fieldname',true,false); ";
             return $return;

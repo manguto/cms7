@@ -288,11 +288,11 @@ abstract class Model
                 { // verifica se o atributo eh referencial (ex.: categoria_id, modalidade_ids) para definicao do(s) valor(es) __toString() das referencias
 
                     {
-                        $itsReferenceAttributeSimple = Model_Reference::itsReferenceAttributeSimple($attrName);
+                        $itsReferenceAttributeSingle = Model_Reference::itsReferenceAttributeSingle($attrName);
                         $itsReferenceAttributeMultiple = Model_Reference::itsReferenceAttributeMultiple($attrName);
                     }
 
-                    if ($itsReferenceAttributeSimple || $itsReferenceAttributeMultiple) {
+                    if ($itsReferenceAttributeSingle || $itsReferenceAttributeMultiple) {
                         
                         $this->loadReferences();
 
@@ -300,7 +300,7 @@ abstract class Model
 
                         if (isset($this->attributes_extra[$referencedModelName])) {
 
-                            if ($itsReferenceAttributeSimple) {
+                            if ($itsReferenceAttributeSingle) {
                                 $attrValue = $this->attributes_extra[$referencedModelName];
                             }
                             if ($itsReferenceAttributeMultiple) {
@@ -331,6 +331,10 @@ abstract class Model
             // percorre todos os atributos para expo-los
             if(sizeof($attribute_extra_array)>0){                
                 foreach ($attribute_extra_array as $attrName => $attrValue) {
+                    
+                    if(Model_Reference::itsNickedAttribute($attrName)){
+                        $attrName = Model_Reference::getNickname($attrName);
+                    }
                     
                     if(is_string($attrValue) || is_int($attrValue) || is_double($attrValue)){
                         $info = " $attrName* => ".strval($attrValue);
@@ -424,7 +428,7 @@ abstract class Model
      * que os atributos fundamentais esteja no
      * inicio desta listagem
      */
-    private function SetAttributesOrder()
+    private function SetAttributesOrder_20191220()
     {
         //Logs::set(Logs::TYPE_INFO, "Ordenação dos atributos do modelo.");
 
@@ -440,6 +444,37 @@ abstract class Model
                 $attributesOrdered[$attributeName] = $attribute;
             }
         }
+        $this->attributes = $attributesOrdered;
+    }
+    
+    /**
+     * ordernar atributos do objeto de maneira
+     * que os atributos fundamentais esteja no
+     * inicio desta listagem
+     */
+    private function SetAttributesOrder()
+    {
+        //Logs::set(Logs::TYPE_INFO, "Ordenação dos atributos do modelo.");
+        $attributesOrdered = [];
+        
+        {//id
+            $attributesOrdered['id'] = $this->attributes['id'];
+        }
+        {//attributes
+            foreach ($this->attributes as $attributeName => $attribute) {                
+                if (!in_array($attributeName, self::fundamentalAttributes)) {
+                    $attributesOrdered[$attributeName] = $attribute;
+                }
+            }
+        }        
+        {//fundamental attributes
+            foreach (self::fundamentalAttributes as $attributeFundamental) {
+                if (isset($this->attributes[$attributeFundamental])) {
+                    $attributesOrdered[$attributeFundamental] = $this->attributes[$attributeFundamental];
+                }
+            }
+        }
+                
         $this->attributes = $attributesOrdered;
     }
 

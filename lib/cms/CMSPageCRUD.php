@@ -29,7 +29,7 @@ class CMSPageCRUD extends CMSPage
                 foreach (array_keys($title_array) as $fieldname) {
 
                     { // caso seja um campo referencial
-                        if (Model_Reference::itsReferenceAttributeSimple($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+                        if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
                             $fieldame_call = Model_Reference::getReferencedModelName($fieldname);
                         } else {
                             $fieldame_call = $fieldname;
