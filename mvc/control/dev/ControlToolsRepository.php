@@ -17,7 +17,7 @@ class ControlToolsRepository extends ControlTools
         $app->get('/dev/tools/repository', function () {
             self::PrivativeDevZone();
             
-            {//inicializacao dos modelos existentes 
+            {//inicializacao dos modelos existentes
                 $model_filename_array = Diretorios::obterArquivosPastas('sis/model', false, true, false, 'php');
                 // deb($r);
                 foreach ($model_filename_array as $model_filename){

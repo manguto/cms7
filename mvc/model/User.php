@@ -152,7 +152,7 @@ class User extends Model
             // deb($quantUsuarios);
         }
 
-        // deb($quantUsuarios);
+        //deb($quantUsuarios);
         if ($quantUsuarios == 0) {
             Logs::set(Logs::TYPE_INFO, 'Criação de usuário administrador necessária...');
             $admin->save();
