@@ -464,6 +464,50 @@ class Datas
         return $diff;
     }
 
+    static function getDateDifferenceShow(Datas $data1, Datas $data2)
+    {
+        $return = [];
+        {
+            $diff = self::getDateDifference($data1, $data2);
+            {
+                $y = $diff->y;
+                $m = $diff->m;
+                $d = $diff->d;
+            }
+        }        
+        {
+            if($y>0){
+                if($y==1){
+                    $return[] = "1 ano"; 
+                }else{
+                    $return[] = "$y anos";
+                }
+            }
+            if($m>0){
+                if(sizeof($return)!=0){
+                    $return[] = ", ";
+                }
+                if($m==1){
+                    $return[] = "1 mês"; 
+                }else{
+                    $return[] = "$m meses";
+                }
+            }
+            if($d>0){
+                if(sizeof($return)!=0){
+                    $return[] = " e ";
+                }
+                
+                if($d==1){
+                    $return[] = "1 dia"; 
+                }else{
+                    $return[] = "$d dias";
+                }
+            }
+        }
+        return implode('', $return);
+    }
+
     /*
      * //increase or decrease some date according to the arguments informed
      * public function Operation_OLD(int $quantity,$parameter='months'){

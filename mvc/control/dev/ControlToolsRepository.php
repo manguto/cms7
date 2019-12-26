@@ -19,9 +19,15 @@ class ControlToolsRepository extends ControlTools
             
             {//inicializacao dos modelos existentes
                 $model_filename_array = Diretorios::obterArquivosPastas('sis/model', false, true, false, 'php');
-                // deb($r);
+                //deb($model_filename_array);
                 foreach ($model_filename_array as $model_filename){
+                    //deb($model_filename);
                     $model_name = str_replace('.php', '', $model_filename);
+
+                    {//INVERSAO DAS BARRAS PARA CHAMADA DA CLASSE!!!
+                        $model_name = str_replace('/','\\',$model_name);
+                        //deb($model_name,0);
+                    }                    
                     $array = (new $model_name())->search();
                 }
             }
