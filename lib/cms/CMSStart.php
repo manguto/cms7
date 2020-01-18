@@ -158,7 +158,11 @@ class CMSStart
         { // SIS_PLATFORM - actual platform
             $request_uri_ = explode('/', $request_uri);
             // deb($request_uri_);
-            $second_uri_parameter = $request_uri_[2];
+            if(isset($request_uri_[2])){
+                $second_uri_parameter = $request_uri_[2];
+            }else{
+                $second_uri_parameter = 'site';
+            }            
             // deb($second_uri_parameter);
 
             switch ($second_uri_parameter) {
