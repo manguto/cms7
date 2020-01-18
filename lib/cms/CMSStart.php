@@ -46,8 +46,6 @@ class CMSStart
 
         // --------------------------------------
 
-        self::SUBVERSION_CSS();
-
         self::FOLDERS_PERMISSIONS();
 
         self::SERVER_PARAMETERS_TUNE();
@@ -124,19 +122,6 @@ class CMSStart
         $return = SERVER_URL . '/' . SIS_FOLDERNAME;
         $return = ServerHelp::fixds($return);
         return $return;
-    }
-
-    private static function SUBVERSION_CSS()
-    {
-        // development flag (foldername has a digit at its end!)
-        define("SUBVERSION", is_numeric(substr(SIS_FOLDERNAME, - 1, 1)) ? true : false);
-
-        if (SUBVERSION) {
-            $SUBVERSION_CSS = "<style>header,section,footer {border-top:solid 5px #f00;}</style>";
-        } else {
-            $SUBVERSION_CSS = '';
-        }
-        define("SUBVERSION_CSS", $SUBVERSION_CSS);
     }
 
     private static function EXTRA_PARAMETERS()
