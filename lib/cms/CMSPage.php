@@ -140,6 +140,7 @@ class CMSPage
                         // <<<<<<<<<<<<<<<<<<<<
                     }
                 }
+                //deb($return);
                 if(sizeof($return)>1){                    
                     throw new Exception("Templates não podem ter o mesmo nome de arquivo. Foram encontrados mais de um template com o mesmo nome (".implode(', ' , $return)."). Modifique, atualize o código que fazia a chamada para os mesmos e tente novamente.");
                 }else if(sizeof($return)==1){
@@ -212,7 +213,17 @@ class CMSPage
         $this->assignDataArray($data);
         
         $filename = $this->CheckAndOrFixTemplatePath($filename, $classObjectSample);
-        //deb($filename,0);
+        
+        /*{
+            deb(getcwd(),0);
+            deb($filename,0);            
+            if(VIRTUAL_HOST_ACTIVE){
+                $filename = explode(getcwd().'//', $filename);
+                $filename = array_pop($filename);
+            }
+            deb($filename,0);
+        }/**/
+        
         $html = $this->tpl->draw($filename, true);
         
         $html = CMSPage_Tools::TplReferencesFix($html);

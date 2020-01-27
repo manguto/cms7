@@ -695,7 +695,7 @@ class Strings
         return $return;
     }
 
-    static function unwrap(string $string, string $delimiterLeft, string $delimiterRight): string
+    static function unwrap(string $string, string $delimiterLeft, string $delimiterRight,$replaceDelimiters=true): string
     {
         $string_ = explode($delimiterLeft, $string);
         $sizeof = sizeof($string_);
@@ -710,6 +710,43 @@ class Strings
             }
         } else {
             throw new Exception("Foram encontrados mais de um ($sizeof) delimitador esquerdo na conteúdo informado (Delimitar Esquerdo: '$delimiterLeft').");
+        }
+        if($replaceDelimiters){
+            $string = $delimiterLeft.$string.$delimiterRight;
+        }
+        return $string;
+    }
+    
+    /**
+     * Remove todas as ocorrências de conteudos delimitados pelas strings informadas 
+     * @param string $string
+     * @param string $delimiterLeft
+     * @param string $delimiterRight
+     * @param boolean $replaceDelimiters
+     * @return string
+     */
+    static function RemoverOcorrenciasRepetidas(string $string, string $delimiterLeft, string $delimiterRight,$replaceDelimiters=false,$quantidadeOcorrencias=0): string
+    {   
+        $posl=true;
+        $posr=true;
+        $ocorrencias = 0;
+        while ($posl && $posr) {
+            $posl = strpos($string,$delimiterLeft);
+            if($posl!==false){
+                $posr = strpos($string,$delimiterRight,$posl);
+                if($posr!==false){
+                    if($quantidadeOcorrencias==0 || ($quantidadeOcorrencias>0 && $ocorrencias<$quantidadeOcorrencias) ){
+                        $length = $posr-$posl+strlen($delimiterRight);
+                        $search = substr($string, $posl,$length);
+                        $string = str_replace($search, '', $string);
+                        //-------------------------------------------
+                        $ocorrencias++;
+                    }else{
+                        $posl=false;
+                        $posr=false;
+                    }
+                }
+            }
         }
         return $string;
     }

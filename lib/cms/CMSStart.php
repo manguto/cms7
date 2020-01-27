@@ -205,7 +205,8 @@ class CMSStart
     {
         if (VIRTUAL_HOST_ACTIVE) {
             $uri_levels = explode('/', $_SERVER['REQUEST_URI']);
-            $return = str_repeat('..' . DIRECTORY_SEPARATOR, sizeof($uri_levels) - 1);
+            $uri_levels = sizeof($uri_levels) - 1;
+            $return = str_repeat('..' . DIRECTORY_SEPARATOR, $uri_levels);
         } else {
             $return = DIRECTORY_SEPARATOR . SIS_FOLDERNAME;
         }
@@ -243,15 +244,15 @@ class CMSStart
 
     private static function ROOT_TPL()
     {
-        $DR = $_SERVER['DOCUMENT_ROOT'];
-        // deb($DR);
-        if (VIRTUAL_HOST_ACTIVE) {
-            $return = $DR . VENDOR_MANGUTO_PRJ_ROOT . 'tpl/';
+        
+        if (VIRTUAL_HOST_ACTIVE) {            
+            //$return = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . VENDOR_MANGUTO_PRJ_ROOT . 'mvc/tpl/';
+            $return = VENDOR_MANGUTO_PRJ_ROOT . 'mvc/tpl/';
         } else {
             // deb(SIS_FOLDERNAME);
             $return = '../' . SIS_FOLDERNAME . '/' . VENDOR_MANGUTO_PRJ_ROOT . 'mvc/tpl/';
         }
-        // deb($return);
+        //deb($return,0);
         return $return;
     }
 
