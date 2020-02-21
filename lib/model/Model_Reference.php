@@ -52,9 +52,12 @@ class Model_Reference
                 $referencedObjec_array = self::getReferencedObjects($attributeName, $attributeValue_possible_id_or_ids);                
                 //debc($referencedObjec_array);
                     
+                //estoque dos objetos referenciados
+                $referencedObjectTemp_array = [];
+                
                 //caso tenha encontrado algum objeto referenciado
                 if(sizeof($referencedObjec_array)>0){
-                    $referencedObjectTemp_array = [];
+                    
                     
                     // percorre cada um dos objetos referenciados
                     foreach ($referencedObjec_array as $referencedObjectTemp_id=>$referencedObjectTemp) {
@@ -83,20 +86,21 @@ class Model_Reference
                         }
                     }                    
                     
-                    // METHOD NAME
-                    $set_method = "set" . ucfirst(strtolower(self::getReferencedModelName($attributeName)));
-                    //deb($set_method,0);
                     
-                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
-                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
-                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
-                    {   
-                        $model_object->$set_method($referencedObjectTemp_array, true);
-                    }
-                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 }
+                
+                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
+                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
+                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SET VALUE
+                {
+                    {// method name
+                        $set_method = "set" . ucfirst(strtolower(self::getReferencedModelName($attributeName)));                     
+                    }
+                    $model_object->$set_method($referencedObjectTemp_array, true);
+                }
+                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             }
         }
         
