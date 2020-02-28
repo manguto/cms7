@@ -110,13 +110,39 @@ function showLongError(data){
 
 //================================================================================================================================================
 //FUNCTIONS
+
 function openLinkNewTab (url){
     $('body').append('<a id="openLinkNewTab" href="' + url + '" target="_blank"><span></span></a>').find('#openLinkNewTab span').click().remove();
 }
 
-// ================================================================================================================================================
-// DOCUMENT READY
+//verifica todos os campos INPUT com a classe 'clickCopy' para que quando CLICADOS o seu conteudo seja COPIADO
+function verify_clickCopy_inpitFields(){
+	var target = $('input.clickCopy');	
+	target.click(function() {	
+		$(this).select();
+		document.execCommand("copy");
+		log("Conteúdo copiado com sucesso!");
+		$(this).blur();
+	}).prop('title','CLIQUE PARA COPIAR O CONTEUDO');
+}
+//verifica todos os campos INPUT com a classe 'overMascUnmasc' para que quando o mouse estiver sobre, o conteudo seja revelado
+function verify_overMascUnmasc_inputFields(){
+	var target = $('input.overMascUnmasc')
+	target.prop('type','password');
+	target.mouseenter(function() {
+		var input = $(this);		
+		input.attr('type', 'text');
+	}).mouseleave(function() {
+		var input = $(this);		
+		input.attr('type', 'password');		
+	});
+}
+//================================================================================================================================================
+//DOCUMENT READY
 
 $(document).ready(function() {
 	
 });
+
+
+//================================================================================================================================================
