@@ -55,6 +55,18 @@ class Strings
         return $return;
     }
 
+    static function RemoverConteudoAnteriorEPosteriorA($needleIni,$needleEnd,$string)
+    {
+        if(substr_count($string, $needleIni)!=1 || substr_count($string, $needleEnd)!=1){
+            throw new Exception("Os parâmetros informados não foram encontrados ou foram encontrados mais vezes do que o esperado.");
+        }
+        $posIni = strpos($string, $needleIni);
+        $posEnd = strpos($string, $needleEnd);
+        $length = ($posEnd+strlen($needleEnd))-$posIni;
+        $return = substr($string, $posIni,$length);        
+        return $return;
+    }
+
     /**
      * remove as entidades html de uma string html
      *

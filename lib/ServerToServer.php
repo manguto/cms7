@@ -6,13 +6,8 @@ class ServerToServer
 
     private $cURL = false;
 
-    private $login_formActionURL = false;
-
-    private $login_formParameters = false;
-
-    private $loginON = false;
-
     // ========================================================================================================================================
+    
     public function __construct()
     {
         // Inicia a sessao cURL
@@ -28,28 +23,85 @@ class ServerToServer
     }
 
     // ========================================================================================================================================
+
+    /**
+     * define a opcao 'HTTP HEADER' com o parametro informado
+     * ex.: $value='Content-Type: application/x-www-form-urlencoded'
+     *
+     * @param
+     *            $value
+     */
+    public function setCURL_CURLOPT_HTTPHEADER($value)
+    {
+        if (is_string($value)) {
+            $value = [
+                $value
+            ];
+        }
+        curl_setopt($this->cURL, CURLOPT_HTTPHEADER, $value);
+    }
+
+    // ========================================================================================================================================
     /**
      * efetua o login no servidor remoto via cURL
      *
      * @throws Exception
      * @return mixed
      */
-    public function login(string $login_formActionURL, array $login_formParameters)
+    public function loginTry(string $server_URL, string $login_form_URL, array $login_form_personalData = [])
     {
-        // set
-        $this->login_formActionURL = trim($login_formActionURL);
-
-        // set
-        $this->login_formParameters = $login_formParameters;
-
-        // efetua a comunicacao com o servidor remoto
-        $response = $this->setContent($this->login_formActionURL, $this->login_formParameters);
-
-        // salva o estado da conexao
-        $this->loginON = true;
-
-        // return
-        return $response;
+        {//obter pagina com o formulario
+            $response_href = $this->getContent($login_form_URL);
+            $html = Arquivos::obterConteudo($response_href);
+            //debc($html);
+        }
+        {//resumir html
+            $needle = '<form';
+            $form_quant = substr_count($html, $needle);
+            if($form_quant!=1){
+                if($form_quant==0){
+                    throw new Exception("Nenhum formulário encontrado na página informada ('$login_form_URL').");
+                }else{
+                    throw new Exception("Mais de um formulário foram encontrados na página informada ('$login_form_URL').");
+                }                
+            }else{
+                $html = Strings::RemoverConteudoAnteriorEPosteriorA('<form', '/form>', $html);
+                // debc($html);
+            }            
+        }
+        {//verificar/obter parametros do formulario
+            {//html to dom
+                $html_dom = simple_html_dom_str($html);
+            }
+            {//form as dom
+                $form_dom = $html_dom->find('form', 0);                
+            }
+            //ACTION
+            $form_action = $server_URL .'/'. $form_dom->action;
+        }
+        {//obter campos do formulario
+            $form_fields = [];
+            foreach ($form_dom->find('input') as $input){
+                $form_fields[$input->name] = $input->value;
+            }
+            foreach ($form_dom->find('textarea') as $textarea){
+                $form_fields[$textarea->name] = $textarea->innertext;
+            }
+            //deb($form_fields);
+        }
+        {//insercao dados informados
+            foreach ($login_form_personalData as $k=>$v){
+                if(!isset($form_fields[$k])){
+                    throw new Exception("O campo '$k' não existe no formulário padrão.");
+                }
+                $form_fields[$k] = $v;
+            }
+            //deb($form_fields);
+        }
+        
+        // login
+        return $this->setContent($form_action, $form_fields);
+        
     }
 
     // ========================================================================================================================================
@@ -58,18 +110,11 @@ class ServerToServer
      */
     public function logout()
     {
-        if ($this->loginON) {
+        // Encerra o cURL
+        curl_close($this->cURL);
 
-            // Encerra o cURL
-            curl_close($this->cURL);
-            
-            // Inicia a sessao cURL
-            $this->cURL = curl_init();
-            
-            // desabilita a flag de secao
-            $this->loginON = false;
-            
-        }
+        // Inicia a sessao cURL
+        $this->cURL = curl_init();
     }
 
     // ========================================================================================================================================
@@ -84,11 +129,15 @@ class ServerToServer
         // Define a URL a ser chamada
         curl_setopt($this->cURL, CURLOPT_URL, $URL);
 
+        // Desabilita o protocolo POST
+        curl_setopt($this->cURL, CURLOPT_CUSTOMREQUEST, 'GET');        
+        curl_setopt($this->cURL, CURLOPT_POST, 0);
+        
         // Obtem o conteudo
-        $content = curl_exec($this->cURL);
+        $response = curl_exec($this->cURL);
 
         // return
-        return $content;
+        return $this->saveResponse($response,__FUNCTION__);
     }
 
     // ========================================================================================================================================
@@ -97,8 +146,8 @@ class ServerToServer
         $formActionURL = trim($formActionURL);
 
         if ($formActionURL == '' || sizeof($formParameters) == 0) {
-            deb($formActionURL,0);
-            deb($formParameters,0);
+            deb($formActionURL, 0);
+            deb($formParameters, 0);
             throw new Exception("Não foi possível enviar as informações solicitadas (HTTP/POST). Contate o administrador.");
         }
 
@@ -115,9 +164,22 @@ class ServerToServer
         $response = curl_exec($this->cURL);
 
         // return
-        return $response;
+        return $this->saveResponse($response,__FUNCTION__);
     }
 
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    // ========================================================================================================================================
+    private function saveResponse(string $response,string $function_name='xxx') {        
+        $now = \DateTime::createFromFormat('U.u', microtime(true));
+        $now = $now->format("Ymd_His-u");        
+        $filename = "data/temp/response_{$now}_{$function_name}.html";
+        Arquivos::escreverConteudo($filename, $response);
+        return $filename;
+    }
+    // ========================================================================================================================================
     // ========================================================================================================================================
     // ========================================================================================================================================
     // ========================================================================================================================================
@@ -137,7 +199,7 @@ class ServerToServer
         $return = implode('&', $return);
         return $return;
     }
-    // ========================================================================================================================================
+    // ========================================================================================================================================    
     // ========================================================================================================================================
     // ========================================================================================================================================
     // ========================================================================================================================================
