@@ -168,7 +168,7 @@ function ajudaPopupsVerificacao(){
 		a.attr('data-id',identificador);
 		a.click(function(){
 			ajuda(identificador);
-			log(identificador);
+			//log(identificador);
 		});
 	});
 }
