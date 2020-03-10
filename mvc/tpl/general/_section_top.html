@@ -1,6 +1,6 @@
 
-<div class="row">
-	<div class="col-11 process-results-area">
+<div class="row mt-1">
+	<div class="col-10 process-results-area">
 		<a href='javascript:void(0)' onclick='prs_toggle()' class="toggle_btn" style=' display:none; font-size:10px; color:#aaa;' title='Exibir/Ocultar mensagens apresentadas.'><i>Exibir/Ocultar Mensagens</i></a>
 		<div class="process-results m-0 p-0">
 			<!-- ---------------------------------------------------------------------------------------- PROCESS RESULTS - START -->
@@ -12,26 +12,28 @@
 			<!-- ---------------------------------------------------------------------------------------- PROCESS RESULTS - END -->
 		</div>		
 	</div>
-	<div class="col-1 text-right no-print">				 
-		<a href="javascript:history.back(0);" class='btn-voltar' title="Clique para voltar à página anterior">Voltar</a>						
+	<div class="col-2 text-right no-print">
+		<a href="javascript:history.back(0);" class='btn-voltar' title="Clique para voltar à página anterior."><img src="/res/img/icons/back.png" alt="VOLTAR"/>Voltar</a>						
 	</div>
 </div>
 <style>
 .btn-voltar{	
-	color:#ddd;		
-	font-size:10px;
+	color:#000;		
+	font-size:12px;
 	background:#fff;
-	border:solid 1px #ddd;
+	border:solid 1px #000;
 	border-radius:5px; 
-	padding:1px 5px 1px 5px;
-	margin:10px 0px 0px 0px;
-	
+	padding:3px 7px 2px 7px;
+	margin:15px 0px 0px 0px;
+	opacity: 0.5;	
+}
+.btn-voltar img{	
+	width:12px;
+	margin:0px 5px 3px 0px;	
 }
 .btn-voltar:hover{	
-	color:#000;
-	border-color:#000;
-	background:#fff;
-	box-shadow: 0px 1px 2px #ccc;
+	opacity: 1.0;
+	box-shadow: 0px 1px 1px #555;
 }
 </style>
 <script>
