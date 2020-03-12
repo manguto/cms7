@@ -1,6 +1,7 @@
 <?php
 namespace manguto\cms5\lib;
 
+
 class ServerToServer
 {
 
@@ -20,6 +21,8 @@ class ServerToServer
         curl_setopt($this->cURL, CURLOPT_COOKIEJAR, 'cookie.txt');
         // Define o tipo de transferência (Padrão: 1)
         curl_setopt($this->cURL, CURLOPT_RETURNTRANSFER, 1);
+        //force the use of a new connection instead of a cached one. 
+        curl_setopt($this->cURL, CURLOPT_FRESH_CONNECT, TRUE);
     }
 
     // ========================================================================================================================================

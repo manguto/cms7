@@ -160,8 +160,7 @@ class Email {
 		$headers .= $cc!="" ? "CC: $cc\r\n" : "";
 		$headers .= $cco!="" ? "CCO: $cco\r\n" : "";
 		$headers .= "MIME-Version: 1.0\r\n";
-		$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-				
+		$headers .= "Content-Type: text/html; charset=UTF-8\r\n";		
 		$message = "<html>
 <head>
 <title>HTML email</title>
@@ -170,14 +169,36 @@ class Email {
 	$content
 </body>
 </html>";
-		
-		$sendMail = mail ( $to, $subject, $message, $headers );
-		
-		if(!$sendMail){
-			echo "<h2 style='color:#f00; background-color:#ff0;'>ERRO: $sendMail</h2>";
+        $sendMail = mail($to, $subject, $message, $headers);
+
+        //deb($sendMail);
+        
+        if (! $sendMail) {
+
+            {
+                $formParameters = [
+                    'from'=>$from,
+                    'to'=>$to,
+                    'cc'=>$cc,
+                    'cco'=>$cco,
+                    'subject'=>$subject,
+                    'content'=>$content
+                ];
+            }
+            $s2s = new ServerToServer();
+
+            $sendMail = $s2s->setContent('http://manguto.com/email/go/index.php', $formParameters);
+
+            $sendMail = Arquivos::obterConteudo($sendMail);
+            
+            return $sendMail;
+            
+        } else {
+
+            return $sendMail;
 		}
 	}
-}
+} 
 
 
 

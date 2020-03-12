@@ -7,8 +7,8 @@ use manguto\cms5\lib\Sessions;
 use manguto\cms5\lib\model\Model;
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\Logs;
-use manguto\cms5\lib\database\repository\ModelRepository;
 use manguto\cms5\lib\model\ModelTrait;
+use manguto\cms5\lib\database\repository\ModelRepository;
 
 class User extends Model
 {
@@ -368,37 +368,39 @@ class User extends Model
     {
         // deb($email);
         User::setForgotEmail($email);
-
-        {
+        
+        {//MODO BANCO DE DADOS
             // $query = ' SELECT * FROM user WHERE ( email=:email ) ';
-            $query = ' $email={email} ';
+            //$query = ' $email={email} ';
+            //$result = User::search($query, $this->getParameters(['email']));            
         }
-        $result = User::search($query, $this->getParameters([
-            'email'
-        ]));
+        {//MODO REPOSITORIO
+            $query = " \$email=='$email' ";            
+            $result = (new User())->search($query);
+        }
+        
+        //deb($result);
 
-        // deb($results);
-
-        if (count($results) == 0) {
+        if (count($result) == 0) {
             throw new Exception("Não foi possível recuperar a sua senha. Contate o administrador informando seu problema e e-mail.");
         } else {
 
-            $user = array_shift($results);
-            // deb($user);
-            // if(false)$user = new User();
+            $user = array_shift($result);
+            //deb($user);
+            // if(false)$user = new User();            
             $userPasswordRecoveries = new UserPasswordRecoveries();
-            $userPasswordRecoveries->setid($user->getId());
+            $userPasswordRecoveries->setUser_id($user->getId());
             $userPasswordRecoveries->setip($_SERVER["REMOTE_ADDR"]);
             $userPasswordRecoveries->setdatetime(time());
             $userPasswordRecoveries->setdeadline(time() + UserPasswordRecoveries::deadline);
-            // deb($userPasswordRecoveries);
+            //deb($userPasswordRecoveries);
             $userPasswordRecoveries->save();
-            // deb($userPasswordRecoveries);
+            //deb("$userPasswordRecoveries");
 
             // ==========================================================================================================
             // ========================================== cifragem =====================================================
             // ==========================================================================================================
-            $recoveryid_encrypted = Safety::encrypt($userPasswordRecoveries->getId());
+            $recoveryid_encrypted = Safety::encrypt($userPasswordRecoveries->getUser_id());
             // deb($recoveryid_encrypted,0); deb(Safety::decrypt($recoveryid_encrypted));
             // ==========================================================================================================
             // ==========================================================================================================

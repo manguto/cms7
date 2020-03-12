@@ -18,7 +18,7 @@ class ControlForgot extends ControlSite
         $app->get('/forgot', function () {
             ControlForgot::get_forgot();
         });
-        $app->post("/forgot", function () {
+        $app->post('/forgot', function () {
             ControlForgot::post_forgot();
         });
         $app->get('/forgot/sent', function () {
@@ -39,7 +39,7 @@ class ControlForgot extends ControlSite
 
     static function post_forgot()
     {
-        // deb($_POST);
+        //deb($_POST);
         try {
             User::getForgot(trim($_POST['email']), false);
             headerLocation('/forgot/sent');

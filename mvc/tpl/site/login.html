@@ -10,17 +10,16 @@
 				<form action="/login" method="post">
 					<p>
 						<label for="login">
-							E-mail
-							<span class="required">*</span>
+							Login							
 						</label>
-						<input type="text" id="login" name="login" value="" class="form-control" required="required" autofocus="autofocus" placeholder="Digite aqui seu E-mail">
+						<input type="text" id="login" name="login" value="" class="form-control" required="required" autofocus="autofocus" placeholder="Digite aqui o seu login...">
 					</p>
-					<p>
+					<p style="margin-bottom: 0px;">
 						<label for="senha">
-							Senha
-							<span class="required">*</span>
+							Senha							
 						</label>
-						<input type="password" id="senha" name="password" value="" class="form-control" required="required" placeholder="Digite aqui a sua Senha">
+						<input type="password" id="senha" name="password" value="" class="form-control" required="required" placeholder="Digite aqui a sua senha...">
+						<div class="lost_password"><a href="/admin/password" title="Clique para saber como recuperar o seu acesso.">Esqueceu a sua senha?</a></div>
 					</p>
 					<div class="clear">
 						<br />
@@ -28,9 +27,7 @@
 					<p>
 						<input type="submit" value="Login" class="btn btn-success">
 					</p>
-					<!-- <p class="lost_password">
-						<a href="/forgot">Esqueceu a sua senha?</a>
-					</p> -->
+					
 					<div class="clear"></div>
 				</form>
 			</div>
@@ -38,4 +35,20 @@
 		</div>
 	</div>
 </section>
+<style>
+.lost_password{
+	margin: 3px 0px 0px 3px;
+	padding: 0;
+}
+.lost_password a{
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+	color: #aaa;	
+}
+.lost_password a:hover{	
+	color: #a00;	
+}
+
+</style>
 {include="../general/_footer"} {include="../general/__close"}

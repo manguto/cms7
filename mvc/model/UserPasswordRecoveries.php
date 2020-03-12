@@ -5,45 +5,44 @@ namespace manguto\cms5\mvc\model;
 use manguto\cms5\lib\model\Model;   
 use manguto\cms5\lib\model\ModelAttribute;
 use manguto\cms5\lib\database\repository\ModelRepository;
+use manguto\cms5\lib\model\ModelTrait;
 
 class UserPasswordRecoveries extends Model
 {   
     
+    use ModelTrait;
     use ModelRepository;
     
     const deadline = 60*60*2; //prazo de validade da solicitacao de reset de senha (2 horas)
-     
         
-    public function __construct($id = 0)
+    /**
+     * Função para definicao do atributos do modelo (ModelAttribute's)
+     */
+    private function defineAttributes()
     {
-        // definicao dos atributos deste modelo
-        $this->DefineAttributes();
-        
-        // construct
-        parent::__construct($id);
-    }
-    
-    // definicao dos atributos deste modelo
-    private function DefineAttributes()
-    {
-        $attributes = [
-            'status' => [
-                'type' => ModelAttribute::TYPE_VARCHAR,
-                'value' => 'new',
-                'length' => 16
-            ],
-            'ip' => [
-                'type' => ModelAttribute::TYPE_VARCHAR,
-                'value' => $_SERVER["REMOTE_ADDR"],
-                'length' => 16
-            ],
-            'deadline' => [
-                'type' => ModelAttribute::TYPE_TIMESTAMP,
-                'value' => (time()+self::deadline)                
-            ]
-        ];
-        
-        $this->SetAttributes($attributes);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('status');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('user_id');
+        $a->setType(ModelAttribute::TYPE_INT);        
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('ip');
+        $a->setType(ModelAttribute::TYPE_VARCHAR);
+        $a->setValue($_SERVER["REMOTE_ADDR"]);
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('datetime');
+        $a->setType(ModelAttribute::TYPE_TIMESTAMP);
+        $a->setValue(time());
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('deadline');
+        $a->setType(ModelAttribute::TYPE_TIMESTAMP);
+        $a->setValue((time()+self::deadline));
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
     }
         
     public function DeadlineValid(){
