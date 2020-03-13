@@ -14,6 +14,8 @@ class Repository implements Database
     // pasta onde serao disponibilizados os arquivos de dados
     private const dir = 'repository';
 
+    private $ClassName;
+    
     private $tablename;
 
     private $filename;
@@ -24,9 +26,10 @@ class Repository implements Database
 
     private $lastInsertId = false;
 
-    public function __construct($tablename)
+    public function __construct($ClassName)
     {
-        $this->tablename = $tablename;
+        $this->ClassName = $ClassName;
+        $this->tablename = strtolower($ClassName);
         $this->filename = $this->getFilename();
         $this->table = $this->getTable();
         $this->length = $this->length();
@@ -223,7 +226,9 @@ class Repository implements Database
     // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private function getFilename()
     {
-        return self::dir . DIRECTORY_SEPARATOR . "$this->tablename.csv";
+        $tablename = $this->tablename;
+        $filename = strtolower($tablename);
+        return self::dir . DIRECTORY_SEPARATOR . "$filename.csv";
     }
 
     /**
@@ -283,8 +288,9 @@ class Repository implements Database
      */
     private function tableInit()
     {
-        $className = Model_Helper::getObjectClassname($this->tablename);
-        $tempObject = new $className();
+        //deb($this);
+        $ClassNameFull = Model_Helper::getObjectClassName_by_ClassName($this->ClassName);        
+        $tempObject = new $ClassNameFull();
         $data = $tempObject->GET_DATA(false, true);
         $data = array_keys($data);
         // deb($data);

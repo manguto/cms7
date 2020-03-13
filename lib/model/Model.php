@@ -3,6 +3,7 @@ namespace manguto\cms5\lib\model;
 
 use manguto\cms5\lib\Exception;
 use manguto\cms5\lib\Logs;
+use manguto\cms5\lib\ServerHelp;
 
 /**
  * esta classe tera como intuito representar os objetor que precisam ser salvos de alguma forma (banco de dados, xml, json, etc.)
@@ -27,7 +28,7 @@ abstract class Model
 
     protected function checkSetStruct()
     {
-        // verifica se 1 ou mais atributos foram definidos na classe filha
+        // verifica se pelo menos um atributos foi definido na classe filha
         $this->CheckAttributesSetted();
         
         // validacao de dados (caso necessaria)
@@ -237,10 +238,21 @@ abstract class Model
      */
     public function GetClassName(): string
     {
-        $class = $this->GetClass();
-        $className = explode(DIRECTORY_SEPARATOR, $class);
-        $className = array_pop($className);
-        return $className;
+        $ClassName = $this->GetClass();
+        
+        {//directory separator
+            if(strpos('/', $ClassName)!==false){
+                $DIRECTORY_SEPARATOR = '/';
+            }else{
+                $DIRECTORY_SEPARATOR = '\\';
+            }
+        }
+        
+        $ClassName_array = explode($DIRECTORY_SEPARATOR, $ClassName);
+        //deb($className);
+        $ClassName = array_pop($ClassName_array);
+        //deb($ClassName);
+        return $ClassName;
     }
 
     /**
@@ -250,10 +262,8 @@ abstract class Model
      */
     public function GetTablename(): string
     {
-        $className = $this->GetClassName();
-        $tablename = explode('\\', $className);
-        $tablename = array_pop($tablename);
-        $tablename = strtolower($tablename);                
+        $ClassName = $this->GetClassName();
+        $tablename = strtolower($ClassName);                
         return $tablename;
     }
 

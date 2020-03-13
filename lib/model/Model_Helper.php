@@ -61,6 +61,45 @@ class Model_Helper
     }
     
     
+    /**
+     * obtem o nome da classe do repositorio informado
+     * para carregamento imediato.
+     *
+     * @param string $repositoryname
+     * @return string
+     */
+    static function getObjectClassName_by_ClassName(string $ClassName): string
+    {
+        
+        $model_class_folders = self::model_class_folders;
+        //deb($model_class_folders,0);
+        
+        foreach ($model_class_folders as $model_class_folder) {
+            
+            $php_files = Diretorios::obterArquivosPastas($model_class_folder, true, true, false, [
+                'php'
+            ]);
+            //deb($php_files,0);
+            foreach ($php_files as $php_file) {
+                $nomeClasse = Arquivos::obterNomeArquivo($php_file, false);
+                $path = Arquivos::obterCaminho($php_file);
+                //deb($nomeClasse,0); deb($tablename,0);  
+                if ($nomeClasse == $ClassName) {
+                    
+                    //deb($path);
+                    $objectClassname = '\\' . $path . $ClassName;
+                    $objectClassname = str_replace('/', '\\', $objectClassname);
+                    $objectClassname = str_replace('\vendor', '', $objectClassname);
+                    // deb($objectClassname,0);
+                    return $objectClassname;
+                }
+            }
+        }
+        //deb('+++');
+        throw new Exception("Classe não encontrada ($ClassName).");
+    }
+    
+    
     
     
     static function get(){
