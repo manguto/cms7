@@ -13,7 +13,10 @@
 		</div>		
 	</div>
 	<div class="col-2 text-right no-print">
-		<a href="javascript:history.back(0);" class='btn-voltar' title="Clique para voltar à página anterior."><img src="/res/img/icons/back.png" alt="VOLTAR"/>Voltar</a>						
+		<a href="javascript:history.back(0);" class='btn-voltar' title="Clique para voltar à página anterior.">
+			<img src="/res/img/icons/back.png" alt="VOLTAR" style="display: none;"/>
+			< Voltar
+		</a>						
 	</div>
 </div>
 <style>
@@ -45,6 +48,12 @@
 	function prs_toggle(){
 		$('.process-result.hide').toggle();
 	}
+	
+	function btn_voltar_hideShow(){
+		if (document.referrer == "") {
+		    $('.btn-voltar').hide();
+		}
+	}
 
 	$(document).ready(function() {
 		
@@ -64,5 +73,7 @@
 				$('.process-result.hide').slideUp(tempo_efeito);
 			}, tempo_ocultar);
 		}
+		//*---------------
+		btn_voltar_hideShow();
 	});
 </script>
