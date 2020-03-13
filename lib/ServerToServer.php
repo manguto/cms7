@@ -23,6 +23,12 @@ class ServerToServer
         curl_setopt($this->cURL, CURLOPT_RETURNTRANSFER, 1);
         //force the use of a new connection instead of a cached one. 
         curl_setopt($this->cURL, CURLOPT_FRESH_CONNECT, TRUE);
+        //??
+        curl_setopt($this->cURL, CURLOPT_SSL_VERIFYPEER, false);
+        //??
+        curl_setopt($this->cURL, CURLOPT_SSL_VERIFYHOST, 0);
+                
+        
     }
 
     // ========================================================================================================================================
@@ -127,20 +133,31 @@ class ServerToServer
      * @param string $URL
      * @return mixed
      */
-    public function getContent(string $URL)
+    public function getContent(string $URL,$POST_Array=false,$saveAndReturnFilename=true)
     {
         // Define a URL a ser chamada
         curl_setopt($this->cURL, CURLOPT_URL, $URL);
 
-        // Desabilita o protocolo POST
-        curl_setopt($this->cURL, CURLOPT_CUSTOMREQUEST, 'GET');        
-        curl_setopt($this->cURL, CURLOPT_POST, 0);
+        // Definicao de protocolo e cia
+        if(is_array($POST_Array)) {
+            // Abilita o protocolo POST
+            curl_setopt($this->cURL, CURLOPT_POST, true);
+            curl_setopt($this->cURL, CURLOPT_POSTFIELDS, $POST_Array);
+        }else{
+            // Desabilita o protocolo POST
+            curl_setopt($this->cURL, CURLOPT_POST, false);
+            curl_setopt($this->cURL, CURLOPT_CUSTOMREQUEST, 'GET');                        
+        }
         
         // Obtem o conteudo
         $response = curl_exec($this->cURL);
 
         // return
-        return $this->saveResponse($response,__FUNCTION__);
+        if($saveAndReturnFilename){
+            return $this->saveResponse($response,__FUNCTION__);
+        }else{
+            return $response;   
+        }        
     }
 
     // ========================================================================================================================================
@@ -178,7 +195,7 @@ class ServerToServer
     private function saveResponse(string $response,string $function_name='xxx') {        
         $now = \DateTime::createFromFormat('U.u', microtime(true));
         $now = $now->format("Ymd_His-u");        
-        $filename = "data/temp/response_{$now}_{$function_name}.html";
+        $filename = "data/temp/serverToServerResponse_{$now}_{$function_name}.html";
         Arquivos::escreverConteudo($filename, $response);
         return $filename;
     }
