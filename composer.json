@@ -1,25 +1,18 @@
 {
-	"name" : "manguto/cms5",
+	"name" : "manguto/cms7",
 	"type" : "library",
-	"description" : "Library & Mini Content Management System",
+	"description" : "Compact Content Management System",
 	"authors" : [{
 			"name" : "Manguto",
 			"email" : "admin@manguto.com"
 		}
 	],
 	"require" : {
-		"php" : "^7.0.0",
-		"slim/slim" : "2.0",
-		"rain/raintpl" : ">=3.0.0",
-		"twbs/bootstrap" : "~4.1",
-		"wenzhixin/bootstrap-table" : "~1.0",
-		"monolog/monolog" : "~2.0",
-		"asgrim/ofxparser" : "*"
+		"php" : "^7.0.0",		
 	},
 	"autoload" : {
 		"psr-4" : {
-			"manguto\\cms5\\lib\\" : "lib/",
-			"manguto\\cms5\\mvc\\" : "mvc/"
+			"manguto\\cms5\\lib\\" : "lib/"			
 		},
 		"files" : [
 			"functions/GeneralFunctions.php",
