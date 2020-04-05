@@ -1,4 +1,4 @@
-# Manguto - Content Management System
+# Manguto - Content Management System V7.0
 > Compact Content Management System - Help on developing simple personal solutions & stuff. 
 
 ----
