@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib\html;
+namespace manguto\cms7\lib\html;
 
 
 /**

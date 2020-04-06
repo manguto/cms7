@@ -1,6 +1,6 @@
 <?php
 
-namespace manguto\cms5\lib\database;
+namespace manguto\cms7\lib\database;
 
 interface Database{
 

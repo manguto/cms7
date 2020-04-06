@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 
 class ServerToServer
@@ -80,7 +80,7 @@ class ServerToServer
         }
         {//verificar/obter parametros do formulario
             {//html to dom
-                $html_dom = simple_html_dom_str($html);
+                $html_dom = simple_html_dom_parser::load_str($html);
             }
             {//form as dom
                 $form_dom = $html_dom->find('form', 0);                
@@ -161,6 +161,14 @@ class ServerToServer
     }
 
     // ========================================================================================================================================
+    /**
+     * Envia os parametros para o URL informado e em caso de sucesso
+     * retorna o resultado obtido e caso contrario FALSE.
+     * @param string $formActionURL
+     * @param array $formParameters
+     * @throws Exception
+     * @return mixed
+     */
     public function setContent(string $formActionURL, array $formParameters)
     {
         $formActionURL = trim($formActionURL);
@@ -184,7 +192,7 @@ class ServerToServer
         $response = curl_exec($this->cURL);
 
         // return
-        return $this->saveResponse($response,__FUNCTION__);
+        return $response;
     }
 
     // ========================================================================================================================================

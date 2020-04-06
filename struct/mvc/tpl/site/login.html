@@ -1,0 +1,102 @@
+{include="../general/__open"} {include="../general/_header"}
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../general/_section_top"}</div>
+	<div class="container">
+		<div class="row mt-5">
+			<div class="col-4"></div>
+			<div class="col-4 card">
+				<form action="/login" method="post">
+					<div class="row">
+						<div class="col-12">
+							<h2>Entrar</h2>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-9">
+							<label for="login">
+								<b>Login:</b>
+							</label>
+							<input type="text" id="login" name="login" value="" class="form-control" required="required" autofocus="autofocus" placeholder="Digite o seu login...">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-9">
+							<label for="senha">
+								<b>Senha:</b>
+							</label>
+							<input type="password" id="senha" name="password" value="" class="form-control" required="required" placeholder="Digite a sua senha...">
+							<span class="lost_password">
+								<a href="/forgot" title="Clique para saber como recuperar o seu acesso." class="float-right mt-2">Esqueceu a sua senha?</a>
+							</span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-9 mt-4">
+							<input type="submit" value="Entrar" class="btn btn-success float-right">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">&nbsp;</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+<style>
+.card {
+	border-radius: 20px;
+	box-shadow: 0px 10px 15px #888;
+	padding: 10px;
+}
+.card:hover {	
+	box-shadow: 0px 10px 15px #555;
+}
+
+.card .row>div {
+	margin-top: 20px;
+	margin-left: 25px;
+}
+.card .row>div.col-12 {
+	padding-left: 27px;
+}
+.card .row>div.col-9 {
+	padding-left: 30px;
+}
+
+.card h2 {
+	text-shadow: 0px 2px 3px #777;
+}
+
+.card input[type=text] {
+	
+}
+
+.card input[type=password] {
+	
+}
+
+.card .lost_password {
+	margin: 10px 0px 0px 3px;
+	padding: 0;
+	text-align: right;
+}
+
+.card .lost_password a {
+	font-size: 13px;
+	margin: 0;
+	padding: 0;
+	color: #aaa;
+}
+
+.card .lost_password a:hover {
+	color: #c00;
+	text-shadow: 0px 1px 2px #999;
+}
+
+.card input[type=submit]{
+	text-shadow:0px 1px 2px #000;
+} 
+
+</style>
+{include="../general/_footer"} {include="../general/__close"}

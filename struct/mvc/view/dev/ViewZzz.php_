@@ -1,0 +1,12 @@
+<?php
+namespace cms\view\dev;
+
+use cms\view\View;
+
+class ViewZzz extends View
+{    
+    static function zzz()
+    {
+        self::PageDev('zzz');
+    }
+}

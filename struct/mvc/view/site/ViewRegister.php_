@@ -1,0 +1,15 @@
+<?php
+namespace cms\view\site;
+
+use cms\view\View;
+
+class ViewRegister extends View
+{
+
+    static function get_register($registerFormValues)
+    {
+        $parameters = [];
+        $parameters['registerFormValues'] =  $registerFormValues;
+        self::PageSite("register", $parameters);
+    }
+}

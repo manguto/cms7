@@ -1,8 +1,8 @@
 <?php
 
-namespace manguto\cms5\lib\database\repository;
+namespace manguto\cms7\lib\database\repository;
 
-use manguto\cms5\lib\Exception;
+use manguto\cms7\lib\Exception;
 
 class RepositoryCSV{
 

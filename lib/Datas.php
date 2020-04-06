@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 /**
  * Classe de auxilio quando do tratamento de datas/horas
@@ -61,7 +61,7 @@ class Datas
          *
          * s - Seconds with leading zeros
          *
-         * @var Ambiguous $format
+         * @var mixed $format
          */
         $format = $this->format;
         $datestr = $this->datestr;

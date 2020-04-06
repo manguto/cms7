@@ -1,10 +1,10 @@
 <?php
-namespace manguto\cms5\lib\html;
+namespace manguto\cms7\lib\html;
 
 
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\model\Model_Helper;
-use manguto\cms5\lib\database\repository\Repository;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\model\Model_Helper;
+use manguto\cms7\lib\database\repository\Repository;
 
 class HTMLPagination extends HTML
 {

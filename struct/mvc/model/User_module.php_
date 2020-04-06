@@ -1,0 +1,74 @@
+<?php
+namespace cms\model;
+
+use manguto\cms7\lib\model\Model;
+use manguto\cms7\lib\database\ModelDatabase;
+use manguto\cms7\lib\database\repository\ModelRepository;
+use manguto\cms7\lib\model\ModelAttribute;
+use manguto\cms7\lib\model\ModelStart;
+use manguto\cms7\lib\Sessions;
+
+class User_module extends Model implements ModelDatabase
+{
+
+    use ModelStart;
+    use ModelRepository;
+
+    /**
+     * Função para definicao do atributos do modelo (ModelAttribute's)
+     */
+    private function defineAttributes()
+    {
+        // -------------------------------------------------
+        $a = new ModelAttribute('user_id');
+        $a->setType(ModelAttribute::TYPE_INT);
+        $this->SetAttribute($a);
+        // -------------------------------------------------
+        $a = new ModelAttribute('module');
+        $this->SetAttribute($a);
+        // -------------------------------------------------
+        $a = new ModelAttribute('nature');
+        $this->SetAttribute($a);
+        // -------------------------------------------------
+    }
+   
+    /**
+     * obtem os modulos acessiveis pelo usuario informado
+     * @param string|int $user_id
+     * @return array
+     */
+    static function getUserModules($user_id):array{
+        $user_modules = (new User_module())->search(" \$user_id==$user_id "); 
+        $return = [];
+        foreach ($user_modules as $user_module){
+            $return[] = $user_module->getModule();
+        }
+        {//adicionar o proprio sistema em questao   
+            $return[] = SIS_FOLDERNAME;
+        }
+        return $return; 
+    }
+
+    /**
+     * obtem os links (HTML) para os modulos 
+     * @return array
+     */
+    static function getUserModulesHomeMenu():array{
+        $return = [];        
+        if(Sessions::isset(User::SESSION.'_modules')){            
+            foreach (Sessions::get(User::SESSION.'_modules') as $module){                
+                if($module!=SIS_FOLDERNAME){
+                    $return[] = [
+                        'href'=>"http://{$_SERVER['HTTP_HOST']}/".$module,
+                        'html'=>strtoupper($module)
+                    ];                                        
+                }
+            }
+        }        
+        return $return;
+    }
+    
+}
+
+
+?>

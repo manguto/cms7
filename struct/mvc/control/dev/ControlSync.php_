@@ -1,0 +1,93 @@
+<?php
+namespace cms\control\dev;
+
+use manguto\cms7\lib\Arquivos;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\ProcessResult;
+use cms\control\Control;
+use cms\view\dev\ViewSync;
+use manguto\cms7\lib\cms\dev\CMSSync;
+
+
+class ControlSync extends Control
+{
+   
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/dev/sync', function () {
+            self::PrivativeDevZone();
+            ViewSync::sync_files();
+        });
+        
+        $app->post('/dev/sync', function () {
+            self::PrivativeDevZone();
+            //debc($_POST);
+            if(isset($_POST['code'])){
+                $code = trim($_POST['code']);
+            }else{
+                throw new Exception("Não foi possivel obter o conteúdo em questão. Tente novamente em alguns instantes.");
+            }
+            CMSSync::updateCMSSyncInfo($code);            
+            CMS::headerLocation('/dev/sync');
+        });
+        
+        $app->get('/dev/sync/go', function () {
+            self::PrivativeDevZone();
+            $analisys = CMSSync::get_dev_sync_go_analisys();
+            ViewSync::get_dev_sync_go($analisys);
+        });
+        
+        $app->post('/dev/sync/analyse', function () {
+            self::PrivativeDevZone();
+            $return = CMSSync::get_dev_sync_analyse();
+            extract($return);            
+            ViewSync::post_dev_sync_analyse($filename, $prod_content_html, $base_content_html);
+        });
+        
+        $app->post('/dev/sync/go', function () {
+            self::PrivativeDevZone();
+            // deb($_POST);
+            try {
+                foreach ($_POST['arquivo'] as $info) {
+                    if (trim($info) == '')
+                        continue;
+                        $info = explode(';', $info);
+                        
+                        if (sizeof($info) == 2) {
+                            // ----------------------------------------------
+                            // CRIACAO OU ATUALIZACAO DE ARQUIVO
+                            // ----------------------------------------------
+                            $origin_path = $info[0];
+                            $destin_path = $info[1];
+                            Arquivos::copiarArquivo($origin_path, $destin_path);
+                            ProcessResult::setSuccess("Arquivo criado/atualizado com sucesso! <br>$origin_path => $destin_path");
+                            // ----------------------------------------------------------------------------------------------
+                        } else if (sizeof($info) == 1) {
+                            // ----------------------------------------------
+                            // REMOCAO DE ARQUIVO
+                            // ----------------------------------------------
+                            $remove_file_path = $info[0];
+                            Arquivos::excluir($remove_file_path);
+                            ProcessResult::setSuccess("Arquivo removido com sucesso! <br>[$remove_file_path]");
+                            // ----------------------------------------------------------------------------------------------
+                        } else {
+                            throw new Exception("Quanditade de parâmetros inadequada a necessária ($info).");
+                        }
+                }
+            } catch (Exception $e) {
+                ProcessResult::setError($e);
+                CMS::headerLocation('/dev/sync/go');
+                exit();
+            }
+            CMS::headerLocation('/dev/sync/go');
+            exit();
+        });
+    }
+
+    // ##########################################################################################################################
+    // ##########################################################################################################################
+    // ##########################################################################################################################
+    // ##########################################################################################################################
+}
+
+?>

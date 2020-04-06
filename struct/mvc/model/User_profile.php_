@@ -1,0 +1,58 @@
+<?php
+namespace cms\model;
+
+use manguto\cms7\lib\model\Model;
+use manguto\cms7\lib\database\ModelDatabase;
+use manguto\cms7\lib\database\repository\ModelRepository;
+use manguto\cms7\lib\model\ModelAttribute;
+use manguto\cms7\lib\model\ModelStart;
+
+class User_profile extends Model implements ModelDatabase
+{
+    
+    use ModelStart;
+    use ModelRepository;
+
+    const default = [
+        [
+            'user_id' => '1',
+            'profile_id' => '1'
+        ]
+    ];
+
+    /**
+     * Função para definicao do atributos do modelo (ModelAttribute's)
+     */
+    private function defineAttributes()
+    {
+        // ---------------------------------------------------
+        $a = new ModelAttribute('user_id');
+        $a->setType(ModelAttribute::TYPE_INT);
+        $a->setNature(ModelAttribute::NATURE_REFERENCE_SINGLE);
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('profile_id');
+        $a->setType(ModelAttribute::TYPE_INT);
+        $a->setNature(ModelAttribute::NATURE_REFERENCE_SINGLE);
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+    }
+    
+    /**
+     * obtem os perfis do usuario informado
+     * @param int $user_id
+     * @return array
+     */
+    static function getUserProfiles(int $user_id):array{
+        $return = [];
+        $user_profiles = (new User_profile())->search(" \$user_id==$user_id ");
+        if(count($user_profiles)>0){
+            foreach ($user_profiles as $user_profile){
+                $return[$user_profile->getId()] = new Profile($user_profile->getId());
+            }
+        }
+        return $return;
+    }
+}
+
+?>

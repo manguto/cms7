@@ -12,12 +12,10 @@
 	},
 	"autoload" : {
 		"psr-4" : {
-			"manguto\\cms5\\lib\\" : "lib/"			
+			"manguto\\cms7\\lib\\" : "lib/"			
 		},
 		"files" : [
-			"functions/GeneralFunctions.php",
-			"functions/SimpleHTMLDOMParser.php",
-			"functions/CMSFunctions.php"
+			"functions/General.php"			
 		]
 	},
 	"minimum-stability" : "dev"

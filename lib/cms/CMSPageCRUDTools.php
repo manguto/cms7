@@ -1,10 +1,10 @@
 <?php
-namespace manguto\cms5\lib\cms;
+namespace manguto\cms7\lib\cms;
 
-use manguto\cms5\lib\Arquivos;
-use manguto\cms5\lib\ProcessResult;
-use manguto\cms5\lib\Arrays;
-use manguto\cms5\lib\Exception;
+use manguto\cms7\lib\Arquivos;
+use manguto\cms7\lib\ProcessResult;
+use manguto\cms7\lib\Arrays;
+use manguto\cms7\lib\Exception;
 
 class CMSPageCRUDTools
 {

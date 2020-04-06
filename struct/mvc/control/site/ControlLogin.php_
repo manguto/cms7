@@ -1,0 +1,38 @@
+<?php
+namespace cms\control\site;
+
+use cms\control\Control;
+use manguto\cms7\lib\ProcessResult;
+use manguto\cms7\lib\cms\CMSAccessManagement;
+use cms\view\View;
+
+class ControlLogin extends Control
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/login', function () {            
+            CMSAccessManagement::clearSessionUser();            
+            View::PageSite("login");
+        });
+
+        $app->post('/login', function () {
+            $login = isset($_POST['login']) ? trim($_POST['login']) : false;
+            $password = isset($_POST['password']) ? trim($_POST['password']) : false;
+            if (CMSAccessManagement::checkUserCredentials($login, $password)) {
+                ProcessResult::setSuccess('Suas credenciais foram validadas com sucesso! <br/>Bem Vindo(a)!');
+                CMS::headerLocation('/');
+            } else {
+                ProcessResult::setError('As credenciais informadas são inválidas!<br/>Tente novamente.');
+                CMS::headerLocation('/login');
+            }
+        });
+
+        $app->get('/logout', function () {
+            CMSAccessManagement::clearSessionUser();
+            CMS::headerLocation("/");
+        });
+    }
+}
+
+?>

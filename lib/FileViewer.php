@@ -1,8 +1,8 @@
 <?php
 
-use manguto\cms5\lib\Arquivos;
-use manguto\cms5\lib\Strings;   
-use manguto\cms5\lib\javascript\Javascript;
+use manguto\cms7\lib\Arquivos;
+use manguto\cms7\lib\Strings;   
+use manguto\cms7\lib\javascript\Javascript;
 
 class FileViewer
 {

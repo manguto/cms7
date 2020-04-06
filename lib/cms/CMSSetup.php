@@ -1,10 +1,10 @@
 <?php
-namespace manguto\cms5\lib\cms;
+namespace manguto\cms7\lib\cms;
 
-use manguto\cms5\lib\Diretorios;
-use manguto\cms5\lib\ServerHelp;
-use manguto\cms5\lib\Arquivos;
-use manguto\cms5\lib\Exception;
+use manguto\cms7\lib\Diretorios;
+use manguto\cms7\lib\ServerHelp;
+use manguto\cms7\lib\Arquivos;
+use manguto\cms7\lib\Exception;
 
 class CMSSetup
 {
@@ -18,140 +18,84 @@ class CMSSetup
     static function Run($manguto_prj_name = '')
     {
         $vendor_manguto_prj_root = 'vendor/manguto/' . $manguto_prj_name . '/';
-
+        $originFilesPath = ServerHelp::fixds($vendor_manguto_prj_root . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR . 'cms' . DIRECTORY_SEPARATOR);
+        
         try {
-
-            { // html start!
-                echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>SYSTEM SETUP</title></head><body>
-<style>
-body{
- font-family:Courier New;
- background:#000;
- color:#fff;
- padding:20px;
-}
-body *{
- font-family:Courier New;
- padding:0;
- margin:0;
- color:#fff;
-}
-body b{
- color:#ff0;
-}
-body .msg{
-    width:100%;
-}
-body .msg.true{
-    text-align:right;
-    color:#0f0;    
-}
-body .msg.false{
-    text-align:left;
-    color:#f00;
-}
-hr{
- background:#fff;
- height:1px;
- border:none;
- margin:10px 0 10px 0px;
-}       
-</style>
-<h1>SETUP</h1>
-";
-            }
-            { // SETUP...
-
-                { // config
-                    $originFilesPath = ServerHelp::fixds($vendor_manguto_prj_root . DIRECTORY_SEPARATOR . 'res' . DIRECTORY_SEPARATOR . 'cms' . DIRECTORY_SEPARATOR);
-                    //deb($originFilesPath);
-                    echo "<hr />";
-                }
-
-                { // informacoes iniciais
-                    $originFiles = self::Initialize($originFilesPath);
-                    // deb($originFiles);
-                    echo "<hr />";
-                }
-
-                { // criacao de pastas e arquivos
-                    self::FileFolderAnalisys($originFilesPath, $originFiles);
-                    echo "<hr />";
-                }
-                { // finalizacao
-                    self::finalization();
-                    echo "<hr />";
-                }
-                { // renomear e criar copia de determinados arquivos
-                    self::SetupReplaceIndexes();
-                }
-            }
-
-            { // html end!
-                echo '
-<script>
-document.addEventListener("DOMContentLoaded", function(event) { 
-  document.location = "#end";
-});
-
-</script>
-</body></html>';
-            }
+            // html start!
+            echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>SYSTEM SETUP</title></head><body>
+                    <style>body{ font-family:Courier New; background:#000; color:#fff; padding:20px;}
+                    body *{font-family:Courier New; padding:0; margin:0; color:#fff;}
+                    body b{color:#ff0;}
+                    body .msg{width:100%;}
+                    body .msg.true{text-align:right; color:#0f0;}
+                    body .msg.false{text-align:left;color:#f00;}
+                    hr{background:#fff; height:1px; border:none; margin:10px 0 10px 0px;}</style>
+                    <h1>SETUP</h1><hr />";
+            // informacoes iniciais
+            $originFiles = self::GetOriginFilesFolders($originFilesPath);
+            // criacao de pastas e arquivos
+            self::FileFolderAnalisys($originFilesPath, $originFiles);
+            // finalizacao
+            self::Finalization();
+            // renomear e criar copia de determinados arquivos
+            self::SetupReplaceIndexes();
+            // = html end!
+            echo '<script>document.addEventListener("DOMContentLoaded", function(event) {document.location = "#end";});</script></body></html>';
+            // ================================
         } catch (Exception $e) {
             echo $e->show();
         }
     }
 
-    private static function Initialize($originFilesPath)
+    private static function GetOriginFilesFolders($originFilesPath)
     {
+        // =======================================================================================
         echo "<h2>Procedimento de instalação inicializado...</h2><br/>";
-
-        // deb($originFilesPath);
         echo "Caminho para obtenção dos pastas/arquivos base: ";
         echo "<b>$originFilesPath</b><br />";
         echo "<br />";
-
+        // =======================================================================================
         // get folders/files structure to reply
         $originFiles = Diretorios::obterArquivosPastas($originFilesPath, true, true, true);
-        // deb($originFiles);
-
-        echo "Pastas/arquivos: <b>" . sizeof($originFiles) . " encontrado(s)</b><br />";
-        echo "<br />";
-        // deb($foldersFiles);
+        // =======================================================================================
+        echo "Pastas/arquivos: <b>" . sizeof($originFiles) . " encontrado(s)</b><br /><br />";
+        // =======================================================================================
         foreach ($originFiles as $originFile) {
             echo "- " . str_replace($originFilesPath, '', $originFile) . " <br />";
         }
+        echo "<hr />";
+        // =======================================================================================
         return $originFiles;
     }
 
     private static function FileFolderAnalisys(string $originFilesPath, array $originFiles)
     {
         echo "<h2>Procedimento de criação de arquivos/pastas inicializado...</h2><br/>";
-
+        
         {
             $ds = '<div class="msg true">';
             $dn = '<div class="msg false">';
         }
-
+        
         $dir_n = 0;
-
+        
         echo "<div style='padding-bottom:0px;'>";
-
+        
         foreach ($originFiles as $originFile) {
-
+            
             {
                 // deb($originFilesPath,0);
                 $destinationFilePath = str_replace($originFilesPath, '', $originFile);
                 // deb($destinationFilePath);
-
+                
                 if (is_dir($originFile)) {
-
+                    
                     echo "</div>";
-
+                    
                     echo "<div style='padding-bottom:0px;'>";
-
+                    
                     $dir_n ++;
-
+                    
                     if (! file_exists($destinationFilePath)) {
                         Diretorios::mkdir($destinationFilePath);
                         echo $ds . "Diretório '$destinationFilePath' criado com sucesso! &#8592; </div>";
@@ -159,13 +103,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
                         echo $dn . " &#8594; Diretório '$destinationFilePath' já existente. Nenhum procedimento realizado.</div>";
                     }
                 } else if (is_file($originFile)) {
-
+                    
                     { // tratamento deviso a extensao "php_"
                         if (Arquivos::obterExtensao($originFile) == 'php_') {
                             $destinationFilePath = str_replace('php_', 'php', $destinationFilePath);
                         }
                     }
-
+                    
                     if (! file_exists($destinationFilePath)) {
                         Arquivos::copiarArquivo($originFile, '.' . DIRECTORY_SEPARATOR . $destinationFilePath);
                         echo $ds . "  Arquivo '$destinationFilePath' criado com sucesso! &#8592; </div>";
@@ -177,9 +121,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 }
             }
         }
+        echo "<hr />";
     }
 
-    private static function finalization()
+    private static function Finalization()
     {
         echo "<div id='end'></div>";
         echo "<br/>";
@@ -187,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         echo "<br/>";
         echo "<h2>SETUP REALIZADO COM SUCESSO!</h2>";
         echo "<br/>";
-        echo "<a href='index.php'>Clique aqui para acessar a nova plataforma</a>.";
+        echo "<a href='dev/models/initialize'>Clique aqui para inicializar os repositórios necessários e acessar a plataforma</a>.";
         echo "<br/>";
         echo "<br/>";
         echo "<br/>";
@@ -208,19 +153,30 @@ document.addEventListener("DOMContentLoaded", function(event) {
         echo "<br/>";
         echo "<br/>";
         echo "<br/>";
-        echo "<br/>";        
+        echo "<br/>";
+        echo "<hr />";
         // echo Javascript::TimeoutDocumentLocation('index.php');
+    }
+
+    private function getSisFoldername()
+    {
+        $sis_foldername = explode(DIRECTORY_SEPARATOR, __DIR__);
+        $foldername = '';
+        while ($foldername != 'vendor') {
+            $foldername = array_pop($sis_foldername);
+        }
+        $foldername = array_pop($sis_foldername);
+        // deb($foldername);
+        return $foldername;
     }
 
     private static function SetupReplaceIndexes()
     {
-               
-
         { // backup arquivo index atual
-            //----------------------------------------------------------------------------------------------------------------------
+          // ----------------------------------------------------------------------------------------------------------------------
             $index_old_filename = 'index.php';
-            $index_old_bkp_filename = 'index_'.date('Ymd').'.php';
-            //----------------------------------------------------------------------------------------------------------------------
+            $index_old_bkp_filename = 'index_' . date('Ymd') . '.php';
+            // ----------------------------------------------------------------------------------------------------------------------
             if (file_exists($index_old_filename)) {
                 $index_old_content = file_get_contents($index_old_filename);
                 if ($index_old_content === false) {
@@ -232,12 +188,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 }
             }
         }
-
-       { // atualizacao do arquivo de indexacao para acesso ao cms instalado
-            //----------------------------------------------------------------------------------------------------------------------
+        
+        { // atualizacao do arquivo de indexacao para acesso ao cms instalado
+          // ----------------------------------------------------------------------------------------------------------------------
             $index_cms_filename = 'index_cms.php';
             $index_new_filename = 'index.php';
-            //----------------------------------------------------------------------------------------------------------------------
+            // ----------------------------------------------------------------------------------------------------------------------
             if (! file_exists($index_cms_filename)) {
                 throw new \Exception("Arquivo de indexação do Content Management System (CMS) não encontrado (index_cms). Contate o administrador!");
             } else {
@@ -248,14 +204,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
                     if (! file_put_contents($index_new_filename, $index_cms_content)) {
                         throw new \Exception("Não foi possível atualizar o conteúdo do arquivo de indexação atual (index_cms -> index). Contate o administrador!");
                     }
-                    if(!unlink($index_cms_filename)){
+                    if (! unlink($index_cms_filename)) {
                         echo "<hr/><b>Não foi possível remover um arquivo base (index_cms). Remova-o manualmente, ou desconsidere esta mensagem!</b><hr/>";
                     }
                 }
             }
         }
     }
-
+    
     // ##################################################################################################################################################################
     // ##################################################################################################################################################################
     // ##################################################################################################################################################################

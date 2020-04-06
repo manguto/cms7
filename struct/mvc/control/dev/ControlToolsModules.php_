@@ -1,0 +1,33 @@
+<?php
+namespace cms\control\dev;
+
+use cms\view\View;
+use manguto\cms7\lib\cms\dev\CMSToolsModules;
+   
+
+class ControlToolsModules extends ControlTools
+{
+
+    static function RunRouteAnalisys($app)
+    {        
+        $app->get('/dev/tools/modules', function () {
+            self::PrivativeDevZone();
+            View::PageDev('tools_modules',get_defined_vars());
+        });        
+        
+        $app->post('/dev/tools/modules', function () {
+            self::PrivativeDevZone(); 
+            //deb($_POST);
+            {
+                $platform = $_POST['platform'];
+                $ModuleName = ucfirst($_POST['modulename']);
+            }
+            {   
+                $results = CMSToolsModules::GenerateFile($platform, $ModuleName);
+            }
+            View::PageDev('tools_modules_result',get_defined_vars());
+        });
+    }    
+}
+ 
+?>

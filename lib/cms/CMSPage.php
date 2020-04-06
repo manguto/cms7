@@ -1,11 +1,10 @@
 <?php
-namespace manguto\cms5\lib\cms;
+namespace manguto\cms7\lib\cms;
 
 use Rain\Tpl;
-use manguto\cms5\lib\Arquivos;
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Diretorios;
-use manguto\cms5\lib\ServerHelp;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\ServerHelp;
+use manguto\cms7\lib\Logs;
 
 /**
  * Documentation for web designers:
@@ -19,8 +18,6 @@ class CMSPage
     private $tpl;
 
     private $tpl_dir;
-
-    const tpl_inclusive_folders = ['general']; 
     
     private $options = [];
 
@@ -40,9 +37,9 @@ class CMSPage
         
         // config
         $config = array(
-            "tpl_dir" => ROOT_TPL . $tpl_dir,
+            "tpl_dir" => SIS_CMS_TPL_PATH . $tpl_dir,
             "cache_dir" => "cache/",
-            "debug" => true // set to false to improve the speed
+            "debug" => false // set to false to improve the speed
         );
         
         Tpl::configure($config);
@@ -61,178 +58,49 @@ class CMSPage
     }
 
     /**
-     * verifica se o arquivo template estah na pasta padrao (ROOT_TPL)
-     * ou se pertence a algum modulos disponivel em ROOT_SIS
-     * @param string $filename
-     *  @param CMSPage $classObjectSample
-     */    
-    private function CheckAndOrFixTemplatePath(string $filename,CMSPage $classObjectSample)
-    {
-        $return = $filename;
-        
-        { // obtencao do nome da plataforma com base no nome da classe
-            { // class name
-                $className = get_class($classObjectSample);
-                $className = Diretorios::fixDirectorySeparator($className);
-                $thisclassname_ = explode(DIRECTORY_SEPARATOR, $className);
-                $className = array_pop($thisclassname_);
-                //deb($className,0);
-            }
-            { // platform
-                $platform = strtolower($className);
-                $platform = str_replace('cmspage', '', $platform);
-                //deb($platform,0);
-            }
-        }
-        
-        { // verifica se o arquivo tpl esta na pasta padrao (tpl) ou na pasta dos modelos.
-            //deb(ROOT_TPL);
-            $filename_test = ROOT_TPL . $platform . '/' . $filename . '.html';
-            $filename_test = ServerHelp::fixds($filename_test);
-            //deb($filename_test, 0);
-            //deb(getcwd(),0); deb($filename_test,0);
-            
-            $templateFileFound = file_exists($filename_test);
-            //deb($templateFileFound,0);
-            
-            if ($templateFileFound) {
-                //deb("Arquivo encontrado na biblioteca",0);
-                // <<<<<<<<<<<<<<<<<<<<
-                // <<<<<<<<<<<<<<<<<<<<
-                // <<<<<<<<<<<<<<<<<<<<                
-                $return = $filename;
-                // <<<<<<<<<<<<<<<<<<<<
-                // <<<<<<<<<<<<<<<<<<<<
-                // <<<<<<<<<<<<<<<<<<<<
-            } else {                
-                //deb("Arquivo NÃO encontrado na biblioteca",0);
-                { // apenas os templates da plataforma em questao serao analisados           
-                    $platform_templates_folder = ROOT_SIS.'tpl'.DIRECTORY_SEPARATOR.$platform.DIRECTORY_SEPARATOR;
-                    //deb($platform_templates_folder);
-                    $sis_tpl_path_array = Diretorios::obterArquivosPastas($platform_templates_folder, true, true, false, [
-                        'html'
-                    ]);
-                    //deb($sis_tpl_path_array);
-                }       
-                $return = [];
-                foreach ($sis_tpl_path_array as $sis_tpl_path) {
-                    
-                    if ($filename == Arquivos::obterNomeArquivo($sis_tpl_path, false)) {
-                        
-                        //tpl auto loading only on 'tpl' folder
-                        if(strpos($sis_tpl_path,'tpl')===false){
-                            continue;
-                        }
-                        
-                        //extension remove
-                        $filename_full = str_replace('.html', '', $sis_tpl_path);
-                        //bridge inserction
-                        $filename_full = self::checkFixTplPathBridge().$filename_full;
-                        //fix directory separator
-                        $filename_full = str_replace('\\', '/', $filename_full);
-                        
-                        // <<<<<<<<<<<<<<<<<<<<
-                        // <<<<<<<<<<<<<<<<<<<<
-                        // <<<<<<<<<<<<<<<<<<<<
-                        $return[] = $filename_full;
-                        // <<<<<<<<<<<<<<<<<<<<
-                        // <<<<<<<<<<<<<<<<<<<<
-                        // <<<<<<<<<<<<<<<<<<<<
-                    }
-                }
-                //deb($return);
-                if(sizeof($return)>1){                    
-                    throw new Exception("Templates não podem ter o mesmo nome de arquivo. Foram encontrados mais de um template com o mesmo nome (".implode(', ' , $return)."). Modifique, atualize o código que fazia a chamada para os mesmos e tente novamente.");
-                }else if(sizeof($return)==1){
-                    $return = array_shift($return);
-                }else{
-                    throw new Exception("O template solicitado não foi encontrado ($filename).");
-                }
-            }
-        }
-        //deb($return,0);
-        return $return;
-    }
-    
-    /**
-     * retorna o endereço completo para um "{include='xxxxxx'}"
-     * baseado no diretorio dos templates (ROOT_TPL) e 
-     * realizado diretamento no arquivo HTML
+     * obtem o nome completo do arquivo do template solicitado
      * @param string $filename
      * @throws Exception
-     * @return string
-     *
-    static function include_tpl(string $filename):string
+     * @return 
+     */
+    private function getFullTemplatePath(string $filename):string
     {
-        $path = '';
-        
-        $limite = 5;
-        
-        $filename_tmp = '';
-        
-        while ($filename_tmp=='' || ! file_exists($filename_tmp)) {
+        $return = $filename;
+        { // verifica se o arquivo tpl esta na pasta padrao (tpl) ou na pasta dos modelos.
             
-            //path serah incrementado apenas após primeira iteracao
-            if($filename_tmp!=''){
-                $path .= '..' . DIRECTORY_SEPARATOR;
+            $filename_test = ServerHelp::fixds(SIS_CMS_TPL_PATH . $this->tpl_dir . $filename . '.html');
+            //deb($filename_test, 0);
+            
+            if (file_exists($filename_test)) {
+                $msg = "Template '$filename_test' encontrado com sucesso.";
+                Logs::set('info',$msg);
+                return $filename;                
+            } else {
+                $msg = "Template '$filename_test' NÃO encontrado!";
+                Logs::set('info',$msg);
+                throw new Exception($msg);
             }
-            
-            $filename_tmp = $path . ROOT_TPL . $filename . '.html';
-            
-            if ($limite -- < 0)
-                throw new Exception("Número máximo de tentativas atingida na busca do template '$filename'.");
         }
-        $return = $path . $filename;
-        deb($return,0);
-        return $return;
-    }*/
-
-    static private function checkFixTplPathBridge(){
-        
-        $ROOT_TPL_ = explode(DIRECTORY_SEPARATOR, Diretorios::fixDirectorySeparator(ROOT_TPL));        
-        //deb($ROOT_TPL_);
-        $jumps = '';
-        foreach ($ROOT_TPL_ as $dir){
-            //deb($dir,0);
-            if($dir=='..' || trim($dir)==''){
-                continue;
-            }
-            $jumps .= '..'.DIRECTORY_SEPARATOR;
-        }
-        //deb($jumps);
-        return $jumps;
     }
     
-    public function setTpl($filename, $data = array(), bool $toString = false, $classObjectSample)
-    {
-        /*{//define include variables needes
-            $include_vars = self::getIncludeVars();  
-            $data = array_merge($data,$include_vars);  
-        }/**/
-        
-        $this->assignDataArray($data);
-        
-        $filename = $this->CheckAndOrFixTemplatePath($filename, $classObjectSample);
-        
-        /*{
-            deb(getcwd(),0);
-            deb($filename,0);            
-            if(VIRTUAL_HOST_ACTIVE){
-                $filename = explode(getcwd().'//', $filename);
-                $filename = array_pop($filename);
-            }
-            deb($filename,0);
-        }/**/
-        
-        $html = $this->tpl->draw($filename, true);
-        
-        $html = CMSPage_Tools::TplReferencesFix($html);
-        
+    public function setTpl($filename, $data = array(), bool $toString = false)
+    {   
+        {//atribuicao dos dados informados para processamento na procudao do html
+            $this->assignDataArray($data);
+        }
+        {//obtencao do html em questao
+            $html = $this->tpl->draw($this->getFullTemplatePath($filename), true);
+            
+        }
+        {//ajustes idenficados localmente
+            $html = CMSPageTools::TplReferencesFix($html);
+        }
+                
         if ($toString) {
             return $html;
-        } else {
-            echo $html;
         }
+        
+        print $html;        
     }
 
     public function __destruct()

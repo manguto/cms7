@@ -1,9 +1,7 @@
 <?php
-namespace manguto\cms5\lib\model;
+namespace manguto\cms7\lib\model;
 
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Logs;
-use manguto\cms5\lib\ServerHelp;
+use manguto\cms7\lib\Exception;
 
 /**
  * esta classe tera como intuito representar os objetor que precisam ser salvos de alguma forma (banco de dados, xml, json, etc.)
@@ -32,7 +30,7 @@ abstract class Model
         $this->CheckAttributesSetted();
         
         // validacao de dados (caso necessaria)
-        $this->VerifyDataAndStructure();
+        $this->CheckDataIntegrity();
 
         // ordernar atributos
         $this->SetAttributesOrder();
@@ -46,7 +44,7 @@ abstract class Model
     protected function SetAttributes(array $attributes_data = [], bool $checkAttributeName = true)
     {
         // deb($attributes_data);
-        //Logs::set(Logs::TYPE_INFO, "Definição de ATRIBUTOS: " . implode(', ', array_keys($attributes_data)) . " (verificação do nome do atributo: $checkAttributeName).");
+        //Logger::set(Logger::TYPE_INFO, "Definição de ATRIBUTOS: " . implode(', ', array_keys($attributes_data)) . " (verificação do nome do atributo: $checkAttributeName).");
 
         // recebe uma lista de paramertros e transforma uma lista de model attributes e verifica (caso solicitado) se é permitido
         $attribute_list = ModelAttribute::Convert_ParameterDataArray_to_ModelAttributeArray($attributes_data, $checkAttributeName);
@@ -81,9 +79,6 @@ abstract class Model
      */
     protected function GetAttribute(string $attributeName)
     {
-        // deb($attributes_data);
-        Logs::set(Logs::TYPE_INFO, "Obtenção do ATRIBUTO '$attributeName' do modelo " . $this->GetClassName());
-
         if (isset($this->attributes[$attributeName])) {
             $attribute = $this->attributes[$attributeName];
         } else {
@@ -100,7 +95,7 @@ abstract class Model
      */
     protected function SetFundamentalAttributes(int $id)
     {
-        //Logs::set(Logs::TYPE_INFO, "Definição dos ATRIBUTOS FUNDAMENTAIS do modelo <b>" . $this->GetClassName() . "</b>.");
+        //Logger::set(Logger::TYPE_INFO, "Definição dos ATRIBUTOS FUNDAMENTAIS do modelo <b>" . $this->GetClassName() . "</b>.");
 
         $attributes = [
             'id' => [
@@ -166,15 +161,15 @@ abstract class Model
      * @param bool $dataEmptyValueSet
      *            - utilizar o valor informado mesmo que vazio?
      */
-    public function SET_DATA(array $data, bool $dataEmptyValueSet = true)
+    public function SET_DATA(array $data, bool $emptyValueSet = true)
     {
         // deb($data);
         foreach ($data as $key => $value) {
             $key = strtolower($key);
-            // evita o carregamento de parametros que nao pertencam ao objeto (outros parametros inseridos no <form> p.ex.)
+            // evita o carregamento de parametros que nao pertencam ao objeto (outros parametros inseridos no <form> por ex. caso o array informado seja o $_POST)
             if (isset($this->attributes[$key])) {                
                 //define o valor informado quando este for diferente de vazio ou se definido independentemente
-                if($value!='' || $dataEmptyValueSet==true){
+                if($value!='' || $emptyValueSet==true){
                     // chamada do metodo de definicao de cada atributo (generico ou especifico se definido)
                     $this->{'set' . ucfirst($key)}($value);
                 }                
@@ -407,7 +402,7 @@ abstract class Model
      */
     private function CheckAttributesSetted()
     {
-        //Logs::set(Logs::TYPE_INFO, "Verificação quanto a atribuição de todos os atributos do modelo.");
+        //Logger::set(Logger::TYPE_INFO, "Verificação quanto a atribuição de todos os atributos do modelo.");
 
         $attributesSetted = false;
         // deb(self::fundamentalAttributes,0);
@@ -428,10 +423,6 @@ abstract class Model
             throw new Exception("Os atributos do modelo '$class' não foram definidos. Defina-os e tente novamente!");
         }
     }
-    
-    /*protected function VerifyDataAndStructure(){
-        Logs::set(Logs::TYPE_INFO, "Validação de dados e estrutura entre atributos do modelo ($this).");
-    }*/
 
     /**
      * ordernar atributos do objeto de maneira
@@ -440,7 +431,7 @@ abstract class Model
      */
     private function SetAttributesOrder_20191220()
     {
-        //Logs::set(Logs::TYPE_INFO, "Ordenação dos atributos do modelo.");
+        //Logger::set(Logger::TYPE_INFO, "Ordenação dos atributos do modelo.");
 
         $attributesOrdered = [];
         foreach (self::fundamentalAttributes as $attributeFundamental) {
@@ -464,7 +455,7 @@ abstract class Model
      */
     private function SetAttributesOrder()
     {
-        //Logs::set(Logs::TYPE_INFO, "Ordenação dos atributos do modelo.");
+        //Logger::set(Logger::TYPE_INFO, "Ordenação dos atributos do modelo.");
         $attributesOrdered = [];
         
         {//id
@@ -564,7 +555,13 @@ abstract class Model
     // ##################################################################################################################################
     // ##################################################################################################################################
     // ##################################################################################################################################
-    public function loadReferences($inArray=true)
+    
+    /**
+     * Realiza o carregamento de outros objetos referenciados por este.
+     * O parametro inArray determina se a referencia de um unico objeto devera ser retornada em como um ARRAY ou como um OBJETO
+     * @param bool $inArray
+     */
+    public function loadReferences(bool $inArray=true)
     {
         Model_Reference::Load($this,$inArray);
         // deb($this);

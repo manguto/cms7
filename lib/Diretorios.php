@@ -1,6 +1,6 @@
 <?php
 
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 
 class Diretorios {
@@ -16,7 +16,14 @@ class Diretorios {
 	 */	 
 	static function obterArquivosPastas(string $path,bool $recursive,bool $filesAllowed,bool $foldersAllowed,$allowedExtensions = array(),$throwException=true) {
 		//deb($path,0);
+		$path = trim($path)=='' ? '.'.DIRECTORY_SEPARATOR : trim($path);
 		$path = self::fixDirectorySeparator ( $path );
+		
+		{//allowed extensions
+		    if(!is_array($allowedExtensions)){
+		        $allowedExtensions =  [strval($allowedExtensions)];
+		    }		    
+		}
 		
 		if ($filesAllowed == false) {
 			$allowedExtensions = false;
@@ -42,7 +49,12 @@ class Diretorios {
     				continue;
     			}
     			
-    			$filename = $path . DIRECTORY_SEPARATOR . $filename ;
+    			//impede o retorno do nome do arquivo com um diretorio esquisito (ex.: ./index.php, ./config.php)
+    			if($path == '.'.DIRECTORY_SEPARATOR){
+    			    $filename = $filename ;
+    			}else{
+    			    $filename = $path . DIRECTORY_SEPARATOR . $filename ;
+    			}
     			
     			$filename = self::fixDirectorySeparator ( $filename );
     			
@@ -97,19 +109,31 @@ class Diretorios {
 	}
 	
 	/**
-	 * CRIA UM DIRETORIO
-	 *	 
+	 * criar um diretorio caso nao exista
+	 * @param string $pathname
+	 * @param bool $recursive
+	 * @param int $mode
+	 * @param bool $throwException
+	 * @throws Exception
+	 * @return boolean
 	 */
-	static function mkdir($pathname, $recursivo = true) {
+	static function mkdir(string $pathname, bool $recursive = true,int $mode=777, bool $throwException=true) {
+	    
 	    if(trim($pathname)!=''){
 	        if (! file_exists ( $pathname )) {
-	            $return = mkdir ( $pathname, 0777, $recursivo );
-	            if (! $return) {
-	                throw new Exception ( "Não foi possível criar o diretório '$pathname'." );
+	            $return = mkdir ( $pathname, $mode, $recursive );
+	            if ($return===false) {
+	                if($throwException){
+	                    throw new Exception ( "Não foi possível criar o diretório '$pathname' ('".error_get_last()."')." );
+	                }else{
+	                    return false;
+	                }	                
 	            }
 	        }
+	        return true;
+	    }else{
+	        return false;
 	    }		
-		return true;
 	}
 	
 	/**

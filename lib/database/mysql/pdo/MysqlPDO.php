@@ -1,9 +1,8 @@
 <?php
-namespace manguto\cms5\lib\database\mysql\pdo;
+namespace manguto\cms7\lib\database\mysql\pdo;
 
-use manguto\cms5\lib\Logs;
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\database\Database;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\database\Database;
 
 class MysqlPDO extends \PDO implements Database
 {
@@ -13,11 +12,11 @@ class MysqlPDO extends \PDO implements Database
     public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = 'utf8')
     {
         if ($dbhost == '' && $dbuser == '' && $dbpass == '' && $dbname == '') {
-            $dbhost = DATABASE_HOST;
-            $dbuser = DATABASE_USER;
-            $dbpass = DATABASE_PASS;
-            $dbname = DATABASE_NAME;
-            $charset = DATABASE_CHARTSET;
+            $dbhost = SIS_DATABASE_HOST;
+            $dbuser = SIS_DATABASE_USER;
+            $dbpass = SIS_DATABASE_PASS;
+            $dbname = SIS_DATABASE_NAME;
+            $charset = SIS_DATABASE_CHARTSET;
         }
 
         $dsn = "mysql:host=$dbhost;dbname=$dbname;charset=$charset";
@@ -96,11 +95,8 @@ class MysqlPDO extends \PDO implements Database
         $stmt = $this->query($rawQuery, $parameters);
         // deb($stmt);
 
-        Logs::set(Logs::TYPE_NOTICE, "Query: " . $stmt->queryString);
-
         $return = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         // deb($return);
-        // Logs::set(Logs::TYPE_NOTICE,"'".count($return)."' registro(s) encontrado(s).",$return);
 
         return $return;
     }

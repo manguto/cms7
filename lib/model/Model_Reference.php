@@ -1,7 +1,7 @@
 <?php
-namespace manguto\cms5\lib\model;
+namespace manguto\cms7\lib\model;
 
-use manguto\cms5\lib\Exception;  
+use manguto\cms7\lib\Exception;  
 
 class Model_Reference
 {

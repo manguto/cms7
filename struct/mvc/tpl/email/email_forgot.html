@@ -1,0 +1,38 @@
+
+<div class="container" style="background-image: linear-gradient(to bottom, #fafafa, #dadada); border-radius:20px; padding:20px 30px 40px 30px;">
+	<div class="row">
+		<div class="col-12">
+			<h2>{#SIS_NAME#}</h2>
+			<h3>Solicitação de Recuperação de Senha</h3>
+			<hr />
+		</div>
+	</div>
+	<div class="row">		
+		<div class="col-12 pl-3" >
+			<br />
+			Prezado(a) {$user->getName()},
+			<br />
+			<br />
+			O sistema <b>{#SIS_NAME#}</b> (<a href="{#SIS_URL#}">{#SIS_URL#}</a>) recebeu uma solicitação de <b>RECUPERAÇÃO de SENHA</b> para o usuário: "{$user->getLogin()}".
+			<br />
+			<br />
+			Caso tenha sido você, clique no link abaixo nos próximos <b>{$deadline} minutos</b>:
+			<br />
+			<br />
+			<a href="{$link}">{$link}</a>
+			<br />
+			<br />			
+			Caso desconheça a solicitação, por favor desconsidere esta mensagem.
+			<br />
+			<br />
+			Obrigado!
+			<br />
+			{#SIS_NAME_FULL#}
+			<br />
+			<a href="mailto:{#SIS_EMAIL#}">{#SIS_EMAIL#}</a>
+			<br />
+			<br />
+			<br />
+		</div>
+	</div>
+</div>

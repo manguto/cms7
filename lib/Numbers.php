@@ -1,6 +1,6 @@
 <?php
 
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 
 
@@ -57,6 +57,15 @@ class Numbers
         $value = str_replace('.', '', $value);
         $value = str_replace(',', '.', $value);
         return $value;
+    }
+    
+    /**
+     * verifica se a string informada eh um codigo gerado atraves de md5
+     * @param string $md5
+     * @return bool
+     */
+    static function is_valid_md5(string $md5):bool {
+        return strlen($md5) == 32 && ctype_xdigit($md5);
     }
     
 }

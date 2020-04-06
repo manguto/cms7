@@ -1,0 +1,86 @@
+<?php
+namespace cms\control\admin;
+
+use cms\model\User;
+use manguto\cms7\lib\ProcessResult;
+use manguto\cms7\lib\Exception;
+use cms\view\admin\ViewUsers;
+use cms\control\Control;
+
+class ControlUsers extends Control
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/admin/users', function () {
+            self::PrivativeAdminZone();
+            ViewUsers::get_admin_users();
+        });
+        
+        $app->get('/admin/users/create', function () {
+            self::PrivativeAdminZone();
+            ViewUsers::get_admin_users_create();
+        });
+        
+        $app->post('/admin/users/create', function () {
+            self::PrivativeAdminZone();            
+            try {
+                $user = new User();
+                {// fix - form adminzoneaccess (checkbox) & password crypt                    
+                    $_POST['adminzoneaccess'] = ! isset($_POST['adminzoneaccess']) ? 0 : 1; 
+                    $_POST['password'] = User::password_crypt($_POST['password']);                    
+                }   
+                $user->SET_DATA($_POST);
+                $user->verifyFieldsToCreateUpdate();
+                $user->save();
+                ProcessResult::setSuccess("Usuário salvo com sucesso!");
+                CMS::headerLocation("/admin/users");
+            } catch (Exception $e) {
+                ProcessResult::setError($e);
+                CMS::headerLocation("/admin/users/create");
+            }
+        });
+        
+        $app->get('/admin/users/:id', function ($id) {
+            self::PrivativeAdminZone();
+            self::PrivateCrudPermission('view', $id);            
+            ViewUsers::get_admin_user($id);
+        });
+        
+        $app->get('/admin/users/:id/delete', function ($id) {
+            self::PrivativeAdminZone();
+            self::PrivateCrudPermission('delete', $id);
+            $user = new User($id);
+            $user->delete();
+            ProcessResult::setSuccess("Usuário removido com sucesso!");
+            CMS::headerLocation("/admin/users");
+        });
+        
+        $app->get('/admin/users/:id/edit', function ($id) {
+            self::PrivativeAdminZone();
+            self::PrivateCrudPermission('edit', $id);
+            $user = new User($id);
+            ViewUsers::get_admin_user_edit($user);
+        });
+        
+        $app->post('/admin/users/:id/edit', function ($id) {
+            self::PrivativeAdminZone();
+            User::PrivateCrudPermission('edit', $id);
+            // fix - form adminzoneaccess (checkbox)
+            $_POST['adminzoneaccess'] = ! isset($_POST['adminzoneaccess']) ? 0 : 1;
+            try {
+                $user = new User($id);
+                $user->SET_DATA($_POST);
+                $user->verifyFieldsToCreateUpdate();
+                $user->save();
+                ProcessResult::setSuccess("Usuário atualizado com sucesso!");
+                CMS::headerLocation("/admin/users");
+            } catch (Exception $e) {
+                ProcessResult::setError($e);
+                CMS::headerLocation("/admin/users/create");
+            }
+        });
+    }
+}
+
+?>

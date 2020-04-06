@@ -1,0 +1,56 @@
+=========================================================================================================================================
+=========================================================================================================================================
+====================================================  COMANDOS BASICOS  =================================================================
+=========================================================================================================================================
+=========================================================================================================================================
+
+================================================================================================= INICIALIZACAO
+git init												-	inicializa o git na pasta
+
+================================================================================================= GENERAL && COMMIT
+git add .												- 	adiciona todos os arquivos modificados à stage area
+git commit -m "descricao do commit"						-	"comita" o projeto	
+git commit ===amend -m "descricao do commit"			-	atualiza o commit com algo
+
+================================================================================================= LOG		
+git log 												- 	log geral 
+git log ===pretty=oneline								- 	log resumido 
+
+git rm filename.txt										-	remove arquivos do controle do git que tenham sido deletados 
+gitk													- 	GUI com todo o historico de commits
+
+================================================================================================= TAGS
+git tag -a v1.0 -m "..."								- 	criar uma TAG (nota simples)
+git tag													-	exibir as TAGS criadas
+git show												-	mais detalhes das tags
+git tag -d v0.0 										- 	remove uma TAG
+
+================================================================================================= BRANCHES
+git branch teste										-	cria um branch 'teste'
+git branch 												-	exibe todos os branchs
+git checkout teste										-	inicia trabalhos no branch teste
+git checkout master										-	inicia trabalhos no branch master (principal)
+git checkout -b teste									-	compactacao das 2 linhas de comando acima
+git merge teste											- 	realiza o merge com branch de teste (estando no ambiente de destino)
+
+================================================================================================= GIT HUB  
+ssh-keygen												- 	cria um arquivo com a CHAVE-SSH (id_rsa.pub) em uma pasta do perfil de usuario 
+            											- 	abrir arquivo e copiar CODIGO
+            											- 	acesse seu perfil do GitHub > ACCOUNT SETTING > SSH-KEYS > ADD SSH-KEY, cola a chave e adiciona.
+            											- 	apos criar um repositorio realiza os procedimentos abaixo para comecar a trabalhar no mesmo
+git clone git@github.com:xxxxxxxxx/yyy.git				-	clona o repositorio xxxxxxxxx/yyy
+
+================================================================================================= GIT HUB - PUSH
+git push origin master									- 	envia (salva) cenário commitado localmente
+
+================================================================================================= OPCOES EXTRAS
+".gitignore"											-	arquivo para listagem dos arquivos/pastas a serem ignoradas
+
+
+
+
+
+
+
+
+.

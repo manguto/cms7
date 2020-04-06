@@ -1,8 +1,8 @@
 <?php
-namespace manguto\cms5\lib\database\mysql\mysqli;
+namespace manguto\cms7\lib\database\mysql\mysqli;
 
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\database\Database;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\database\Database;
 
 class Mysqli implements Database
 {
@@ -16,11 +16,11 @@ class Mysqli implements Database
     public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = '')
     {
         if ($dbhost == '' && $dbuser == '' && $dbpass == '' && $dbname == '' && $charset == '') {
-            $dbhost = DATABASE_HOST;
-            $dbuser = DATABASE_USER;
-            $dbpass = DATABASE_PASS;
-            $dbname = DATABASE_NAME;
-            $charset = DATABASE_CHARTSET;
+            $dbhost = SIS_DATABASE_HOST;
+            $dbuser = SIS_DATABASE_USER;
+            $dbpass = SIS_DATABASE_PASS;
+            $dbname = SIS_DATABASE_NAME;
+            $charset = SIS_DATABASE_CHARTSET;
         }
         
         $this->connection = new \mysqli($dbhost, $dbuser, $dbpass, $dbname);

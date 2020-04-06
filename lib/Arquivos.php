@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 class Arquivos
 {
@@ -246,16 +246,16 @@ class Arquivos
     /**
      * verifica se um arquivo ou pasta existem
      *
-     * @param string $filename_or_foldername
+     * @param string $fileOrFolderName
      * @param boolean $throwException
      * @throws Exception
      * @return boolean
      */
-    static function verificarArquivoOuPastaExiste(string $filename_or_foldername, bool $throwException = true)
+    static function verificarArquivoOuPastaExiste(string $fileOrFolderName, bool $throwException = true)
     {
-        if (file_exists($filename_or_foldername) == false) {
+        if (file_exists($fileOrFolderName) == false) {
             if ($throwException) {
-                throw new Exception("Arquivo ou pasta não encontrado(a) ($filename_or_foldername).");
+                throw new Exception("Arquivo ou pasta não encontrado(a) ($fileOrFolderName).");
             } else {
                 return false;
             }
@@ -265,53 +265,45 @@ class Arquivos
     }
 
     /**
-     * obtem as permissoes atuais de um arquivo ou pasta,
-     * onde caso seja uma pasta, cria-a caso esta não exista.
+     * obtem as permissoes atuais de um arquivo ou pasta     
      *
-     * @param string $filename_or_foldername
+     * @param string $fileOrFolderName
      * @param boolean $throwException
      * @throws Exception
-     * @return boolean|string
+     * @return boolean|int
      */
-    static function permissoesObter(string $filename_or_foldername, bool $throwException = true)
+    static function permissoesObter(string $fileOrFolder_name, bool $throwException = true)
     {
-        $ArquivoOuPastaExiste = Arquivos::verificarArquivoOuPastaExiste($filename_or_foldername,$throwException);
-        
-        if ($ArquivoOuPastaExiste==TRUE) {            
-            $fileperms = decoct(fileperms($filename_or_foldername) & 0777);
-            // deb($fileperms);
-            return $fileperms;
-        }else{
-            
-            //se nao for um arquivo...            
-            $eh_diretorio = self::obterExtensao($filename_or_foldername)=='' ? true : false;                        
-            
-            if($eh_diretorio){
-                Diretorios::mkdir($filename_or_foldername,true);
-                return self::permissoesObter($filename_or_foldername,$throwException);
-            }
+        $return = false;
+        if (self::verificarArquivoOuPastaExiste($fileOrFolder_name,$throwException)) {            
+            $return = decoct(fileperms($fileOrFolder_name) & 0777);
+            $return = intval($return);
         }
+        return $return;
     }
 
     /**
      * altera as permissoes de uma determinado arquivo ou pasta
-     * @param string $filename_or_foldername
+     * @param string $fileOrFolderName
      * @param int $permissoesNovas
      * @param boolean $throwException
      * @throws Exception
      */
-    static function permissoesAlterar(string $filename_or_foldername,int $permissoesNovas, $throwException = true)
+    static function permissoesAlterar(string $fileOrFolderName,int $newPermissions,bool $throwException = true)
     {   
-        if (Arquivos::verificarArquivoOuPastaExiste($filename_or_foldername,$throwException)) {
-            if(chmod($filename_or_foldername, $permissoesNovas)==false){
+        if (Arquivos::verificarArquivoOuPastaExiste($fileOrFolderName,$throwException)) {
+            if(chmod($fileOrFolderName, $newPermissions)==false){
                 if($throwException){
-                    throw new Exception("Não foi possível alterar as permissões do arquivo ou pasta solicitado ($filename_or_foldername).");
+                    $permissionsActual = self::permissoesObter($fileOrFolderName,$throwException);
+                    throw new Exception("Não foi possível alterar as permissões do arquivo ou pasta solicitado ($fileOrFolderName ['$permissionsActual']) para '$newPermissions'.");
                 }else{
                     return false;
                 }                
             }else{
                 return true;
             }
+        }else{
+            return false;
         }
     }
     

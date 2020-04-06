@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 class ProcessResult
 {
@@ -14,7 +14,7 @@ class ProcessResult
      *
      * @return array
      */
-    static function GET($unset_all = false): array
+    static function GET(bool $unset_all = false): array
     {
         $return = [];
 

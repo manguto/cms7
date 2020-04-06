@@ -1,0 +1,14 @@
+<?php
+namespace cms\view\admin;
+
+
+
+use cms\view\View; 
+
+class ViewLogin extends View
+{    
+    static function get_admin_login()
+    {
+        self::PageAdmin("login");
+    }
+}

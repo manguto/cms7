@@ -1,0 +1,80 @@
+<?php
+namespace cms\model;
+
+use manguto\cms7\lib\model\Model;
+use manguto\cms7\lib\database\ModelDatabase;
+use manguto\cms7\lib\database\repository\ModelRepository;
+use manguto\cms7\lib\model\ModelAttribute;
+use manguto\cms7\lib\model\ModelStart;
+use manguto\cms7\lib\Exception;
+
+class Profile extends Model implements ModelDatabase
+{
+    
+    use ModelStart;
+    use ModelRepository;
+
+    const default = [
+        [
+            'name' => 'Desenvolvedor',
+            'key' => 'dev'
+        ],
+        [
+            'name' => 'Administrador',
+            'key' => 'admin'
+        ],        
+        [
+            'name' => 'Usuário',
+            'key' => 'user'
+        ]
+    ];
+
+    /**
+     * Função para definicao do atributos do modelo (ModelAttribute's)
+     */
+    private function defineAttributes()
+    {
+        // ---------------------------------------------------
+        $a = new ModelAttribute('name');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('key');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('obs');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+    }
+    
+    /**
+     * verifica se a 'key' informada existe dentre as especificadas no sistema
+     * @param string $key
+     * @return bool
+     */
+    static function checkKeyExist(string $key):bool{
+        foreach (Profile::default as $info){
+            $key_temp = $info['key'];
+            if($key==trim($key_temp)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * verifica se o perfil possui a 'key' informada
+     * @param string $key
+     * @return boolean
+     */
+    public function checkKey(string $key){
+        if(Profile::checkKeyExist($key)){
+            return $this->getKey()==trim($key);
+        }else{
+            throw new Exception("A chave de Perfil informada ('$key'), não foi encontrada no sistema.");
+        }        
+    }
+
+    
+}
+
+?>

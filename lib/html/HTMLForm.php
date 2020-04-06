@@ -1,7 +1,7 @@
 <?php
-namespace manguto\cms5\lib\html;
+namespace manguto\cms7\lib\html;
 
-use manguto\cms5\lib\Arrays;
+use manguto\cms7\lib\Arrays;
 
 class HTMLForm extends HTML
 {
@@ -37,7 +37,7 @@ class HTMLForm extends HTML
         $return[] = "<select name='{$tablename}_id' id='{$tablename}_id' class='form-control'>";
         $return[] = "<option value=''>Selecione uma opção...</option>";
         foreach ($rep as $r){
-            $r = Arrays::arrayMultiNivelParaSimples($r);
+            $r = Arrays::multiToSingleDimension($r);
             {
                 $selected = $r['id']==$idSelected ? 'selected' : '';
             }

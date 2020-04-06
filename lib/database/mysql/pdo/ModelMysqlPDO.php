@@ -1,10 +1,9 @@
 <?php
-namespace manguto\cms5\lib\database\mysql\pdo;
+namespace manguto\cms7\lib\database\mysql\pdo;
 
-use manguto\cms5\lib\Exception;
-use manguto\cms5\mvc\model\User;
-use manguto\cms5\lib\Logs;
-use manguto\cms5\lib\model\ModelAttribute;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\model\ModelAttribute;
+
 
 trait ModelMysqlPDO
 {
@@ -59,7 +58,7 @@ trait ModelMysqlPDO
     {
         {
             // validacao de dados (caso necessaria)
-            $this->VerifyDataAndStructure();
+            $this->CheckDataIntegrity();
         }
         
         { // verificacao/ajuste antes do salvamento
@@ -71,14 +70,14 @@ trait ModelMysqlPDO
                 $this->setInsert___datetime(date('Y-m-d H:i:s'));
 
                 // atualizacao do usuario autor da atulizacao
-                $this->setInsert___user_id(User::getSessionUserDirectAttribute('id'));
+                $this->setInsert___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
             }
 
             // atualizacao do datahora da atualizacao
             $this->setUpdate___datetime(date('Y-m-d H:i:s'));
 
             // atualizacao do usuario autor da atulizacao
-            $this->setUpdate___user_id(User::getSessionUserDirectAttribute('id'));
+            $this->setUpdate___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
         }
 
         {
@@ -180,7 +179,7 @@ trait ModelMysqlPDO
         $this->SetAttributes($ModelAttribute, false);
         
         //verificar dados e corretude de sua estrutura
-        $this->VerifyDataAndStructure();
+        $this->CheckDataIntegrity();
     }
 
     public function delete()
@@ -201,8 +200,7 @@ trait ModelMysqlPDO
 
     public function search(string $query = '', array $params = []): array
     {
-        Logs::set(Logs::TYPE_NOTICE, $query, $params);
-
+        
         $return = [];
 
         { // parametros
@@ -226,20 +224,18 @@ trait ModelMysqlPDO
             }
         }
 
-        Logs::set(Logs::TYPE_NOTICE, $query, $params);
-
         $mysql_pdo = $this->NewMysqlPDO();
         // deb($query,0);
         $register_array = $mysql_pdo->select($query, $params);
         // deb($register_array);
 
-        // Logs::set(Logs::TYPE_NOTICE,"Encontrado(s) '".count($register_array)."' registro(s).");
+        // Logger::set(Logger::TYPE_NOTICE,"Encontrado(s) '".count($register_array)."' registro(s).");
 
         foreach ($register_array as $register) {
             { // deb($register);
                 $object = new $called_class();
                 $object->SET_DATA($register);
-                $object->VerifyDataAndStructure();
+                $object->CheckDataIntegrity();
             }
             $return[$object->getId()] = $object;
         }

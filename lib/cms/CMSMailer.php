@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib\cms;
+namespace manguto\cms7\lib\cms;
 
 use Rain\Tpl;
 
@@ -16,8 +16,11 @@ class CMSMailer
     
     public function __construct(string $toAddress, string $toName, string $subject, string $tplName, array $data = array(), string $GMAIL_USERNAME = '', string $GMAIL_PASSWORD = '', string $NAME_FROM = '', string $EMAIL_FROM = '')
     {
-        $this->USERNAME = $GMAIL_USERNAME == '' ? GMAIL_USERNAME : $GMAIL_USERNAME;
-        $this->PASSWORD = $GMAIL_PASSWORD == '' ? GMAIL_PASSWORD : $GMAIL_PASSWORD;
+        //$this->USERNAME = $GMAIL_USERNAME == '' ? GMAIL_USERNAME : $GMAIL_USERNAME;
+        $this->USERNAME = $GMAIL_USERNAME;
+        //$this->PASSWORD = $GMAIL_PASSWORD == '' ? GMAIL_PASSWORD : $GMAIL_PASSWORD;
+        $this->PASSWORD = $GMAIL_PASSWORD;
+        
         $this->NAME_FROM = $NAME_FROM == "" ? SIS_NAME : $NAME_FROM;
         $this->EMAIL_FROM = $EMAIL_FROM == "" ? SIS_EMAIL : $EMAIL_FROM;
         
@@ -91,7 +94,7 @@ class CMSMailer
     public function contentTpl($tplName,$data)
     {
         $config = array(
-            "tpl_dir" => ROOT_TPL . "email/",
+            "tpl_dir" => SIS_CMS_TPL_PATH . "email/",
             "cache_dir" => "cache/",
             "debug" => true // set to false to improve speed
         );

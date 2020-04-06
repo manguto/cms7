@@ -1,15 +1,16 @@
-# Manguto - Content Management System V7.0
-> Compact Content Management System - Help on developing simple personal solutions & stuff. 
+# Manguto - Library & Content Management System
+
+> Library & Mini Content Management System - Little help on developing simple personal solutions. 
 
 ----
 ## composer.json
     {
 	"require" : {
-		"manguto/cms7" : "*"
+		"manguto/cms5" : "*"
 	},
 	"autoload" : {
 		"psr-4" : {
-			"mvc\\" : "mvc/"
+			"sis\\" : "sis/"
 		}
 	},
 	"minimum-stability" : "dev"
@@ -24,7 +25,7 @@ composer install
     session_unset();    
     use manguto\cms7\lib\cms\CMSSetup;
     require_once "vendor/autoload.php";
-    CMSSetup::Run('cms7');        
+    CMSSetup::Run('cms5');        
     ?>
 
 ## Done!

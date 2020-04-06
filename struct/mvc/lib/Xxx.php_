@@ -1,0 +1,9 @@
+<?php
+namespace cms\lib;
+
+class Xxx
+{
+
+}
+
+?>

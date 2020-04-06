@@ -1,21 +1,22 @@
 <?php
-namespace manguto\cms5\lib\database\repository;
+namespace manguto\cms7\lib\database\repository;
 
-use manguto\cms5\mvc\model\User;
-use manguto\cms5\lib\Exception;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\cms\CMSAccessManagement;
 
 trait ModelRepository
 {
-    
-    public function getDatabaseName() {
+
+    public function getDatabaseName()
+    {
         return 'Repository';
     }
-    
-    public function save() 
+
+    public function save()
     {
         {
             // validacao de dados (caso necessaria)
-            $this->VerifyDataAndStructure();
+            $this->CheckDataIntegrity();
         }
         
         { // verificacao/ajuste antes do salvamento
@@ -27,30 +28,29 @@ trait ModelRepository
                 $this->setInsert___datetime(date('Y-m-d H:i:s'));
                 
                 // atualizacao do usuario autor da atulizacao
-                $this->setInsert___user_id(User::getSessionUserDirectAttribute('id'));
+                $this->setInsert___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
             }
             
             // atualizacao do datahora da atualizacao
             $this->setUpdate___datetime(date('Y-m-d H:i:s'));
             
             // atualizacao do usuario autor da atulizacao
-            $this->setUpdate___user_id(User::getSessionUserDirectAttribute('id'));
+            $this->setUpdate___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
         }
         {
-            $tablename = $this->GetTablename();
-            // deb($tablename);
+            // $tablename = $this->GetTablename();
             $id = $this->getId();
-        }        
+        }
         {
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            $repository = new Repository($tablename);
-            //deb($repository);
+            $repository = new Repository($this->GetClassName());
+            // deb($repository);
             $parameters = $this->getParameters();
-            //deb($parameters);
+            // deb($parameters);
             $repository->save($parameters);
-            //deb($repository);
+            // deb($repository);
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -58,14 +58,15 @@ trait ModelRepository
         { // definicao do id do objeto quando da sua criacao
             if ($id == 0) {
                 $lastInsertedId = $repository->getLastInsertId();
-                //deb($lastInsertedId);
+                // deb($lastInsertedId);
                 $this->setId($lastInsertedId);
             }
         }
     }
-     
+
     /**
      * carrega o objeto com base no ID informado
+     *
      * @throws Exception
      */
     public function load()
@@ -74,18 +75,18 @@ trait ModelRepository
             $tablename = $this->GetTablename();
             // deb($tablename);
         }
-        {//identificador
+        { // identificador
             $id = $this->getId();
-            //deb($id);
+            // deb($id);
         }
-        //carrega algum objeto caso o id do mesmo tiver sido informado
-        if($id!=0){
+        // carrega algum objeto caso o id do mesmo tiver sido informado
+        if ($id != 0) {
             // deb($this);
             $object_array = self::search(' $id={id} ', $this->getParameters('id'));
-            //deb($object_array);
+            // deb($object_array);
             
             $registerAmount = sizeof($object_array);
-            //deb($registerAmount);
+            // deb($registerAmount);
             if ($registerAmount == 0) {
                 throw new Exception("Não foi encontrado nenhum registro para identificador ($id) na tabela '$tablename'.");
             } elseif ($registerAmount > 1) {
@@ -102,61 +103,58 @@ trait ModelRepository
             // definir dados no objeto
             $this->SetAttributes($ModelAttribute, false);
             
-            //verificar dados e corretude de sua estrutura
-            $this->VerifyDataAndStructure();
+            // verificar dados e corretude de sua estrutura
+            $this->CheckDataIntegrity();
         }
     }
-       
+
     public function delete()
     {
-        $id = $this->getId()*-1;
+        $id = $this->getId() * - 1;
         $this->setId($id);
         $this->save();
     }
-    
+
     public function search(string $query = '', array $parameters = []): array
-    {   
-        //deb($query,0); deb($parameters);        
-        
-        {//instanciando objeto para acesso ao repositorio
-            //$tablename = $this->GetTablename();
-            //$repository = new Repository($tablename);
+    {
+        $return = [];
+        //=======================================================================================
+        { // analises/verificacoes da query informada
+            //deb($query,0);
+            [$query,$order_by] = Repository::search_query_parse($query);
+            //deb($query,0);
+        }        
+        //=======================================================================================
+        {// obtencao dos registros no respectivo repositorio
             $className = $this->GetClassName(true);
             $repository = new Repository($className);
-
+            $table = $repository->select($query, $parameters);                     
         }
-        {
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //deb($query,0);
-            $table = $repository->select($query, $parameters);
-            //debc($table,0);
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            
+        //=======================================================================================
+        {//criacao de cada objeto e insercao no array de retorno            
+            foreach ($table as $row) {
+                $modelClassName = $this->getClass();
+                $registro = new $modelClassName();
+                $registro->SET_DATA($row);
+                $registro->CheckDataIntegrity();
+                $return[$registro->getId()] = $registro;
+            }
         }
-        
-        $return=[];
-        foreach ($table as $row) {
-            $modelClassName = $this->getClass();
-            $registro = new $modelClassName();
-            $registro->SET_DATA($row);            
-            $registro->VerifyDataAndStructure();
-            //deb($registro);
-            $return[$registro->getId()] = $registro;
+        //=======================================================================================
+        {//ordenacao dos resultados informados            
+            $return = Repository::result_order_by($return,$order_by);            
         }
-        
+        //=======================================================================================
         return $return;
     }
-       
-    public function length(string $query, array $params = []): int
+
+
+    public function length(string $query = ''): int
     {
-        $return =  $this->search();        
+        $return = $this->search($query);
         return sizeof($return);
     }
-      
+
     public function getParameters($attributes = [], $exceptions = []): array
     {
         { // correcao ajuste do formato dos parametros
@@ -211,14 +209,14 @@ trait ModelRepository
             // deb($attributes);
         }
         
-        //deb($attributes,0);
-        //deb($exceptions,0);
+        // deb($attributes,0);
+        // deb($exceptions,0);
         
         $return = [];
         foreach ($all_attributes as $attribute) {
             
             $name = $attribute->getName();
-            //deb($name,0);
+            // deb($name,0);
             // verificacao se algum parametro deve ser removido ou exibido
             
             if ($return_attributes && ! in_array($name, $attributes)) {
@@ -232,11 +230,9 @@ trait ModelRepository
             $return[$name]['data_type'] = $attribute->getType();
             $return[$name]['length'] = $attribute->getLength();
         }
-        //deb($return);
+        // deb($return);
         return $return;
     }
-    
-    
 }
 
 ?>

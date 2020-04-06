@@ -1,0 +1,298 @@
+<?php
+namespace cms\model;
+
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\model\Model;
+use manguto\cms7\lib\model\ModelAttribute;
+use manguto\cms7\lib\model\ModelStart;
+use manguto\cms7\lib\database\repository\ModelRepository;
+use manguto\cms7\lib\database\ModelDatabase;
+
+class User extends Model implements ModelDatabase
+{
+    
+    use ModelStart;
+    use ModelRepository;
+
+    const default = [
+        [
+            'name' => 'Administrador',
+            'login' => 'adm',
+            'password' => 'mad',
+            'email' => 'adm@sis.com',
+            'phone' => '(XX) X.XXXX-XXXX'
+        ]
+    ];
+
+    const SESSION = "User";
+
+    const FORGOT_EMAIL = "UserEmail";
+
+    /**
+     * !IMPORTANT
+     * Função para defniicao do atributos do modelo!
+     */
+    private function defineAttributes()
+    {
+        // ---------------------------------------------------
+        $a = new ModelAttribute('name');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('login');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('password');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('email');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+        $a = new ModelAttribute('phone');
+        $this->SetAttribute($a);
+        // ---------------------------------------------------
+    }
+
+    // ############################################################################################################################################
+    
+    /**
+     * definicao do password (c/ cifragem)
+     * @param string $value
+     */
+    public function setPassword(string $value)
+    {
+        if(trim($value)==''){
+            throw new Exception("A senha de usuário não pode ser vazia.");
+        }else{
+            parent::setPassword(User::password_crypt($value));
+        }        
+    }
+
+    // ############################################################################################################################################
+    
+    /**
+     * verifica se existe algum usuario com o login / password informados
+     * retornando-o caso afirmativo e caso contrario 'false'
+     *
+     * @param string $login
+     * @param string $password
+     * @throws Exception
+     * @return boolean|mixed
+     */
+    static function checkUserCredentials(string $login, string $password)
+    {
+        $return = false;
+        // usuario existe?
+        $login__search = (new User())->search(" \$login=='$login' ");
+        $n = count($login__search);
+        if ($n == 1) {
+            // usuario e senha correta?
+            $login_and_password__search = (new User())->search(" \$login=='$login' && \$password=='" . User::password_crypt($password) . "' ");
+            $m = count($login_and_password__search);
+            if ($m == 1) {
+                $return = array_shift($login_and_password__search);
+            } else if ($m > 1) {
+                throw new Exception("Foram encontrados mais de um usuário com o mesmo login e senha. Contate o administrador.");
+            }
+        } else if ($n > 1) {
+            throw new Exception("Foram encontrados mais de um usuários com o mesmo login. Contate o administrador.");
+        }
+        return $return;
+    }
+
+    // ############################################################################################################################################
+    /**
+     * obtem os perfis vinculados ao usuario
+     *
+     * @return array
+     */
+    public function getProfiles(): array
+    {
+        return User_profile::getUserProfiles($this->getId());
+    }
+
+    // ############################################################################################################################################
+    /**
+     * verifica se o usuario possui o perfil correspondente aa chave informada
+     *
+     * @param string $profileKey
+     * @return bool
+     */
+    public function checkProfile(string $profileKey): bool
+    {
+        $profiles = $this->getProfiles();
+        foreach ($profiles as $profile) {
+            if ($profile->checkKey($profileKey)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ############################################################################################################################################
+    
+    /**
+     * Verifica se existe algum usuario com o login informado.
+     * Caso haja alguma excecao, basta informar o 'id' do usuario
+     * no parametro correspondente.
+     * @param string $login
+     * @param boolean $exception__user_id
+     * @throws Exception
+     * @return bool
+     */
+    static function checkLoginExist(string $login, $exception__user_id = false): bool
+    {
+        { // query
+            if ($user_id == false) {
+                $query = " \$login=='$login' ";
+            } else {
+                $query = " \$login=='$login' && \$id!=$exception__user_id ";
+            }
+        }
+        $result = (new User())->search($query);
+        $n = sizeof($result);
+        if ($n == 1) {
+            return true;
+        } else if ($n == 0) {
+            return false;
+        } else {
+            throw new Exception("Foram encontrados $n usuários com o mesmo login. Contate o administrador.");
+        }
+    }
+
+    // ############################################################################################################################################
+    
+    /**
+     * Verifica se existe algum usuario com o e-mail informado.
+     * Caso haja alguma excecao, basta informar o 'id' do usuario
+     * no parametro correspondente.
+     *
+     * @param string $email
+     * @param boolean $exception__user_id
+     * @throws Exception
+     * @return mixed|boolean
+     */
+    static function checkEmailExist(string $email, $exception__user_id = false)
+    {
+        { // query
+            if ($exception__user_id == false) {
+                $query = " \$email=='$email' ";
+            } else {
+                $query = " \$email=='$email' && \$id!=$exception__user_id ";
+            }
+        }
+        $result = (new User())->search($query);
+        $n = sizeof($result);
+        if ($n == 1) {
+            return array_shift($result);
+        } else if ($n == 0) {
+            return false;
+        } else {
+            throw new Exception("Foram encontrados $n usuários com o mesmo e-mail ('$email'). Contate o administrador.");
+        }
+    }
+
+    // ############################################################################################################################################
+    
+    /**
+     * Verifica se os campos informados ($_POST) podem ser utilizados em um usuario para criacao ou atualizacao
+     *
+     * @throws Exception
+     */
+    public function verifyFieldsToCreateUpdate()
+    {
+        
+        // name
+        if ($this->getname() == '') {
+            throw new Exception("Preencha o seu nome.");
+        }
+        // email
+        if ($this->getemail() == '') {
+            throw new Exception("Preencha o seu email.");
+        }
+        // login
+        if ($this->getlogin() == '') {
+            throw new Exception("Preencha o seu login.");
+        }
+        
+        // login exists
+        if (User::checkLoginExist($this->getLogin(), $this->getId())) {
+            throw new Exception("O Login '<b>" . $this->getLogin() . "</b>' já se encontra em uso.<br/> Preencha outro valor e tente novamente.");
+        }
+        // email exists
+        
+        if (User::checkEmailExist($this->getEmail(), $this->getId())) {
+            throw new Exception("O E-mail '<b>" . $this->getEmail() . "</b>' já se encontra em uso.<br/> Preencha outro valor e tente novamente.");
+        }
+        
+        // password
+        if ($this->getpassword() == '') {
+            throw new Exception("Preencha a sua senha.");
+        }
+    }
+
+    // ############################################################################################################################################
+    public function verifyPasswordUpdate($current_pass, $new_pass, $new_pass_confirm)
+    {
+        { // --- ERROR VERIFICATION
+            if ($current_pass === '') {
+                throw new Exception('Digite a SENHA ATUAL.');
+            }
+            
+            if ($new_pass === '') {
+                throw new Exception('Digite a NOVA SENHA.');
+            }
+            
+            if ($new_pass_confirm === '') {
+                throw new Exception('Digite a CONFIRMAÇÃO da nova senha.');
+            }
+            
+            if ($new_pass !== $new_pass_confirm) {
+                throw new Exception('A CONFIRMAÇÃO da nova senha NÃO CONFERE.');
+            }
+            
+            if (User::password_crypt($new_pass) === $this->getPassword()) {
+                throw new Exception('A sua nova senha deve ser DIFERENTE da atual.');
+            }
+            
+            if (User::password_crypt($current_pass) !== $this->getPassword()) {
+                throw new Exception('A SENHA ATUAL não está correta.');
+            }
+        }
+    }
+
+    // ############################################################################################################################################
+    public function __toString()
+    {
+        $return = "
+        <ul class='list list-striped list-bordered-bottom'>
+            <li>Nome: <b>{$this->getName()}</b></li>
+            <li>Login: <b>{$this->getLogin()}</b></li>
+            <li>E-mail: <b>{$this->getEmail()}</b></li>
+            <li>Perfil(is): <b>...</b></li>
+        </ul>";
+        
+        return $return;
+    }
+
+    // ############################################################################################################################################
+    // ####################################################################################################################################### AUX
+    // ############################################################################################################################################
+    /**
+     * realiza a cifragem da string informada
+     *
+     * @param string $passwordRaw
+     * @return string
+     */
+    static function password_crypt(string $passwordRaw): string
+    {
+        // return password_hash($passwordRaw,PASSWORD_DEFAULT,["cost"=>12]);
+        return md5($passwordRaw);
+    }
+    
+    // ############################################################################################################################################
+    // ############################################################################################################################################
+    // ############################################################################################################################################
+}
+
+
+

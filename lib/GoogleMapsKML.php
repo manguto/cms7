@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 class GoogleMapsKML extends GoogleMaps
 {

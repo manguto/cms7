@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib\html;
+namespace manguto\cms7\lib\html;
 
 
 /**
@@ -756,8 +756,8 @@ class simple_html_dom
     function childNodes($idx=-1) {return $this->root->childNodes($idx);}
     function firstChild() {return $this->root->first_child();}
     function lastChild() {return $this->root->last_child();}
-    function createElement($name, $value=null) {return @simple_html_dom_str("<$name>$value</$name>")->first_child();}
-    function createTextNode($value) {return @end(simple_html_dom_str($value)->nodes);}
+    function createElement($name, $value=null) {return @simple_html_dom_parser::load_str("<$name>$value</$name>")->first_child();}
+    function createTextNode($value) {return @end(simple_html_dom_parser::load_str($value)->nodes);}
     function getElementById($id) {return $this->find("#$id", 0);}
     function getElementsById($id, $idx=null) {return $this->find("#$id", $idx);}
     function getElementByTagName($name) {return $this->find($name, 0);}

@@ -1,0 +1,36 @@
+<?php
+namespace cms\view\dev;
+
+
+use cms\model\User;
+use cms\view\View;
+
+class ViewUsers extends View
+{
+
+    static function get_dev_users($users)
+    {   
+        self::PageDev("users", [
+            'users' => $users
+        ]);
+    }
+    
+    static function get_dev_users_create()
+    {
+        $adminzoneaccess = User::adminzoneaccess;
+        $devzoneaccess = User::devzoneaccess;
+        $temp = 'usuario' . date("is");        
+        self::PageDev("users-create", get_defined_vars());
+    }
+    static function get_dev_user($user)
+    {   
+        self::PageDev("users-view", get_defined_vars());        
+    } 
+    
+    static function get_dev_user_edit($user)
+    {   
+        $adminzoneaccess = User::adminzoneaccess;
+        $devzoneaccess = User::devzoneaccess;
+        self::PageDev("users-update", get_defined_vars());
+    }
+}

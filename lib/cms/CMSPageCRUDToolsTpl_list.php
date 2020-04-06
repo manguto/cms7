@@ -1,8 +1,8 @@
 <?php
-namespace manguto\cms5\lib\cms;
+namespace manguto\cms7\lib\cms;
 
-use manguto\cms5\lib\model\Model_Helper;
-use manguto\cms5\lib\model\Model_Reference;
+use manguto\cms7\lib\model\Model_Helper;
+use manguto\cms7\lib\model\Model_Reference;
 
 class CMSPageCRUDToolsTpl_list
 {

@@ -1,7 +1,7 @@
 <?php
-namespace manguto\cms5\lib\database\mysql\mysqli;
+namespace manguto\cms7\lib\database\mysql\mysqli;
 
-use manguto\cms5\lib\Exception;
+use manguto\cms7\lib\Exception;
 
 trait ModelMysqli
 {

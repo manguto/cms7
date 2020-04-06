@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 class Calendario
 {
@@ -208,7 +208,7 @@ class Calendario
         { // DEFINICAO DE ATRIBUTOS DAS TAGS ENVOLVIDAS
 
             // DOM OBJECT
-            $return_dom = simple_html_dom_str($return);
+            $return_dom = simple_html_dom_parser::load_str($return);
             // deb($return_dom);
 
             { // TABLE

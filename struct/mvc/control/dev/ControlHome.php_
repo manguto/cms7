@@ -1,0 +1,19 @@
+<?php
+namespace cms\control\dev;
+
+use cms\control\Control;
+use cms\view\View;
+
+class ControlHome extends Control
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/dev', function () {
+            self::PrivativeDevZone();
+            View::PageDev('index');
+        });
+    }
+}
+
+?>

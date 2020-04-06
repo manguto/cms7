@@ -1,0 +1,19 @@
+<?php
+namespace cms\control\admin;
+
+use cms\view\admin\ViewZzz;
+use cms\control\Control;
+
+class ControlZzz extends Control 
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/admin/zzz', function () {
+            self::PrivativeAdminZone();
+            ViewZzz::zzz();
+        });
+    }
+}
+
+?>

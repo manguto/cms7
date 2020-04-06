@@ -1,0 +1,92 @@
+<?php
+namespace cms\control\site;
+
+use cms\model\User;
+use manguto\cms7\lib\ProcessResult;
+use cms\view\site\ViewProfile; 
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\Sessions;
+use cms\control\Control;
+use manguto\cms7\lib\cms\CMSAccessManagement;
+
+
+class ControlProfile extends Control
+{
+ 
+    static function RunRouteAnalisys($app)
+    {
+        $app->get('/profile', function () {
+            self::PrivativeZone();
+            ControlProfile::get_profile();
+        });
+        $app->post('/profile', function () {
+            self::PrivativeZone();
+            ControlProfile::post_profile();
+        });
+        $app->get('/profile/change-password', function () {
+            self::PrivativeZone();
+            ControlProfile::get_profile_change_password();
+        });
+        $app->post('/profile/change-password', function () {
+            self::PrivativeZone();
+            ControlProfile::post_profile_change_password();
+        });
+    }
+
+    static function get_profile()
+    {
+        
+        $user = CMSAccessManagement::getSessionUser();
+        ViewProfile::get_profile($user);
+    }
+
+    static function post_profile()
+    {   
+        $user = CMSAccessManagement::getSessionUser();
+        { // === PARAMETERS VERIFICATION & CERTIFICATION
+            $_POST['adminzoneaccess'] = $user->checkProfile('admin');
+            $_POST['password'] = $user->getPassword();
+            $_POST['login'] = $user->getLogin();
+        }
+        $user->SET_DATA($_POST);
+        try {
+            $user->verifyFieldsToCreateUpdate();
+            $user->save();
+            ProcessResult::setSuccess('Usuário salvo com sucesso!');
+            CMS::headerLocation('/profile');
+            exit();
+        } catch (Exception $e) {
+            ProcessResult::setError($e);
+            Sessions::set(\sis\control\admin\ControlProfile::key,$_POST);  
+            CMS::headerLocation('/profile');
+            exit();
+        }
+    }
+
+    static function get_profile_change_password()
+    {
+        ViewProfile::get_profile_change_password();
+    }
+
+    static function post_profile_change_password()
+    {
+        $user = CMSAccessManagement::getSessionUser();
+        try {
+            $current_pass = isset($_POST['current_pass']) ? $_POST['current_pass'] : '';
+            $new_pass = isset($_POST['new_pass']) ? $_POST['new_pass'] : '';
+            $new_pass_confirm = isset($_POST['new_pass_confirm']) ? $_POST['new_pass_confirm'] : '';
+            $user->verifyPasswordUpdate($current_pass, $new_pass, $new_pass_confirm);
+            $user->setPassword(User::password_crypt($new_pass));
+            $user->save();
+            ProcessResult::setSuccess('Senha alterada com sucesso!!!');
+            CMS::headerLocation('/');
+            exit();
+        } catch (Exception $e) {
+            ProcessResult::setError($e);
+            CMS::headerLocation('/profile/change-password');
+            exit();
+        }
+    }
+}
+
+?>

@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib\cms;
+namespace manguto\cms7\lib\cms;
 
 class CMSPageCRUDToolsTpl_view
 {

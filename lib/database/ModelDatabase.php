@@ -1,12 +1,12 @@
 <?php
-namespace manguto\cms5\lib\database;
+namespace manguto\cms7\lib\database;
 
 /**
- * Responsavel pela definicao dos metodos fundamentais aos TRAITS que fazem a interface com as bases de dados (ModelMysqlPDO, ModelRepository, etc.),
- * mas que como não podem ser interfaceados pelos TRAITS, devem ser pelos MODELOS.
- *
- * @author MAGT
- *        
+ * Metodos fundamentais dos TRAITS que fazem a interface 
+ * com as bases de dados (ModelMysqlPDO, ModelRepository, etc.)
+ * que devem ser interfaceados pelos MODELOS já que 
+ * não podem ser interfaceados pelos TRAITS. *
+ * @author MAGT        
  */
 interface ModelDatabase
 {
@@ -43,18 +43,15 @@ interface ModelDatabase
      * @param array $params
      * @return int
      */
-    function length(string $query, array $params = []): int;
+    function length(string $query): int;
     
     /**
      * Retorna os parametros do registro no formato exigido pelo banco de dados em questao.
-     * Obs.: os parametros da funcao sao filtros. utilizar apenas um deles 
-     * ou deixar ambos vazios ("[]") para obtencao de todos os atributos 
-     * do registro em questao. 
+     * Obs.: Os parametros desta funcao sao filtros. Utilize apenas um deles ou deixe ambos vazios
+     * (para obtencao de todos os atributos do registro em questao). 
      *
-     * @param array $attributes
-     *            - nomes dos parametros a serem exibidos, ou
-     * @param array $exceptions
-     *            - nomes dos parametros a serem ocultados
+     * @param array $attributes | nomes dos parametros a serem exibidos
+     * @param array $exceptions | nomes dos parametros a serem ocultados
      * @return array
      */
     function getParameters($attributes = [], $exceptions = []): array;

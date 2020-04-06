@@ -1,0 +1,26 @@
+<?php
+namespace cms\control\site;
+
+use manguto\cms7\lib\Sessions;
+
+use cms\view\View;
+use cms\control\Control;
+
+class ControlHome extends Control 
+{
+
+    static function RunRouteAnalisys($app)
+    {
+        { // ROTAS
+            $app->get('/', function () {                
+                View::PageSite("home");
+            });
+            
+            $app->get('/reset', function () {
+                Sessions::Reset();                
+            });
+        }
+    }   
+}
+
+?>

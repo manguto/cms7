@@ -1,18 +1,17 @@
 <?php
-namespace manguto\cms5\lib\model;
+namespace manguto\cms7\lib\model;
 
-use manguto\cms5\lib\Diretorios;
-use manguto\cms5\lib\Arquivos;
-use manguto\cms5\lib\Exception;
-use manguto\cms5\lib\Strings;
+use manguto\cms7\lib\Diretorios;
+use manguto\cms7\lib\Arquivos;
+use manguto\cms7\lib\Exception;
+use manguto\cms7\lib\Strings;
 
 class Model_Helper
 {
 
     const model_class_folders = [
-        'sis/model/',
-        VENDOR_MANGUTO_PRJ_ROOT.'mvc/model/'
-    ];     
+        SIS_CMS_MODEL_PATH
+    ];
     
     const funcoes_padrao = ['__construct','preLoad','posLoad'];
     
@@ -69,33 +68,23 @@ class Model_Helper
      * @return string
      */
     static function getObjectClassName_by_ClassName(string $ClassName): string
-    {
-        
-        $model_class_folders = self::model_class_folders;
-        //deb($model_class_folders,0);
-        
-        foreach ($model_class_folders as $model_class_folder) {
-            
+    {   
+        foreach (self::model_class_folders as $model_class_folder) {            
             $php_files = Diretorios::obterArquivosPastas($model_class_folder, true, true, false, [
                 'php'
             ]);
-            //deb($php_files,0);
             foreach ($php_files as $php_file) {
                 $nomeClasse = Arquivos::obterNomeArquivo($php_file, false);
-                $path = Arquivos::obterCaminho($php_file);
-                //deb($nomeClasse,0); deb($tablename,0);  
+                $path = $model_class_folder;                
                 if ($nomeClasse == $ClassName) {
-                    
-                    //deb($path);
                     $objectClassname = '\\' . $path . $ClassName;
                     $objectClassname = str_replace('/', '\\', $objectClassname);
                     $objectClassname = str_replace('\vendor', '', $objectClassname);
-                    // deb($objectClassname,0);
+                    //deb($objectClassname);
                     return $objectClassname;
                 }
             }
         }
-        //deb('+++');
         throw new Exception("Classe não encontrada ($ClassName).");
     }
     

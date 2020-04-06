@@ -1,0 +1,78 @@
+<?php
+namespace cms\control\dev;
+
+
+use manguto\cms7\lib\Diretorios;
+use manguto\cms7\lib\Arquivos;
+use cms\view\View;
+use cms\control\Control;
+
+class ControlDocs extends Control
+{
+    const folder = SIS_PATH . 'docs';
+
+    static function RunRouteAnalisys($app)
+    {
+        
+            $app->get('/dev/docs', function () {
+                self::PrivativeDevZone();
+                View::PageDev('docs', self::docs_parameters());
+            });
+            
+            
+            $app->get('/dev/docs/:page', function ($page) {
+                self::PrivativeDevZone();
+                View::PageDev('docs_page', self::docs_page_parameters($page));
+            });
+            
+            
+               
+    }
+
+    // =======================================================================================================================================
+    // =======================================================================================================================================
+    // =======================================================================================================================================
+    static private function docs_parameters()
+    {
+        $folder = self::folder;
+        $samples = [];
+        // deb($folder);
+        if (file_exists($folder)) {
+            $htmls = Diretorios::obterArquivosPastas($folder, false, true, false, [
+                'html'
+            ]);
+
+            foreach ($htmls as $html) {
+                $filename = Arquivos::obterNomeArquivo($html, false);
+                $samples[$filename] = ucfirst($filename);
+            }
+        }
+        // deb($samples);
+
+        return get_defined_vars();
+    }
+    
+    static private function docs_page_parameters($page)
+    {
+        $folder = self::folder;
+        {
+            $pageTitle = ucfirst($page);    
+        }
+        {
+            //$pageContent = Arquivos::obterConteudo(SIS_PATH.'docs/'.$page.'.html');
+            $include = "../../../../../$folder/$page";
+        }
+        return get_defined_vars();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+?>

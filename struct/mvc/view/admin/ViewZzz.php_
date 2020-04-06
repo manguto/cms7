@@ -1,0 +1,18 @@
+<?php
+namespace cms\view\admin;
+
+use cms\view\View;
+
+class ViewZzz extends View
+{
+
+    static function zzz()
+    {
+        self::PageAdmin('zzz');
+    }
+}
+
+
+
+
+

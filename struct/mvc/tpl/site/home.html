@@ -1,0 +1,25 @@
+{include="../../../sis/tpl/general/__open"} {include="../../../sis/tpl/general/_header"}
+<section>
+	<div class="container mt-0 mb-0 pt-0 pb-0">{include="../../../sis/tpl/general/_section_top"}</div>	
+	<div class="container">
+		<div class="row mb-5">
+			<div class="col-12">
+				<h1 class=''>Bem vindo(a)</h1>
+				<h1 class='display-4'>{#SIS_NAME_FULL#}</h1>
+			</div>
+		</div>
+		<br />
+		<br />
+		<div class="row">
+			<div class="col-12">
+				{if="sizeof(\sis\model\User_module::getUserModulesHomeMenu())>0"} 
+				<h3 style='font-style: italic;'>Módulos disponíveis:</h3>
+				{loop="\sis\model\User_module::getUserModulesHomeMenu()"}
+					<a href='{$value.href}' class='btn btn-outline-success'>{$value.html}</a> <hr />
+				{/loop}
+				{/if}	
+			</div>
+		</div>
+	</div>
+</section>
+{include="../../../sis/tpl/general/_footer"} {include="../../../sis/tpl/general/__close"}

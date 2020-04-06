@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 class Strings
 {
@@ -595,6 +595,7 @@ class Strings
             $caracter = $string[$c];
             $ascii = ord($caracter);
             
+            $caracter_show = trim($caracter)=='' ? '_' : $caracter;
             $return[] = "<a href='#' title='$caracter($ascii)'>$caracter</a>";
         }
         return implode('', $return);
@@ -846,9 +847,17 @@ class Strings
         return $return;
     }
 
-    static function str_inverter($string)
+    
+    /**
+     * inverte cada caractere da string informada
+     * de forma que esta se torna ordenalmente inversa 
+     * a string original
+     * @param $string
+     * @return string
+     */
+    static function str_inverter($string):string
     {
-        
+        $string = strval($string);
         // deb(chr(65));
         
         // 0-255

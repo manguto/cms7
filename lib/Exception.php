@@ -1,12 +1,11 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
 class Exception extends \Exception
 {
 
     public function __construct($message = null, $code = null, $previous = null)
     {   
-        Logs::set(Logs::TYPE_ERROR,$message);
         parent::__construct($message, $code, $previous);
     }
 

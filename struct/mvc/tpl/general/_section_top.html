@@ -1,0 +1,80 @@
+
+<div class="row pt-1">
+	<div class="col-10 process-results-area">
+		<a href='javascript:void(0)' onclick='prs_toggle()' class="toggle_btn" style=' display:none; font-size:10px; color:#aaa;' title='Exibir/Ocultar mensagens apresentadas.'><i>Exibir/Ocultar Mensagens</i></a>
+		<div class="process-results m-0 p-0">
+			<!-- ---------------------------------------------------------------------------------------- PROCESS RESULTS - START -->
+			{loop="manguto\cms7\lib\ProcessResult::GET()"}
+			<div class="process-result {$value.row_class} mb-0 mt-0" style="background:#fff;">
+				<div class="alert mb-1 {$value.col_class}">{autoescape="off"} {$value.msg} {/autoescape}</div>
+			</div>
+			{/loop}
+			<!-- ---------------------------------------------------------------------------------------- PROCESS RESULTS - END -->
+		</div>		
+	</div>
+	<div class="col-2 text-right no-print">
+		<a href="javascript:history.back(0);" class='btn-voltar' title="Clique para voltar à página anterior.">
+			<img src="/res/img/back.png" alt="VOLTAR"/>Voltar
+		</a>						
+	</div>
+</div>
+<style>
+.btn-voltar{	
+	color:#000;		
+	font-size:12px;
+	background:#fff;
+	border:solid 1px #fff;
+	border-radius:5px; 
+	padding:3px 8px 6px 5px;
+	margin:15px 0px 0px 0px;
+	opacity: 0.5;	
+}
+.btn-voltar img{	
+	width:12px;
+	margin:0px 5px 3px 0px;	
+}
+.btn-voltar:hover{	
+	opacity: 1.0;
+	box-shadow: 0px 1px 1px #555;
+	border:solid 1px #000;
+	color:#000;
+}
+</style>
+<script>
+	{//configurations
+		var tempo_ocultar = 3 * 1000; //seg
+		var tempo_efeito = 1 * 1000; //seg	
+	}
+	
+	function prs_toggle(){
+		$('.process-result.hide').toggle();
+	}
+	
+	function btn_voltar_hideShow(){
+		if (document.referrer == "") {
+		    $('.btn-voltar').hide();
+		}
+	}
+
+	$(document).ready(function() {
+		
+		var prsa = $('.process-results-area');		
+		var prs = $('.process-results');		
+		var pr = $('.process-result');
+		
+		//obtem a quantidade de mensagens existentes na iteracao
+		var pr_l = pr.length;
+		//log(pr_l);
+		
+		if (pr_l > 0) {
+			{//cria o botao de exibicao
+				prsa.find(".toggle_btn").show();
+			}
+			setTimeout(function() {
+				$('.process-result.hide').slideUp(tempo_efeito);
+			}, tempo_ocultar);
+		}
+		//*---------------
+		btn_voltar_hideShow();
+	});
+</script>

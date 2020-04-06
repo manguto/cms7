@@ -1,0 +1,39 @@
+<?php
+namespace cms\view\admin;
+
+use cms\view\View;
+use cms\model\User;
+
+class ViewUsers extends View
+{
+
+    static function get_admin_users()
+    {   
+        {
+            $users = (new User())->search();
+        }
+        self::PageAdmin("users",get_defined_vars());
+    }
+    
+    static function get_admin_users_create()
+    {
+        {
+            $temp = 'usuario' . date("is");
+        }
+        self::PageAdmin("users-create",get_defined_vars());
+    }
+    static function get_admin_user($id)
+    {   
+        {
+            $user = new User($id);
+        }
+        self::PageAdmin("users-view",get_defined_vars());
+    }
+    
+    static function get_admin_user_edit($user)
+    {   
+        self::PageAdmin("users-update", [
+            'user' => $user->GET_DATA($extraIncluded = true, $ctrlParametersIncluded = false, $referencesIncluded = true, $singleLevelArray = false)
+        ]);
+    }
+}
