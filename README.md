@@ -25,7 +25,7 @@ composer install
     session_unset();    
     use manguto\cms7\lib\cms\CMSSetup;
     require_once "vendor/autoload.php";
-    CMSSetup::Run('cms5');        
+    CMSSetup::Run('cms7');        
     ?>
 
 ## Done!
