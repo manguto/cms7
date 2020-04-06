@@ -6,7 +6,7 @@
 ## composer.json
     {
 	"require" : {
-		"manguto/cms5" : "*"
+		"manguto/cms7" : "*"
 	},
 	"autoload" : {
 		"psr-4" : {
