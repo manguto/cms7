@@ -1,8 +1,6 @@
 <?php
-namespace manguto\cms5\lib;
+namespace manguto\cms7\lib;
 
-use OfxParser\Parser;
- 
 /**
  * Classe de suporte ao tratamento de arquivos OFX
  * http://www.ofx.net/downloads/OFX%202.2.pdf
@@ -42,7 +40,8 @@ class OFXs
     {
         $this->filename = $filename;
 
-        $this->parser = new Parser();
+        //$this->parser = new Parser();
+        $this->parser = new \stdClass();
         // deb($this->parser);
 
         $this->ofx = $this->parser->loadFromFile($this->filename);

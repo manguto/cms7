@@ -4,23 +4,53 @@ namespace manguto\cms7\lib;
 class Exception extends \Exception
 {
 
+    // ####################################################################################################
+    // ########################################################################################## construct
+    // ####################################################################################################
     public function __construct($message = null, $code = null, $previous = null)
-    {   
+    {
         parent::__construct($message, $code, $previous);
     }
 
+    // ####################################################################################################
+    
     /**
-     * Exibicao de alguma excessao ou mensagem de erro
-     *
+     * imprime ou obtem o html com as informacoes da excecao
+     * @param bool $print
+     * @return string
+     */
+    public function show(bool $print=true){
+        return Exception::static_show($this,$print);
+    }
+    
+    // ####################################################################################################
+    // ############################################################################################# static
+    // ####################################################################################################
+    /**
+     * imprime o caminho percorrido ate o local quantas vezes o codigo passar pelo mesmo
+     * @param string $msg
+     * @throws Exception
+     */
+    static function deb($msg = '')
+    {
+        try {
+            throw new Exception($msg);
+        } catch (Exception $e) {
+            Exception::static_show($e, true);
+        }
+    }
+
+    // ####################################################################################################
+    // ############################################################################################ private
+    // ####################################################################################################
+    
+    /**
+     * exibe a excecao informada
+     * @param Exception $e
      * @param boolean $echo
      * @return string
      */
-    public function show($echo = false)
-    {
-        return self::static_show($this, $echo);
-    }
-
-    static function static_show($e, $echo = false)
+    private static function static_show(Exception $e, $echo = false)
     {
         $type = gettype($e);
         $return = "<pre title='$type'><br/>";
@@ -34,23 +64,13 @@ class Exception extends \Exception
         }
     }
 
+    // ####################################################################################################
     /**
-     * imprime o caminho percorrido ate o local
-     * quantas vezes o codigo passar pelo mesmo
+     * Retorna um array com os caminhos percorridos na iteracao atual.
      *
-     * @param string $msg
-     * @throws Exception
+     * @return array
      */
-    static function deb($msg = '')
-    {
-        try {
-            throw new Exception($msg);
-        } catch (Exception $e) {
-            Exception::static_show($e, true);
-        }
-    }
-
-    public function getTraceAsArray()
+    private function getTraceAsArray(): array
     {
         { // conf
             $lineDelimiter = '#';
@@ -65,36 +85,37 @@ class Exception extends \Exception
         foreach ($trace_line_array as $trace_line) {
             $trace_line = Strings::RemoverQuebrasDeLinha($trace_line);
             $trace_line = trim($trace_line);
-            
-            // pula linhas vazias
-            if ($trace_line == ''){
-                continue;
-            }   
-            
-            //remove o indice à esquerda ("34 Xxxxxxxx xxxxxxxx")
-            $trace_line = substr($trace_line, strpos($trace_line, ' '));
-            
-            //remoce o registro referente ao index
-            if(strpos($trace_line, '{main}')){
-                $trace_line = getcwd().DIRECTORY_SEPARATOR.'index.php';
-            }            
-            $return[] = trim($trace_line);
 
+            // pula linhas vazias
+            if ($trace_line == '') {
+                continue;
+            }
+
+            // remove o indice à esquerda ("34 Xxxxxxxx xxxxxxxx")
+            $trace_line = substr($trace_line, strpos($trace_line, ' '));
+
+            // remoce o registro referente ao index
+            if (strpos($trace_line, '{main}')) {
+                $trace_line = getcwd() . DIRECTORY_SEPARATOR . 'index.php';
+            }
+            $return[] = trim($trace_line);
         }
-        //remove ultimo registro referente a chamada a esta mesma funcao
+        // remove ultimo registro referente a chamada a esta mesma funcao
         array_shift($return);
-        
-        //inverte a ordem do array
+
+        // inverte a ordem do array
         rsort($return);
         return $return;
     }
 
+    // ####################################################################################################
     /**
      * parseia a string do trace em parametros
+     *
      * @param string $trace_line
      * @return array
      */
-    private function getTraceAsArray_line(string $trace_line):array
+    private function getTraceAsArray_line(string $trace_line): array
     {
         $trace_line_info_array = explode(' ', $trace_line);
         // deb($trace_line_info_array);
@@ -125,9 +146,14 @@ class Exception extends \Exception
             'line' => $lineNumber,
             'function' => $class_method_function
         ];
-        
+
         return $return;
     }
+    
+    // ####################################################################################################
+    // ####################################################################################################
+    // ####################################################################################################
+    
 }
 
 ?>

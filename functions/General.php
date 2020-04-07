@@ -1,21 +1,17 @@
 <?php
 use manguto\cms7\lib\Variables;
-use manguto\cms7\lib\Exception;
 
-// =============================================================================================================================================
-// =============================================================================================================================================
-// ========================================= GENERAL FUNCTIONS =================================================================================
-// =============================================================================================================================================
-// =============================================================================================================================================
-
+// #############################################################################################################################################
+// ########################################################################################################################### GENERAL FUNCTIONS
+// #############################################################################################################################################
 
 /**
- * retorna uma string HTML com a representacao do conteudo do array
+ * DEBUG VARIABLE - IMPRIME ou RETORNA (die=false) a representacao HTML da variavel informada
  *
  * @param number $level
  * @return string
  */
-function debv($variable, $die = true, $level = 0)
+function debv($variable, $die = true, int $level = 0)
 {
     $type = gettype($variable);
     // boolean, integer, double, string, NULL, array, object, resource, unknown type
@@ -73,8 +69,9 @@ function debv($variable, $die = true, $level = 0)
     }
 }
 
+// #############################################################################################################################################
 /**
- * debug
+ * DEBUG - IMPRIME a representacao HTML da variavel informada
  *
  * @param bool $die
  * @param bool $backtrace
@@ -117,74 +114,24 @@ function deb($var, bool $die = true, bool $backtrace = true)
         $var = str_replace('"</', '</span>"</', $var);
     }
 
-    /* */
-
-    echo "<pre class='deb' title='$backtrace'>$var</pre>
+    echo "
+<pre class='deb' title='$backtrace'>$var</pre>
 <style>
-.deb {
-	line-height:17px;
-}
-
-.deb .varName { 
-	background: #ffb;	
-}
-
-.deb .varContent { 
-		
-}
-.deb .varContentValue { 
-	background: #fbb;
-    padding: 0px 5px;
-    border-radius:2px;
-}
-
-
-.deb .varArrayContent {
-	border-bottom: solid 1px #ccc;
-	border-left: solid 1px #eee;
-	padding: 0px 0px 5px 5px;
-	margin: 0px 0px 0px 10px;
-    cursor:pointer;    
-}
-.deb .varArrayContent:hover {
-    border-color:#555;
-}
-</style>
-";
-
-    if ($die)
+.deb {	line-height:17px;}
+.deb .varName {	background: #ffb;}
+.deb .varContent {}
+.deb .varContentValue {	background: #fbb;    padding: 0px 5px;    border-radius:2px;}
+.deb .varArrayContent {	border-bottom: solid 1px #ccc;	border-left: solid 1px #eee;	padding: 0px 0px 5px 5px;	margin: 0px 0px 0px 10px;    cursor:pointer;}
+.deb .varArrayContent:hover {    border-color:#555;}
+</style>";
+    if ($die) {
         die();
-}
-
-/**
- * debug code if '$deb' isset and is TRUE!
- *
- * @param bool $die
- * @param bool $backtrace
- */
-function debx($deb, $var, bool $die = true)
-{
-    if ($deb == true) {
-        $backtrace = true;
-        deb($var, $die, $backtrace);
     }
 }
 
+// #############################################################################################################################################
 /**
- * debug objects in a array
- * @param array $var_array
- * @param bool $die
- */
-function debs(array $var_array,bool $die=true,string $sep = '<hr/>'){
-    foreach ($var_array as $var){
-        echo "$var$sep";
-    }
-    if($die) die();
-}
-
-
-/**
- * realiza ajustes no backtrace informado para uma melhor apresetnacao
+ * realiza ajustes no backtrace informado para uma melhor apresentacao
  *
  * @param string $backtrace
  * @param boolean $sortAsc
@@ -202,31 +149,32 @@ function backtraceFix(string $backtrace, $sortAsc = true)
     return $backtrace;
 }
 
+// #############################################################################################################################################
 /**
- * debug code
+ * DEBUG - IMPRIME a representacao STRING da variavel informada em um campo de texto
  *
  * @param bool $die
  * @param bool $backtrace
  */
 function debc($var, bool $die = true, bool $backtrace = true)
 {
-
     // backtrace show?
     if ($backtrace) {
         $backtrace = backtraceFix(get_backtrace(), false);
     } else {
         $backtrace = '';
     }
-
     // var_dump to string
     ob_start();
     var_dump($var);
     $var = ob_get_clean();
     echo "<textarea style='border:solid 1px #000; padding:5px; width:90%; height:400px;' title='$backtrace'>$var</textarea>";
-    if ($die)
+    if ($die) {
         die();
+    }
 }
 
+// #############################################################################################################################################
 /**
  * Get Backtrace
  *
@@ -234,15 +182,13 @@ function debc($var, bool $die = true, bool $backtrace = true)
  */
 function get_backtrace(): string
 {
+    // obtem backtrace
     $trace = debug_backtrace();
-
     // removao da primeira linha relativa a chamada a esta mesma funcao
     array_shift($trace);
-
     // inversao da ordem de exibicao
     krsort($trace);
-
-    $log = '';
+    $return = '';
     $step = 1;
     foreach ($trace as $t) {
 
@@ -250,24 +196,22 @@ function get_backtrace(): string
             $file = $t['file'];
             $line = $t['line'];
             $func = $t['function'];
-            $log .= "#" . $step ++ . " => $func() ; $file ($line)\n";
+            $return .= "#" . $step ++ . " => $func() ; $file ($line)\n";
         }
     }
-    {
-        // identacao
-        // $log = CSVHelp::IdentarConteudoCSV($log,25,'direita');
-        $log = str_replace(';', '', $log);
-        // $log=str_replace(' ', '_', $log);
-    }
+    // identacao
+    $return = str_replace(';', '', $return);
 
-    return $log;
+    return $return;
 }
 
-// =============================================================================================================================================
-// =============================================================================================================================================
-// ========================================= ERRORS FUNCTIONS ================================================================================
-// =============================================================================================================================================
-// =============================================================================================================================================
+// #############################################################################################################################################
+// ############################################################################################################################ ERRORS FUNCTIONS
+// #############################################################################################################################################
+
+/**
+ * funcao utilizaca para tratamento de erros fatais
+ */
 function fatal_error_handler()
 {
     $error = error_get_last();
@@ -283,7 +227,17 @@ function fatal_error_handler()
         exit();
     }
 }
-
+// #############################################################################################################################################
+/**
+ * formatacao da exibicao do erro fatal
+ *
+ * @param integer $errno
+ * @param string $errstr
+ * @param
+ *            $errfile
+ * @param integer $errline
+ * @return string
+ */
 function format_fatal_error($errno, $errstr, $errfile, $errline)
 {
     $trace = print_r(debug_backtrace(), true);
@@ -317,35 +271,13 @@ function format_fatal_error($errno, $errstr, $errfile, $errline)
     return $content;
 }
 
-/**
- * Obtem o separador de diretorio (DIRECTORY_SEPARATOR) presente no caminho informado.
- * @param string $path
- * @param bool $throwException
- * @throws Exception
- * @return string|boolean
- */
-function DS(string $path, bool $throwException=true){
-    $return = DIRECTORY_SEPARATOR;
-    if(strpos($path, $return)===FALSE){        
-        $return = '/'==DIRECTORY_SEPARATOR ? '\\' : '/';            
-        if(strpos($path, $return)===false){
-            if($throwException){
-                throw new Exception("Não foi encontrado nenhum separador de pasta no caminho informado: '$path'.");
-            }else{
-                $return = false;
-            }
-        }
-    }
-    return $return;
-}
+// #############################################################################################################################################
+// ########################################################################################################################## VARIABLE FUNCTIONS
+// #############################################################################################################################################
 
-// =============================================================================================================================================
-// =============================================================================================================================================
-// ========================================= VARIABLE FUNCTIONS ================================================================================
-// =============================================================================================================================================
-// =============================================================================================================================================
 /**
  * Obtencao de variavel via GET
+ *
  * @param string $varname
  * @param string $default
  * @param bool $throwException
@@ -355,9 +287,10 @@ function GET(string $varname, $default = '', bool $throwException = false)
 {
     return Variables::GET($varname, $default, $throwException);
 }
-
+// #############################################################################################################################################
 /**
  * Obtencao de variavel via POST
+ *
  * @param string $varname
  * @param string $default
  * @param bool $throwException
@@ -368,53 +301,58 @@ function POST(string $varname, $default = '', bool $throwException = false)
     return Variables::POST($varname, $default, $throwException);
 }
 
-// =============================================================================================================================================
-// =============================================================================================================================================
-// ========================================= CSS FUNCTIONS =====================================================================================
-// =============================================================================================================================================
-// =============================================================================================================================================
-function css_repeat($input, $multiplier)
+
+// #############################################################################################################################################
+// ############################################################################################################################### CSS FUNCTIONS
+// #############################################################################################################################################
+
+/**
+ * retorna o termo informado repetido em sequencia
+ * na quantidade informada
+ *
+ * @param string $input
+ * @param int $multiplier
+ * @return string
+ */
+function css_repeat(string $term, string $separator = ',', int $multiplier)
 {
-    return str_repeat($input . ',', $multiplier - 1) . $input;
+    return str_repeat($term . $separator, $multiplier - 1) . $term;
 }
 
-// =============================================================================================================================================
-// =============================================================================================================================================
-// ======================================== STATIC CLASS METHOD CALLER ========================================================================
-// =============================================================================================================================================
-// =============================================================================================================================================
+// #############################################################################################################################################
+// ##################################################################################################################################### CLASSES
+// #############################################################################################################################################
+
 /**
- * Chamada de um metodo de uma determinada classe
+ * Retorna o resultado da chamada a classe, metodo e parametros informados
+ *
  * @param string $className
  * @param string $methodName
  * @return
  */
-function SCC(string $className, string $methodName)
+function staticClassMethod_call(string $className, string $methodName, $par1 = NULL, $par2 = NULL)
 {
+    $return = false;
     { // obtem os eventuais parametros do metodo a ser chamado
-      // deb(func_get_args());
         $args = func_get_args();
-        {
-            $evalTextPars = [];
-            if (sizeof($args) > 0) {
-                foreach ($args as $key => $arg) {
-                    // remove classname and method name from args
-                    if ($key < 2) {
-                        continue;
-                    }
-                    $evalTextPars[] = "\$args[$key]";
-                }
+        // percorre os argumentos informados, exceto os 2 primeiros (classname e methodname)
+        $evalTextPars = [];
+        if (sizeof($args) > 2) {
+            foreach (array_keys($args) as $key) {
+                $evalTextPars[] = "\$args[$key]";
             }
-            $evalTextPars = implode(',', $evalTextPars);
-            // deb($evalTextPars);
         }
+        $evalTextPars = implode(',', $evalTextPars);
     }
-
     $evalText = "\$return = $className::$methodName($evalTextPars);";
-    // deb($evalText);
-
     eval($evalText);
     return $return;
 }
+
+// #############################################################################################################################################
+// #############################################################################################################################################
+// #############################################################################################################################################
+// #############################################################################################################################################
+// #############################################################################################################################################
 
 ?>

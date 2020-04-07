@@ -1,6 +1,6 @@
 <?php
 namespace manguto\cms7\lib;
-
+ 
 class Sessions
 {
 
@@ -111,15 +111,12 @@ class Sessions
     /**
      * realiza um reset na sessao
      */
-    static function Reset($redirecionar = true)
+    static function Reset()
     {
         session_destroy();
         session_start();
-        if ($redirecionar) {
-            ProcessResult::setSuccess('Sessão reinicializada com sucesso!');
-            CMS::headerLocation('/');
-            exit();
-        }
+        ProcessResult::setSuccess('Sessão reinicializada com sucesso!');
+        return true;
     }
 }
 

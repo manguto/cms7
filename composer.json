@@ -12,7 +12,10 @@
 	},
 	"autoload" : {
 		"psr-4" : {
-			"manguto\\cms7\\lib\\" : "lib/"			
+			"manguto\\cms7\\cms\\" : "cms/",						
+			"manguto\\cms7\\database\\" : "database/",
+			"manguto\\cms7\\lib\\" : "lib/",
+			"manguto\\cms7\\model\\" : "model/"
 		},
 		"files" : [
 			"functions/General.php"			

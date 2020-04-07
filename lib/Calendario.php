@@ -208,7 +208,7 @@ class Calendario
         { // DEFINICAO DE ATRIBUTOS DAS TAGS ENVOLVIDAS
 
             // DOM OBJECT
-            $return_dom = simple_html_dom_parser::load_str($return);
+            $return_dom = simple_html_dom_parser::load_str($return); 
             // deb($return_dom);
 
             { // TABLE
@@ -227,7 +227,6 @@ class Calendario
                 }
             }
             { // TD
-
                 $index = 0;
                 foreach ($return_dom->find('td') as $td) {
                     $return_dom->find('td', $index)->class .= ' ' . $this->tdClass;

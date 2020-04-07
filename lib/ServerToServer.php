@@ -1,7 +1,6 @@
 <?php
 namespace manguto\cms7\lib;
 
-
 class ServerToServer
 {
 
