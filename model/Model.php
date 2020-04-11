@@ -293,15 +293,15 @@ abstract class Model
                 { // verifica se o atributo eh referencial (ex.: categoria_id, modalidade_ids) para definicao do(s) valor(es) __toString() das referencias
 
                     {
-                        $itsReferenceAttributeSingle = Model_Reference::itsReferenceAttributeSingle($attrName);
-                        $itsReferenceAttributeMultiple = Model_Reference::itsReferenceAttributeMultiple($attrName);
+                        $itsReferenceAttributeSingle = ModelReference::itsReferenceAttributeSingle($attrName);
+                        $itsReferenceAttributeMultiple = ModelReference::itsReferenceAttributeMultiple($attrName);
                     }
 
                     if ($itsReferenceAttributeSingle || $itsReferenceAttributeMultiple) {
                         
                         $this->loadReferences();
 
-                        $referencedModelName = Model_Reference::getReferencedModelName($attrName);
+                        $referencedModelName = ModelReference::getReferencedModelName($attrName);
 
                         if (isset($this->attributes_extra[$referencedModelName])) {
 
@@ -337,8 +337,8 @@ abstract class Model
             if(sizeof($attribute_extra_array)>0){                
                 foreach ($attribute_extra_array as $attrName => $attrValue) {
                     
-                    if(Model_Reference::itsNickedAttribute($attrName)){
-                        $attrName = Model_Reference::getNickname($attrName);
+                    if(ModelReference::itsNickedAttribute($attrName)){
+                        $attrName = ModelReference::getNickname($attrName);
                     }
                     
                     if(is_string($attrValue) || is_int($attrValue) || is_double($attrValue)){
@@ -563,7 +563,7 @@ abstract class Model
      */
     public function loadReferences(bool $inArray=true)
     {
-        Model_Reference::Load($this,$inArray);
+        ModelReference::Load($this,$inArray);
         // deb($this);
     }
     // ##################################################################################################################################

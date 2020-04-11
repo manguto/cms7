@@ -7,7 +7,7 @@ use manguto\cms7\lib\Strings;
 use manguto\cms7\lib\Exception;
 use manguto\cms7\lib\ServerHelp;
 use manguto\cms7\lib\ProcessResult;
-use manguto\cms7\mvc\model\User;
+
 use manguto\cms7\lib\Datas;
 use manguto\cms7\lib\Arrays;
 use manguto\cms7\lib\model\Model;
@@ -142,7 +142,8 @@ class _OFF_Repository extends Model
 
         { // =========================================================================== general parameters
             $cpi = _OFF_RepositoryReferences::ctrl_parameter_ini;
-            $user_id = User::getSessionUserDirectAttribute('id');
+            //$user_id = User::getSessionUserDirectAttribute('id');
+            $user_id = '?';
             $datetime = date(Datas::FormatoDatahora);
         }
 

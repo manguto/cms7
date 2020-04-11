@@ -3,7 +3,7 @@ namespace manguto\cms7\lib\model;
 
 use manguto\cms7\lib\Exception;  
 
-class Model_Reference
+class ModelReference
 {
 
     // indicador de referencia a outro objeto
@@ -127,7 +127,7 @@ class Model_Reference
         $possibleModelName = self::getReferencedModelName($attributeName);
         //deb($possibleModelName,0);
 
-        $modelPossibleModelName = Model_Helper::getObjectClassname($possibleModelName);        
+        $modelPossibleModelName = ModelHelper::getObjectClassname($possibleModelName);        
         //deb($modelPossibleModelName);
 
         if (self::itsReferenceAttributeMultiple($attributeName)) {

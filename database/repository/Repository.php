@@ -2,7 +2,7 @@
 namespace manguto\cms7\lib\database\repository;
 
 use manguto\cms7\lib\Arquivos;
-use manguto\cms7\lib\model\Model_Helper;
+use manguto\cms7\lib\model\ModelHelper;
 use manguto\cms7\lib\Exception;
 use manguto\cms7\lib\database\Database;
 use manguto\cms7\lib\Diretorios;
@@ -300,7 +300,7 @@ class Repository implements Database
     private function tableInit()
     {
         // deb($this);
-        $ClassNameFull = Model_Helper::getObjectClassName_by_ClassName($this->ClassName);
+        $ClassNameFull = ModelHelper::getObjectClassName_by_ClassName($this->ClassName);
         // deb($ClassNameFull);
         $tempObject = new $ClassNameFull();
         $data = $tempObject->GET_DATA(false, true);

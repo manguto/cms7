@@ -1,8 +1,8 @@
 <?php
 namespace manguto\cms7\lib\cms;
 
-use manguto\cms7\lib\model\Model_Helper;
-use manguto\cms7\lib\model\Model_Reference;
+use manguto\cms7\lib\model\ModelHelper;
+use manguto\cms7\lib\model\ModelReference;
 
 class CMSPageCRUDToolsTpl_list
 {
@@ -35,7 +35,7 @@ class CMSPageCRUDToolsTpl_list
     {
         $return = [];
         { // parameters
-            $objectClassname = Model_Helper::getObjectClassname($modelname);
+            $objectClassname = ModelHelper::getObjectClassname($modelname);
         }
         
         {
@@ -82,7 +82,7 @@ class CMSPageCRUDToolsTpl_list
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+        if (ModelReference::itsReferenceAttributeSingle($fieldname) || ModelReference::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "<select class='form-control' id='$fieldname' name='{$fieldname}[]' multiple='multiple'>
                     {loop=\"\$filter_" . $fieldname . "_array\"}
@@ -105,7 +105,7 @@ class CMSPageCRUDToolsTpl_list
     {
         $return = [];
         { // parameters
-            $objectClassname = Model_Helper::getObjectClassname($modelname);
+            $objectClassname = ModelHelper::getObjectClassname($modelname);
         }
         
         {
@@ -143,7 +143,7 @@ class CMSPageCRUDToolsTpl_list
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // ------------------------------------------------------------------------------------------------------------------------- referencia
         // verifica se existe o campo em questao possui um combo fixo (predefinido como constante da classe)
-        if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+        if (ModelReference::itsReferenceAttributeSingle($fieldname) || ModelReference::itsReferenceAttributeMultiple($fieldname)) {
             // deb($fieldname,0);
             $return = "combo_ordenar('#$fieldname',true,false); ";
             return $return;

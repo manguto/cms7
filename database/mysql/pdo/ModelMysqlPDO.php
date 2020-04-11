@@ -70,14 +70,16 @@ trait ModelMysqlPDO
                 $this->setInsert___datetime(date('Y-m-d H:i:s'));
 
                 // atualizacao do usuario autor da atulizacao
-                $this->setInsert___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
+                //$this->setInsert___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
+                $this->setInsert___user_id('?');
             }
 
             // atualizacao do datahora da atualizacao
             $this->setUpdate___datetime(date('Y-m-d H:i:s'));
 
             // atualizacao do usuario autor da atulizacao
-            $this->setUpdate___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
+            //$this->setUpdate___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
+            $this->setUpdate___user_id('?');
         }
 
         {

@@ -2,8 +2,8 @@
 namespace manguto\cms7\lib\cms;
 
 
-use manguto\cms7\lib\model\Model_Reference;
-use manguto\cms7\lib\model\Model_Helper;
+use manguto\cms7\lib\model\ModelReference;
+use manguto\cms7\lib\model\ModelHelper;
 
 class CMSPageCRUD extends CMSPage
 {
@@ -15,7 +15,7 @@ class CMSPageCRUD extends CMSPage
 
     static function List___get_register_array(string $tablename,string $conditions='',array $title_array)
     {
-        $ObjectClassname = Model_Helper::getObjectClassname($tablename);
+        $ObjectClassname = ModelHelper::getObjectClassname($tablename);
         
         { // full content
             $obj_array = $ObjectClassname::getList($conditions, $returnAsObject = true, $loadReferences = true);
@@ -29,8 +29,8 @@ class CMSPageCRUD extends CMSPage
                 foreach (array_keys($title_array) as $fieldname) {
 
                     { // caso seja um campo referencial
-                        if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
-                            $fieldame_call = Model_Reference::getReferencedModelName($fieldname);
+                        if (ModelReference::itsReferenceAttributeSingle($fieldname) || ModelReference::itsReferenceAttributeMultiple($fieldname)) {
+                            $fieldame_call = ModelReference::getReferencedModelName($fieldname);
                         } else {
                             $fieldame_call = $fieldname;
                         }

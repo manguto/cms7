@@ -2,7 +2,6 @@
 
 namespace manguto\cms7\lib\cms;
 
-use Rain\Tpl;
 use manguto\cms7\lib\Arquivos;
 use manguto\cms7\lib\Exception;
 
@@ -36,10 +35,10 @@ class CMSPageOther{
 			"debug"         => true  // set to false to improve the speed
 		);
 
-		Tpl::configure( $config );
+		//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Tpl::configure( $config );
 		
 		// create the Tpl object
-		$this->tpl = new Tpl;
+		//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$this->tpl = new Tpl;
 		
 		$this->assignDataArray($this->options['data']);
 		

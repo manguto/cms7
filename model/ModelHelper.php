@@ -6,7 +6,7 @@ use manguto\cms7\lib\Arquivos;
 use manguto\cms7\lib\Exception;
 use manguto\cms7\lib\Strings;
 
-class Model_Helper
+class ModelHelper
 {
 
     const model_class_folders = [
@@ -274,7 +274,7 @@ class Model_Helper
     
     
     static function get_repository_extended_tablenames(){
-        $model_array = Model_Helper::get();
+        $model_array = ModelHelper::get();
         //deb($model_array);
         foreach ($model_array as $tablename=>$model_information){
             //deb($model_information);

@@ -1,8 +1,8 @@
 <?php
 namespace manguto\cms7\lib\cms;
 
-use manguto\cms7\lib\model\Model_Helper;
-use manguto\cms7\lib\model\Model_Reference;
+use manguto\cms7\lib\model\ModelHelper;
+use manguto\cms7\lib\model\ModelReference;
 
 class CMSPageCRUDToolsView
 {
@@ -36,14 +36,14 @@ class CMSPageCRUDToolsView
     {
         $return = [];
         { // parameters
-            $objectClassname = Model_Helper::getObjectClassname($modelname);
+            $objectClassname = ModelHelper::getObjectClassname($modelname);
             // deb($objectClassname);
             $Modelname = ucfirst($modelname);
         }
         
         {
             //$filters = $objectClassname::get_filters($modelname);
-            $filters = Model_Helper::get_filters($modelname);
+            $filters = ModelHelper::get_filters($modelname);
             // deb($filters);
         }
         
@@ -53,11 +53,11 @@ class CMSPageCRUDToolsView
                 $return[] = "\$filter_" . $fieldname . "_array = $Modelname::$$fieldname;";
             }
             
-            if (Model_Reference::itsReferenceAttributeSingle($fieldname) || Model_Reference::itsReferenceAttributeMultiple($fieldname)) {
+            if (ModelReference::itsReferenceAttributeSingle($fieldname) || ModelReference::itsReferenceAttributeMultiple($fieldname)) {
                 
-                $repositoryName = Model_Reference::getReferencedModelName($fieldname);
+                $repositoryName = ModelReference::getReferencedModelName($fieldname);
                 // deb($repositoryName);
-                $FieldModelname = Model_Helper::getObjectClassname($repositoryName);
+                $FieldModelname = ModelHelper::getObjectClassname($repositoryName);
                 $return[] = "\$filter_" . $fieldname . "_array = $FieldModelname::getList('', \$returnAsObject=true, \$loadReferences=true);";
             }
         }
@@ -72,7 +72,7 @@ class CMSPageCRUDToolsView
         $return = [];
         
         { // parameters
-            $objectClassname = Model_Helper::getObjectClassname($modelname);
+            $objectClassname = ModelHelper::getObjectClassname($modelname);
             // deb($objectClassname);
         }
         
