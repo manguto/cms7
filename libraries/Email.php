@@ -160,7 +160,7 @@ class Email
     /**
      * Envia um email com as informacoes fornecidas
      */
-    static function Enviar($from, $to, $cc, $cco, $subject, $content)
+    static function Enviar($from, $to, $cc, $cco, $subject, $content,$alternative_manguto_sendmail_password=false)
     {
         if (self::CheckServerMailService()) {
             {//parameters
@@ -174,18 +174,21 @@ class Email
             $return = mail($to, $subject, $content, $headers);
             
         } else {
-            $formParameters = [
-                'from' => $from,
-                'to' => $to,
-                'cc' => $cc,
-                'cco' => $cco,
-                'subject' => $subject,
-                'content' => $content,
-                'password' => SIS_MANGUTO_SENDMAIL_PASSWORD
-            ];
-            $s2s = new ServerToServer();
-            $return = $s2s->setContent('http://manguto.com/email/go/index.php', $formParameters);
-            
+            if($alternative_manguto_sendmail_password!==false){
+                $formParameters = [
+                    'from' => $from,
+                    'to' => $to,
+                    'cc' => $cc,
+                    'cco' => $cco,
+                    'subject' => $subject,
+                    'content' => $content,
+                    'password' => $alternative_manguto_sendmail_password
+                ];
+                $s2s = new ServerToServer();
+                $return = $s2s->setContent('http://manguto.com/email/go/index.php', $formParameters);
+            }else{
+                throw new Exception("Não foi possível o envio da mensagem de e-mail solicitada através do sistema de envio deste servidor e a senha para envio via servidor alternativo não foi informada. Verifique os parâmetros necessários e tente novamente.");
+            }
         }
         return ($return===false ? 'Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes.' : true);        
     }

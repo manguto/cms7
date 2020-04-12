@@ -16,11 +16,11 @@ class Mysqli implements Database
     public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = '')
     {
         if ($dbhost == '' && $dbuser == '' && $dbpass == '' && $dbname == '' && $charset == '') {
-            $dbhost = SIS_DATABASE_HOST;
-            $dbuser = SIS_DATABASE_USER;
-            $dbpass = SIS_DATABASE_PASS;
-            $dbname = SIS_DATABASE_NAME;
-            $charset = SIS_DATABASE_CHARTSET;
+            $dbhost = APP_DATABASE_HOST;
+            $dbuser = APP_DATABASE_USER;
+            $dbpass = APP_DATABASE_PASS;
+            $dbname = APP_DATABASE_NAME;
+            $charset = APP_DATABASE_CHARTSET;
         }
         
         $this->connection = new \mysqli($dbhost, $dbuser, $dbpass, $dbname);

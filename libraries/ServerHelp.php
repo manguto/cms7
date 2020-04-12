@@ -49,12 +49,12 @@ class ServerHelp
      *
      * @return string
      */
-    static function getRoute(): string
+    static function getURL(): string
     {
         if (isset($_SERVER['REQUEST_URI'])) {
             $return = $_SERVER['REQUEST_URI'];
-        } else {
-            $return = '';
+        } else {            
+            $return = Variables::filter_input(INPUT_SERVER,'REQUEST_URI');                        
         }
         return $return;
     }

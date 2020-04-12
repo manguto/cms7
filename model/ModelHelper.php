@@ -10,7 +10,7 @@ class ModelHelper
 {
 
     const model_class_folders = [
-        SIS_CMS_MODEL_PATH
+        APP_CMS_MODEL_PATH
     ];
     
     const funcoes_padrao = ['__construct','preLoad','posLoad'];

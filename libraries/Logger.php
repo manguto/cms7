@@ -1,14 +1,12 @@
 <?php
 namespace manguto\cms7\lib;
 
-use manguto\cms7\lib\cms\CMSAccessManagement;
-
 class Logs
 {
 
     const dir = 'log';
 
-    const name = SIS_ABREV . '_LOG';
+    const name = APP_ABREV . '_LOG';
 
     const global_varname = 'logger';
 
@@ -115,7 +113,7 @@ class Logs
         {
             $date =  date(self::formato_data_arquivo);        
             $sid = session_id();
-            $user = CMSAccessManagement::getSessionUser();
+            $user = '?';
             if ($user !== false) {
                 $userid = Numbers::str_pad_left($user->getId(), 3);
             } else {
@@ -166,7 +164,7 @@ class Logs
                     $sid = session_id();
                     //deb($sid);
                     
-                    $u = CMSAccessManagement::getSessionUser();                    
+                    $u = false;                    
                     $uid = $u===false ? '000' : Numbers::str_pad_left($u->getId(),3);
                     //deb($uid);
                 }

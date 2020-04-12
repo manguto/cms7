@@ -1,7 +1,7 @@
 {
 	"name": "manguto/cms7",
 	"type": "library",
-	"description": "Compact Content Management System",
+	"description": "Content management system suport libraries.",
 	"authors": [
 		{
 			"name": "Manguto",
@@ -12,14 +12,13 @@
 		"php": "^7.0.0"
 	},
 	"autoload": {
-		"psr-4": {
-			"manguto\\cms7\\cms\\" : "cms/",
+		"psr-4": {			
 			"manguto\\cms7\\database\\":"database/",
-			"manguto\\cms7\\lib\\" : "lib/",
+			"manguto\\cms7\\libraries\\" : "libraries/",
 			"manguto\\cms7\\model\\":"model/"
 		},
 		"files": [
-			"functions/General.php"
+			"functions/functions.php"
 		]
 	},
 	"minimum-stability": "dev",

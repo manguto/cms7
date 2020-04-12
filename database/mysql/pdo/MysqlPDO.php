@@ -12,11 +12,11 @@ class MysqlPDO extends \PDO implements Database
     public function __construct($dbhost = '', $dbuser = '', $dbpass = '', $dbname = '', $charset = 'utf8')
     {
         if ($dbhost == '' && $dbuser == '' && $dbpass == '' && $dbname == '') {
-            $dbhost = SIS_DATABASE_HOST;
-            $dbuser = SIS_DATABASE_USER;
-            $dbpass = SIS_DATABASE_PASS;
-            $dbname = SIS_DATABASE_NAME;
-            $charset = SIS_DATABASE_CHARTSET;
+            $dbhost = APP_DATABASE_HOST;
+            $dbuser = APP_DATABASE_USER;
+            $dbpass = APP_DATABASE_PASS;
+            $dbname = APP_DATABASE_NAME;
+            $charset = APP_DATABASE_CHARTSET;
         }
 
         $dsn = "mysql:host=$dbhost;dbname=$dbname;charset=$charset";
