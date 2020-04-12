@@ -1,9 +1,9 @@
 <?php
-namespace manguto\cms7\lib\database\repository;
+namespace manguto\cms7\database\repository;
 
-use manguto\cms7\lib\Arquivos;
-use manguto\cms7\lib\CSV;
-use manguto\cms7\lib\Exception;
+use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\CSV;
+use manguto\cms7\libraries\Exception;
 
 class _OFF_RepositoryCMSAssist
 {    

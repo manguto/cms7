@@ -1,8 +1,8 @@
 <?php
-namespace manguto\cms7\lib\database\mysql\pdo;
+namespace manguto\cms7\database\mysql\pdo;
 
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\model\ModelAttribute;
+use manguto\cms7\libraries\Exception;
+use manguto\cms7\model\ModelAttribute;
 
 
 trait ModelMysqlPDO
@@ -31,9 +31,9 @@ trait ModelMysqlPDO
      * Conexao com o banco de dados, conforme os dados
      * padrao ou informados no modelo a utiliza-lo
      *
-     * @return \manguto\cms7\lib\database\mysql\pdo\MysqlPDO
+     * @return MysqlPDO
      */
-    private function NewMysqlPDO()
+    private function NewMysqlPDO():MysqlPDO
     {
         $databaseInfo = $this->DatabaseInfo();
         // deb($databaseInfo);

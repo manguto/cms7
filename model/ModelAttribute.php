@@ -1,9 +1,9 @@
 <?php
-namespace manguto\cms7\lib\model;
+namespace manguto\cms7\model;
 
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\Numbers;
-use manguto\cms7\lib\Moedas;
+use manguto\cms7\libraries\Exception;
+use manguto\cms7\libraries\Numbers;
+use manguto\cms7\libraries\Moedas;
 
 class ModelAttribute
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace manguto\cms7\lib;
+namespace manguto\cms7\libraries;
 
 
 

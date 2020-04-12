@@ -1,7 +1,7 @@
 <?php
-namespace manguto\cms7\lib\model;
+namespace manguto\cms7\model;
 
-use manguto\cms7\lib\Exception;
+use manguto\cms7\libraries\Exception;
 
 trait ModelTrait
 {

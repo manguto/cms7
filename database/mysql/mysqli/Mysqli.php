@@ -1,8 +1,8 @@
 <?php
-namespace manguto\cms7\lib\database\mysql\mysqli;
+namespace manguto\cms7\database\mysql\mysqli;
 
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\database\Database;
+use manguto\cms7\libraries\Exception;
+use manguto\cms7\database\Database;
 
 class Mysqli implements Database
 {

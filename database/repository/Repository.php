@@ -1,12 +1,12 @@
 <?php
-namespace manguto\cms7\lib\database\repository;
+namespace manguto\cms7\database\repository;
 
-use manguto\cms7\lib\Arquivos;
-use manguto\cms7\lib\model\ModelHelper;
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\database\Database;
-use manguto\cms7\lib\Diretorios;
-use manguto\cms7\lib\Strings;
+use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\model\ModelHelper; 
+use manguto\cms7\libraries\Exception; 
+use manguto\cms7\database\Database; 
+use manguto\cms7\libraries\Diretorios;
+use manguto\cms7\libraries\Strings;
 
 class Repository implements Database
 {

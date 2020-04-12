@@ -1,16 +1,16 @@
 <?php
-namespace manguto\cms7\lib\database\repository;
+namespace manguto\cms7\database\repository;
 
-use manguto\cms7\lib\Arquivos;
-use manguto\cms7\lib\Diretorios;
-use manguto\cms7\lib\Strings;
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\ServerHelp;
-use manguto\cms7\lib\ProcessResult;
+use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Diretorios;
+use manguto\cms7\libraries\Strings;
+use manguto\cms7\libraries\Exception;
+use manguto\cms7\libraries\ServerHelp;
+use manguto\cms7\libraries\ProcessResult;
 
-use manguto\cms7\lib\Datas;
-use manguto\cms7\lib\Arrays;
-use manguto\cms7\lib\model\Model;
+use manguto\cms7\libraries\Datas;
+use manguto\cms7\libraries\Arrays;
+use manguto\cms7\model\Model;
 
 class _OFF_Repository extends Model 
 {

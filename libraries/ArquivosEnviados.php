@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms7\lib;
+namespace manguto\cms7\libraries;
 
 /**
  * Classe de suporte para

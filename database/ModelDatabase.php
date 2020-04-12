@@ -1,5 +1,5 @@
 <?php
-namespace manguto\cms7\lib\database;
+namespace manguto\cms7\database;
 
 /**
  * Metodos fundamentais dos TRAITS que fazem a interface 

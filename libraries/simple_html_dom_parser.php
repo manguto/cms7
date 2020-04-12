@@ -1,9 +1,9 @@
 <?php
-namespace manguto\cms7\lib;
+namespace manguto\cms7\libraries;
 
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\Arquivos;
-use manguto\cms7\lib\Strings;
+use manguto\cms7\libraries\Exception;
+use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Strings;
 
 /**
  * http://simplehtmldom.sourceforge.net/

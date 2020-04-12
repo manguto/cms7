@@ -1,10 +1,10 @@
 <?php
-namespace manguto\cms7\lib\model;
+namespace manguto\cms7\model;
 
-use manguto\cms7\lib\Diretorios;
-use manguto\cms7\lib\Arquivos;
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\Strings;
+use manguto\cms7\libraries\Diretorios;
+use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Exception;
+use manguto\cms7\libraries\Strings;
 
 class ModelHelper
 {

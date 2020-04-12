@@ -1,7 +1,7 @@
 <?php
-namespace manguto\cms7\lib\model;
+namespace manguto\cms7\model;
 
-use manguto\cms7\lib\Exception;
+use manguto\cms7\libraries\Exception; 
 
 /**
  * esta classe tera como intuito representar os objetor que precisam ser salvos de alguma forma (banco de dados, xml, json, etc.)

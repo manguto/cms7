@@ -23,7 +23,7 @@ composer install
     <?php    
     session_start();
     session_unset();    
-    use manguto\cms7\lib\cms\CMSSetup;
+    use manguto\cms7\libraries\cms\CMSSetup;
     require_once "vendor/autoload.php";
     CMSSetup::Run('cms7');        
     ?>

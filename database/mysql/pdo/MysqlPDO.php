@@ -1,8 +1,8 @@
 <?php
-namespace manguto\cms7\lib\database\mysql\pdo;
+namespace manguto\cms7\database\mysql\pdo;
 
-use manguto\cms7\lib\Exception;
-use manguto\cms7\lib\database\Database;
+use manguto\cms7\libraries\Exception;
+use manguto\cms7\database\Database;
 
 class MysqlPDO extends \PDO implements Database
 {
