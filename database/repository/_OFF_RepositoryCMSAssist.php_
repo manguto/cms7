@@ -1,7 +1,7 @@
 <?php
 namespace manguto\cms7\database\repository;
 
-use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Files;
 use manguto\cms7\libraries\CSV;
 use manguto\cms7\libraries\Exception;
 
@@ -22,7 +22,7 @@ class _OFF_RepositoryCMSAssist
 
             $repositorioEncontrado = self::repositoryExists($tablename);
             if ($repositorioEncontrado !== false) {
-                $csvContent = Arquivos::obterConteudo($repositorioEncontrado);
+                $csvContent = Files::obterConteudo($repositorioEncontrado);
             } else {
                 $csvContent = '';
             }
@@ -108,7 +108,7 @@ class _OFF_RepositoryCMSAssist
             }
             // deb($modelContent);
             $modelFilenameNew = "prj/model/$Tablename.php";
-            Arquivos::escreverConteudo($modelFilenameNew, $modelContent);
+            Files::escreverConteudo($modelFilenameNew, $modelContent);
             return "Um modelo para '$Tablename' foi criado com sucesso!";
         }
     }
@@ -171,7 +171,7 @@ class _OFF_RepositoryCMSAssist
                 }
 
                 if (file_exists($repositoryIniFilename)) {
-                    Arquivos::copiarArquivo($repositoryIniFilename, $repositoryFilename);
+                    Files::copiarArquivo($repositoryIniFilename, $repositoryFilename);
                     ProcessResult::setSuccess("Repositório '<b>$repositoryname</b>' preenchido (via '$repositoryIniFilename') com sucesso.");
                 } else {
                     ProcessResult::setWarning("A inicialização do repositório '<b>$repositoryname</b>' não pode ser realizada, pois não foi encontrado nenhum arquivo base para inicialização.");

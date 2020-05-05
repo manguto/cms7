@@ -68,6 +68,26 @@ class Numbers
         return strlen($md5) == 32 && ctype_xdigit($md5);
     }
     
+    
+    /**
+     * verifica se um numero inteiro eh IMPAR (odd)
+     * @param int $number
+     * @return bool
+     */
+    static function isOdd(int $number):bool{
+        return $number % 2 != 0;
+    }
+    
+    /**
+     * verifica se um numero inteiro eh PAR (even)
+     * @param int $number
+     * @return bool
+     */
+    static function isEven(int $number):bool{
+        return $number % 2 == 0;        
+    }
+    
+    
 }
 
 

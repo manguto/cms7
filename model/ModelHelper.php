@@ -2,7 +2,7 @@
 namespace manguto\cms7\model;
 
 use manguto\cms7\libraries\Diretorios;
-use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Files;
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\libraries\Strings;
 
@@ -41,8 +41,8 @@ class ModelHelper
             ]);
             //deb($php_files,0);
             foreach ($php_files as $php_file) {
-                $nomeClasse = Arquivos::obterNomeArquivo($php_file, false);
-                $path = Arquivos::obterCaminho($php_file);
+                $nomeClasse = Files::getBaseName($php_file, false);
+                $path = Files::getPath($php_file);
                 //deb($nomeClasse,0); deb($tablename,0);  
                 if ($nomeClasse == $tablename) {
                     
@@ -74,7 +74,7 @@ class ModelHelper
                 'php'
             ]);
             foreach ($php_files as $php_file) {
-                $nomeClasse = Arquivos::obterNomeArquivo($php_file, false);
+                $nomeClasse = Files::getBaseName($php_file, false);
                 $path = $model_class_folder;                
                 if ($nomeClasse == $ClassName) {
                     $objectClassname = '\\' . $path . $ClassName;
@@ -117,7 +117,7 @@ class ModelHelper
     static private function getModels($files){
         $models=[];
         foreach ($files as $file){
-            $model_name = Arquivos::obterNomeArquivo($file,false);
+            $model_name = Files::getBaseName($file,false);
             $models[$model_name] = [];
         }
         return $models;
@@ -206,10 +206,10 @@ class ModelHelper
         $funcoes = [];
         foreach ($filename_array as $filename){
             
-            $conteudo = Arquivos::obterConteudo($filename);
+            $conteudo = Files::obterConteudo($filename);
             //debc($conteudo);
             
-            $model_name = Arquivos::obterNomeArquivo($filename,false);
+            $model_name = Files::getBaseName($filename,false);
             //deb($model_name,0);
             
             {//parameters

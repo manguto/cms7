@@ -21,6 +21,27 @@ class ServerHelp
     }
 
     // ####################################################################################################
+    
+    /**
+     * FIX DIRECTORY SEPARATOR - Ajusta o caminho informado com o DIRECTORY_SEPARATOR do servidor ou outro caso informado.
+     *
+     * @param string $path
+     * @return string $DIRECTORY_SEPARATOR
+     */
+    static function fixURLseparator(string $url): string
+    {   
+        $url_separator = '/';
+        $url = str_replace('\\', $url_separator, $url);
+        while (strpos($url, $url_separator . $url_separator) !== false) {
+            $url = str_replace($url_separator . $url_separator, $url_separator, $url);
+        }
+        if(substr($url,-1,1)=='/'){
+            $url = substr($url,0,strlen($url)-1);
+        }
+        return $url;
+    }
+    
+    // ####################################################################################################
 
     /**
      * obtem o IP do usuario
@@ -58,6 +79,22 @@ class ServerHelp
         }
         return $return;
     }
+    
+    
+    // ####################################################################################################
+
+    /**
+     * Obtem o methodo de solicitacao realizado
+     *
+     * @return string
+     */
+    static function getRequestMethod(): string
+    {   
+        return $_SERVER['REQUEST_METHOD'];        
+    }
+    
+    
+    
 }
 
 ?>

@@ -70,7 +70,7 @@ trait ModelMysqlPDO
                 $this->setInsert___datetime(date('Y-m-d H:i:s'));
 
                 // atualizacao do usuario autor da atulizacao
-                //$this->setInsert___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
+                //$this->setInsert___user_id(Access::getSessionUserAttribute('id'));
                 $this->setInsert___user_id('?');
             }
 
@@ -78,7 +78,7 @@ trait ModelMysqlPDO
             $this->setUpdate___datetime(date('Y-m-d H:i:s'));
 
             // atualizacao do usuario autor da atulizacao
-            //$this->setUpdate___user_id(CMSAccessManagement::getSessionUserDirectAttribute('id'));
+            //$this->setUpdate___user_id(Access::getSessionUserAttribute('id'));
             $this->setUpdate___user_id('?');
         }
 

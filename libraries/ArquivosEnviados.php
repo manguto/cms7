@@ -46,7 +46,7 @@ class ArquivosEnviados
             {//filename
                 $filename = basename($_FILES[$fieldName]["name"]);                
                 if($randomName){
-                    $ext = Arquivos::obterExtensao($filename);
+                    $ext = Files::getExtension($filename);
                     $filename = uniqid('arquivo_').'.'.$ext;
                 }
             }            

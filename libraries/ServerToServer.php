@@ -60,7 +60,7 @@ class ServerToServer
     {
         {//obter pagina com o formulario
             $response_href = $this->getContent($login_form_URL);
-            $html = Arquivos::obterConteudo($response_href);
+            $html = Files::obterConteudo($response_href);
             //debc($html);
         }
         {//resumir html
@@ -203,7 +203,7 @@ class ServerToServer
         $now = \DateTime::createFromFormat('U.u', microtime(true));
         $now = $now->format("Ymd_His-u");        
         $filename = "data/temp/serverToServerResponse_{$now}_{$function_name}.html";
-        Arquivos::escreverConteudo($filename, $response);
+        Files::escreverConteudo($filename, $response);
         return $filename;
     }
     // ========================================================================================================================================

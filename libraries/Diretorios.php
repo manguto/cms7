@@ -85,7 +85,8 @@ class Diretorios {
     				unset ( $return [$k] );
     			}
     			if (is_file ( $filename ) && $allowedExtensions !== false) {
-    				$extension = Arquivos::obterExtensao ( $filename );
+    				$extension = Files::getExtension ( $filename );    				
+    				
     				//deb("$path => $extension",0);
     				// debug($allowedExtensionArray,0);
     				if (sizeof ( $allowedExtensions ) > 0 && ! in_array ( $extension, $allowedExtensions )) {
@@ -238,7 +239,7 @@ class Diretorios {
 	        //deb($filepath_dest);
 	        
 	        if(file_exists($filepath_b)){
-	            if(Arquivos::verificarArquivosIdenticos($filepath_a, $filepath_b)){
+	            if(Files::verificarArquivosIdenticos($filepath_a, $filepath_b)){
 	                $result['iguais'][] = $filepath_b;
 	            }else{
 	                $result['diferentes'][] = $filepath_b;

@@ -182,7 +182,7 @@ class Logs
         if(sizeof($logs)>0){
             {
                 $filename = array_pop($logs);
-                $content = Arquivos::obterConteudo($filename);
+                $content = Files::obterConteudo($filename);
                 {//substituicoes para evitar interpretacao de JSON do navegador, entre outras
                     $content = str_replace('[]', '', $content);
                     $content = str_replace('[', '', $content);
@@ -237,7 +237,7 @@ class Logs
         foreach ($logs as $key=>$filepath) {
             //deb($log);
             
-            $filename = Arquivos::obterNomeArquivo($filepath);
+            $filename = Files::getBaseName($filepath);
             //deb($filename);
             
             $log_year = substr($filename, 0,4);
@@ -293,7 +293,7 @@ class Logs
     static function temp(string $msg='') {
         $filename = 'log/temp_'.date('Ymd').'.txt';
         $msg = date('H:i:s d-m-Y').' | '.$msg.chr(10);        
-        Arquivos::escreverConteudo($filename, $msg, FILE_APPEND);
+        Files::escreverConteudo($filename, $msg, FILE_APPEND);
     }
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 }

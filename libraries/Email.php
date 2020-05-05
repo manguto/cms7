@@ -151,7 +151,7 @@ class Email
             while (file_exists($filename)) {
                 $filename = str_replace('.', '_.', $filename);
             }
-            Arquivos::escreverConteudo($filename, $contents);
+            Files::escreverConteudo($filename, $contents);
             $attachments_saved[$name] = $filename;
         }
         return $attachments_saved;

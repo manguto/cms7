@@ -1,7 +1,7 @@
 <?php
 namespace manguto\cms7\database\repository;
 
-use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Files;
 use manguto\cms7\libraries\Diretorios;
 use manguto\cms7\libraries\Strings;
 use manguto\cms7\libraries\Exception;
@@ -10,7 +10,7 @@ use manguto\cms7\libraries\ProcessResult;
 use manguto\cms7\libraries\Datas;
 use manguto\cms7\libraries\Arrays;
 use manguto\cms7\model\Model;
-use manguto\cms7\libraries\cms\CMSAccessManagement;
+use application\core\Access;
 
 class OFF_Repository extends Model 
 {
@@ -142,7 +142,7 @@ class OFF_Repository extends Model
 
         { // =========================================================================== general parameters
             $cpi = _OFF_RepositoryReferences::ctrl_parameter_ini;
-            $user_id = CMSAccessManagement::getSessionUserDirectAttribute('id');
+            $user_id = Access::getSessionUserAttribute('id');
             $datetime = date(Datas::FormatoDatahora);
         }
 
@@ -631,7 +631,7 @@ class OFF_Repository extends Model
         self::saveRepositoryCSV_START($repositoryname, $repositoryFilename);
 
         // obtencao do conteudo
-        $repositoryCSV = Arquivos::obterConteudo($repositoryFilename);
+        $repositoryCSV = Files::obterConteudo($repositoryFilename);
 
         // transformar codificacao do texto
         $repositoryCSV = utf8_encode($repositoryCSV);
@@ -654,7 +654,7 @@ class OFF_Repository extends Model
         // transformar codificacao do texto
         $repositoryCSV = utf8_decode($repositoryCSV);
         // salvar arquivo
-        Arquivos::escreverConteudo(Repository::getRepositoryFilename($repositoryname), $repositoryCSV);
+        Files::escreverConteudo(Repository::getRepositoryFilename($repositoryname), $repositoryCSV);
     }
 
     // ==============================================================================================================================-

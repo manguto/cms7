@@ -736,22 +736,25 @@ class Strings
      * @param string $delimiterLeft
      * @param string $delimiterRight
      * @param boolean $replaceDelimiters
-     * @return string
+     * @return array
      */
-    static function RemoverOcorrenciasRepetidas(string $string, string $delimiterLeft, string $delimiterRight,$replaceDelimiters=false,$quantidadeOcorrencias=0): string
+    static function RemoverOcorrenciasEntreDelimitadores(string $string, string $delimiterLeft, string $delimiterRight,$replaceDelimiters=false,$quantidadeOcorrencias=0): array
     {   
+        $return = $string;
+        $searchs = [];
         $posl=true;
         $posr=true;
         $ocorrencias = 0;
         while ($posl && $posr) {
-            $posl = strpos($string,$delimiterLeft);
+            $posl = strpos($return,$delimiterLeft);
             if($posl!==false){
-                $posr = strpos($string,$delimiterRight,$posl);
+                $posr = strpos($return,$delimiterRight,$posl);
                 if($posr!==false){
                     if($quantidadeOcorrencias==0 || ($quantidadeOcorrencias>0 && $ocorrencias<$quantidadeOcorrencias) ){
                         $length = $posr-$posl+strlen($delimiterRight);
-                        $search = substr($string, $posl,$length);
-                        $string = str_replace($search, '', $string);
+                        $search = substr($return, $posl,$length);
+                        $searchs[] = $search;
+                        $return = str_replace($search, '', $return);
                         //-------------------------------------------
                         $ocorrencias++;
                     }else{
@@ -761,9 +764,9 @@ class Strings
                 }
             }
         }
-        return $string;
+        return [$return,$searchs];
     }
-
+    
     static function showCSV(string $text): string
     {
         // ajuste correcional de caracteres especiais
@@ -956,6 +959,70 @@ class Strings
         return $return;
     }
     
+    /**
+     * remove ocorrencias repetidas de uma string em outra
+     * @param string $search
+     * @param string $string
+     * @return string
+     */
+    static function removeRepeatedOccurrences(string $search, string $string):string{
+        while(strpos($string, $search.$search)!==false){
+            $string = str_replace($search.$search, $search, $string);
+        }
+        return $string;
+    }
+    
+    /**
+     * verifica se a string eh iniciada pelo termo informado,
+     * retornando o conteudo (com/sem o termo) ou 'false' 
+     * @param string $term
+     * @param string $string
+     * @return bool|string
+     */
+    static function checkIni(string $term, string $string,bool $termRemove=true){
+        $return = false;
+        if(substr($string, 0,strlen($term))==$term){
+            if($termRemove){
+                $return = substr($string, strlen($term));
+            }else{
+                $return = $string;
+            }
+        }
+        return $return;
+    }
+    
+    /**
+     * verifica se a string eh finalizada pelo termo informado,
+     * retornando o conteudo (com/sem o termo) ou 'false' 
+     * @param string $term
+     * @param string $string
+     * @return bool|string
+     */
+    static function checkEnd(string $term, string $string,bool $termRemove=true){
+        $return = false;
+        if(substr($string,-strlen($term))==$term){
+            if($termRemove){
+                $return = substr($string,0,-strlen($term));
+            }else{
+                $return = $string;
+            }
+        }
+        return $return;
+    }
+    
+    /**
+     * remove as aspas da string
+     * @param string $string
+     * @return string
+     */
+    static function removeQuotationMarks(string $string):string
+    {
+        $return = $string;
+        $return = str_replace('"', '', $return);
+        $return = str_replace("'", '', $return);
+        $return = str_replace("`", '', $return);        
+        return $return;
+    }
 }
 
 ?>

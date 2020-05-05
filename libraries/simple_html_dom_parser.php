@@ -2,7 +2,7 @@
 namespace manguto\cms7\libraries;
 
 use manguto\cms7\libraries\Exception;
-use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Files;
 use manguto\cms7\libraries\Strings;
 
 /**
@@ -168,11 +168,11 @@ class simple_html_dom_parser
 
         $filename = $this->getFilename();
 
-        if (! Arquivos::verificarArquivoOuPastaExiste($filename, false)) {
+        if (! Files::verificarArquivoOuPastaExiste($filename, false)) {
             $html_content = file_get_contents($this->url);
-            Arquivos::escreverConteudo($filename, $html_content);
+            Files::escreverConteudo($filename, $html_content);
         } else {
-            $html_content = Arquivos::obterConteudo($filename);
+            $html_content = Files::obterConteudo($filename);
         }
         $this->loadHTMLContent_fromString($html_content);
     }

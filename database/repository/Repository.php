@@ -1,7 +1,7 @@
 <?php
 namespace manguto\cms7\database\repository;
 
-use manguto\cms7\libraries\Arquivos;
+use manguto\cms7\libraries\Files;
 use manguto\cms7\model\ModelHelper; 
 use manguto\cms7\libraries\Exception; 
 use manguto\cms7\database\Database; 
@@ -250,7 +250,7 @@ class Repository implements Database
     private function getTable(): array
     {
         // obtencao do conteudo
-        $repositoryCSV = Arquivos::obterConteudo($this->filename, false);
+        $repositoryCSV = Files::obterConteudo($this->filename, false);
         // debc($repositoryCSV);
         
         // obtencao ou inicializacao e caso ainda nao exista, cria-o!
@@ -308,7 +308,7 @@ class Repository implements Database
         // deb($data);
         $titles = implode(RepositoryCSV::valuesDelimiter, $data) . chr(10);
         // deb($titles);
-        Arquivos::escreverConteudoControlado($this->filename, $titles);
+        Files::escreverConteudoControlado($this->filename, $titles);
     }
 
     /**
@@ -331,7 +331,7 @@ class Repository implements Database
         // deb($repositoryCSV);
         
         // salvar arquivo
-        Arquivos::escreverConteudoControlado($this->getFilename(), $repositoryCSV);
+        Files::escreverConteudoControlado($this->getFilename(), $repositoryCSV);
     }
 
     /**
@@ -520,13 +520,13 @@ class Repository implements Database
         ]);
         foreach ($modelFiles as $modelFile) {
             // deb($modelFile);
-            $conteudo = Arquivos::obterConteudo($modelFile);
+            $conteudo = Files::obterConteudo($modelFile);
             
             $modelRepositoryFile = strpos($conteudo, 'use ModelRepository') !== false;
             // deb($modelFile,0); deb($modelRepositoryFile,0);
             
             if ($modelRepositoryFile) {
-                $tablename = strtolower(Arquivos::obterNomeArquivo($modelFile, false));
+                $tablename = strtolower(Files::getBaseName($modelFile, false));
                 // deb($tablename);
                 
                 // inicializa o modelo repositorial

@@ -65,6 +65,37 @@ class Exception extends \Exception
     }
 
     // ####################################################################################################
+    // ####################################################################################################
+    // ####################################################################################################
+    /**
+     * realiza o manipulacao de eventos indevidos do sistema (Error, Throwable, Exception)
+     * @param mixed $e
+     */
+    static function handleEvent($e)
+    {
+        // tipo do evento
+        $event_class = get_class($e);
+        
+        if (strpos($event_class, 'Exception') !== false) {
+            {// EXCEPTION
+                $e->show(true);
+            }
+            
+        } else if (strpos($event_class, 'Error') !== false) {
+            {// ERROR
+                
+                echo "<pre>$e</pre>";
+                die();
+            }
+        } else {
+            echo "Não foi possível identificar o tipo do erro reportado. Verifique os detalhes abaixo:";
+            debc($e);
+        }
+    }
+    
+    // ####################################################################################################
+    // ####################################################################################################
+    // ####################################################################################################
     /**
      * Retorna um array com os caminhos percorridos na iteracao atual.
      *
