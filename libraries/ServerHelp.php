@@ -71,12 +71,13 @@ class ServerHelp
      * @return string
      */
     static function getURL(): string
-    {
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $return = $_SERVER['REQUEST_URI'];
+    {   
+        $REQUEST_URI = $_SERVER['REQUEST_URI'] ?? false;        
+        if ($REQUEST_URI!==false) {
+            $return = $REQUEST_URI;
         } else {            
             $return = Variables::filter_input(INPUT_SERVER,'REQUEST_URI');                        
-        }
+        }        
         return $return;
     }
     

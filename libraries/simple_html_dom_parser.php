@@ -1,10 +1,6 @@
 <?php
 namespace manguto\cms7\libraries;
 
-use manguto\cms7\libraries\Exception;
-use manguto\cms7\libraries\Files;
-use manguto\cms7\libraries\Strings;
-
 /**
  * http://simplehtmldom.sourceforge.net/
  *

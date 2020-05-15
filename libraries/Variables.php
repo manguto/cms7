@@ -3,36 +3,96 @@ namespace manguto\cms7\libraries;
 
 class Variables
 {
-
-    static function isset($variableName)
-    {
-        global $$variableName;
-
-        if (isset($variableName)) {
+    
+    /**
+     * verifica se a variavel encontra-se definida dentre os parametros enviados
+     * @param string $variableName
+     * @param array $definedVariables
+     * @param bool $throwException
+     * @throws Exception
+     * @return bool
+     */
+    static function isset(string $variableName,array $definedVariables, bool $throwException = false): bool
+    {   
+        if (isset($definedVariables[$variableName])) {
             return true;
         } else {
+            if ($throwException) {
+                throw new Exception("A variável '$variableName' não foi encontrada (definida).");
+            }
             return false;
         }
     }
 
-    static function issetAndNotEmpty($variableName)
-    {
-        global $$variableName;
-
-        if (self::isset($variableName) && trim($variableName) != '') {
-            return true;
-        } else {
-            return false;
-        }
+ 
+    /**
+     * verifica se a variavel esta definida e caso contrario retorna o valor padrao ou dispara uma excecao
+     * @param string $variableName
+     * @param array $definedVariables
+     * @param bool $throwException
+     * @param mixed $default
+     * @throws Exception
+     * @return mixed |string
+     */
+    static function isset_get(string $variableName,array $definedVariables, bool $throwException = TRUE, $default = NULL)
+    {           
+        if (self::isset($variableName, $definedVariables, $throwException)) {            
+            return $definedVariables[$variableName];
+        }else{
+            if($default!=NULL){
+                return $default;
+            }else{
+                throw new Exception("A variável '$variableName' não foi encontrada e não definido o valor padrão para retorno.");
+            }            
+        }        
     }
 
-    static function isntset_set(&$variableName, $value)
+    /**
+     * verifica se a variavel informada encontra-se
+     * definica na variavel gloval $_GET
+     *
+     * @param string $varname
+     * @param string $default
+     * @param bool $throwException
+     * @throws Exception
+     * @return mixed
+     */
+    static function GET(string $varname, $default = '', bool $throwException = false)
     {
-        global $$variableName;
-
-        if (! self::isset($variableName)) {
-            return $value;
+        if (isset($_GET[$varname])) {
+            $return = $_GET[$varname];
+        } else {
+            if ($throwException) {
+                throw new Exception("Não foi possível obter o conteúdo da variável \$_GET[$varname]. Variável não definida.");
+            } else {
+                $return = $default;
+            }
         }
+        return $return;
+    }
+
+    /**
+     * verifica se a variavel informada encontra-se
+     * definica na variavel gloval $_POST
+     *
+     * @param string $varname
+     * @param string $default
+     * @param bool $throwException
+     * @throws Exception
+     * @return mixed
+     */
+    static function POST(string $varname, $default = '', bool $throwException = false)
+    {
+        if (isset($_POST[$varname])) {
+            $return = $_POST[$varname];
+        } else {
+            if ($throwException) {
+                throw new Exception("Não foi possível obter o conteúdo da variável \$_POST[$varname]. Variável não definida.");
+            } else {
+                $return = $default;
+            }
+        }
+        return $return;
     }
 
     /**
@@ -53,36 +113,8 @@ class Variables
     {
         $return = filter_input($INPUT_, $variable_name, $FILTER_VALIDATE_, $options);
         $return = substr($return, 1);
-        if($throwException==true && ($return==false || $return==NULL)){
+        if ($throwException == true && ($return == false || $return == NULL)) {
             throw new Exception("Não foi possível obter o conteúdo da variável solicitada ('$variable_name').");
-        }
-        return $return;
-    }
-
-    static function GET(string $varname, $default = '', bool $throwException = false)
-    {
-        if (isset($_GET[$varname])) {
-            $return = $_GET[$varname];
-        } else {
-            if ($throwException) {
-                throw new Exception("Não foi possível obter o conteúdo da variável \$_GET[$varname]. Variável não definida.");
-            } else {
-                $return = $default;
-            }
-        }
-        return $return;
-    }
-
-    static function POST(string $varname, $default = '', bool $throwException = false)
-    {
-        if (isset($_POST[$varname])) {
-            $return = $_POST[$varname];
-        } else {
-            if ($throwException) {
-                throw new Exception("Não foi possível obter o conteúdo da variável \$_POST[$varname]. Variável não definida.");
-            } else {
-                $return = $default;
-            }
         }
         return $return;
     }
