@@ -13,11 +13,10 @@ class Datas
     private $format;
 
     private $datestr;
-    
-    private $timestamp;
-    
-    private $date;
 
+    private $timestamp;
+
+    private $date;
 
     // const FormatoDatahora = 'Y-m-d H:i:s';
     const FormatoDatahora = 'd/m/Y H:i';
@@ -34,9 +33,8 @@ class Datas
         self::checkdate($dateFormat, $dateStr);
         $this->format = $dateFormat;
         $this->datestr = $dateStr;
-        $this->timestamp = self::mktime($this->format, $this->datestr);        
+        $this->timestamp = self::mktime($this->format, $this->datestr);
         $this->date = $this->date_create_from_format();
-        
     }
 
     private function date_create_from_format()
@@ -45,10 +43,10 @@ class Datas
         /**
          * d - Day of the month; with leading zeros
          * j - Day of the month; without leading zeros
-         * 
+         *
          * m - Month (01-12)
          * n - Month (1-12)
-         * 
+         *
          * Y - Year (e.g 2013)
          * y - Year (e.g 13)
          *
@@ -70,28 +68,28 @@ class Datas
             'Y',
             'y'
         ], '01');
-        
+
         self::date_create_from_format_fix($format, $datestr, [
             'm',
             'n'
         ], '01');
-        
+
         self::date_create_from_format_fix($format, $datestr, [
             'd',
             'j'
         ], '01');
-        
+
         self::date_create_from_format_fix($format, $datestr, [
             'H',
             'h',
             'G',
             'g'
         ], '00');
-        
+
         self::date_create_from_format_fix($format, $datestr, [
             'i'
         ], '00');
-        
+
         self::date_create_from_format_fix($format, $datestr, [
             's'
         ], '00');
@@ -133,7 +131,6 @@ class Datas
     {
         return floatval($this->timestamp);
     }
-    
 
     /**
      * Verifica se a data eh valida
@@ -233,10 +230,10 @@ class Datas
     {
         if ($dayNumber < 0 || $dayNumber > 6) {
             throw new Exception("Número inadequado para um dia da semana [0-6]('$dayNumber').");
-        }else{            
-            $code = $fullName ? '%A' : '%a';            
-            return strftime($code, strtotime("Sunday +{$dayNumber} days"));           
-        }        
+        } else {
+            $code = $fullName ? '%A' : '%a';
+            return strftime($code, strtotime("Sunday +{$dayNumber} days"));
+        }
     }
 
     static function staticGetWeekDayName(int $dayNumber, string $size = 'p', bool $uppercase = true, bool $ucfirst = false): string
@@ -451,7 +448,7 @@ class Datas
             }
         }
         $this->date->add($dateInterval);
-        $this->datestr = $this->getDate($this->format);        
+        $this->datestr = $this->getDate($this->format);
         $this->timestamp = self::mktime($this->format, $this->datestr);
     }
 
@@ -474,33 +471,33 @@ class Datas
                 $m = $diff->m;
                 $d = $diff->d;
             }
-        }        
+        }
         {
-            if($y>0){
-                if($y==1){
-                    $return[] = "1 ano"; 
-                }else{
+            if ($y > 0) {
+                if ($y == 1) {
+                    $return[] = "1 ano";
+                } else {
                     $return[] = "$y anos";
                 }
             }
-            if($m>0){
-                if(sizeof($return)!=0){
+            if ($m > 0) {
+                if (sizeof($return) != 0) {
                     $return[] = ", ";
                 }
-                if($m==1){
-                    $return[] = "1 mês"; 
-                }else{
+                if ($m == 1) {
+                    $return[] = "1 mês";
+                } else {
                     $return[] = "$m meses";
                 }
             }
-            if($d>0){
-                if(sizeof($return)!=0){
+            if ($d > 0) {
+                if (sizeof($return) != 0) {
                     $return[] = " e ";
                 }
-                
-                if($d==1){
-                    $return[] = "1 dia"; 
-                }else{
+
+                if ($d == 1) {
+                    $return[] = "1 dia";
+                } else {
                     $return[] = "$d dias";
                 }
             }
@@ -508,41 +505,219 @@ class Datas
         return implode('', $return);
     }
 
-    /*
-     * //increase or decrease some date according to the arguments informed
-     * public function Operation_OLD(int $quantity,$parameter='months'){
-     * $newDate = self::static_Operation($this,$quantity,$parameter);
-     * $this->date = $newDate->date;
-     * $this->datestr= $newDate->datestr;
-     * $this->format= $newDate->format;
-     * $this->timestamp= $newDate->timestamp;
-     * }
+    /**
+     * retorna a quant.
+     * de itens conforme descrito no intervalo (anos, meses, etc.)
      *
-     * //get an date and operate it with the args passed
-     * static function static_Operation(Datas $date,int $quantity, string $parameter='months'):Datas{
-     * {
-     *
-     * $time = " $quantity $parameter ";
-     * //deb($time,0);
-     * $timestampNew = strtotime($time,$date->getTimestamp());
-     * //deb($timestampNew,0);
-     * }
-     * {
-     * $date_str = date($date->format,$timestampNew);
-     * //deb($date_str,0);
-     * }
-     * {
-     * $date_format = $date->format;
-     * //deb($date_format,0);
-     * }
-     *
-     * $newDate = new Datas($date_str,$date_format);
-     * return $newDate;
-     * }
+     * @param string $interval
+     * @param string|int $date_from
+     * @param string|int $date_to
+     * @param bool $using_timestamps
+     * @return number
      */
+    static function datediff(string $interval, $date_from, $date_to, bool $using_timestamps = true)
+    {
+        /*
+         * $interval can be:
+         * yyyy - Number of full years
+         * q - Number of full quarters
+         * m - Number of full months
+         * y - Difference between day numbers
+         * (eg 1st Jan 2004 is "1", the first day. 2nd Feb 2003 is "33". The datediff is "-32".)
+         * d - Number of full days
+         * w - Number of full weekdays
+         * ww - Number of full weeks
+         * h - Number of full hours
+         * n - Number of full minutes
+         * s - Number of full seconds (default)
+         */
+        if (! $using_timestamps) {
+            $date_from = strtotime($date_from, 0);
+            $date_to = strtotime($date_to, 0);
+        }
+
+        $difference = $date_to - $date_from; // Difference in seconds
+        $months_difference = 0;
+
+        switch ($interval) {
+            case 'yyyy': // Number of full years
+                $years_difference = floor($difference / 31536000);
+                if (mktime(date("H", $date_from), date("i", $date_from), date("s", $date_from), date("n", $date_from), date("j", $date_from), date("Y", $date_from) + $years_difference) > $date_to) {
+                    $years_difference --;
+                }
+
+                if (mktime(date("H", $date_to), date("i", $date_to), date("s", $date_to), date("n", $date_to), date("j", $date_to), date("Y", $date_to) - ($years_difference + 1)) > $date_from) {
+                    $years_difference ++;
+                }
+
+                $datediff = $years_difference;
+                break;
+
+            case "q": // Number of full quarters
+                $quarters_difference = floor($difference / 8035200);
+
+                while (mktime(date("H", $date_from), date("i", $date_from), date("s", $date_from), date("n", $date_from) + ($quarters_difference * 3), date("j", $date_to), date("Y", $date_from)) < $date_to) {
+                    $months_difference ++;
+                }
+
+                $quarters_difference --;
+                $datediff = $quarters_difference;
+                break;
+
+            case "m": // Number of full months
+                $months_difference = floor($difference / 2678400);
+
+                while (mktime(date("H", $date_from), date("i", $date_from), date("s", $date_from), date("n", $date_from) + ($months_difference), date("j", $date_to), date("Y", $date_from)) < $date_to) {
+                    $months_difference ++;
+                }
+
+                $months_difference --;
+
+                $datediff = $months_difference;
+                break;
+
+            case 'y': // Difference between day numbers
+                $datediff = date("z", $date_to) - date("z", $date_from);
+                break;
+
+            case "d": // Number of full days
+                $datediff = floor($difference / 86400);
+                break;
+
+            case "w": // Number of full weekdays
+                $days_difference = floor($difference / 86400);
+                $weeks_difference = floor($days_difference / 7); // Complete weeks
+                $first_day = date("w", $date_from);
+                $days_remainder = floor($days_difference % 7);
+                $odd_days = $first_day + $days_remainder; // Do we have a Saturday or Sunday in the remainder?
+
+                if ($odd_days > 7) { // Sunday
+                    $days_remainder --;
+                }
+
+                if ($odd_days > 6) { // Saturday
+                    $days_remainder --;
+                }
+
+                $datediff = ($weeks_difference * 5) + $days_remainder;
+                break;
+
+            case "ww": // Number of full weeks
+                $datediff = floor($difference / 604800);
+                break;
+
+            case "h": // Number of full hours
+                $datediff = floor($difference / 3600);
+                break;
+
+            case "n": // Number of full minutes
+                $datediff = floor($difference / 60);
+                break;
+
+            default: // Number of full seconds (default)
+                $datediff = $difference;
+                break;
+        }
+
+        return $datediff;
+    }
+
+    /**
+     * obtencao das semanas uteis (inicio e fim) entre duas datas
+     *
+     * @param string|int $date_ini
+     * @param string|int $date_end
+     * @param bool $dates_timestamp_format
+     * @return array
+     */
+    static function getWeeksInfoBetweenDates($date_ini, $date_end, bool $dates_timestamp_format = false): array
+    {
+        $return = [];
+
+        { // verificacao ajuste do formato dos dados
+            if ($dates_timestamp_format) {
+                $date_ini_str = date('Y-m-d', $date_ini);
+                $date_end_str = date('Y-m-d', $date_end);
+            } else {
+                $date_ini_str = $date_ini;
+                $date_end_str = $date_end;
+            }
+        }
+        { // criacao de objetos para tratamento
+            $date_ini = new \DateTime($date_ini_str);
+            { // shift ate uma segunda-feira
+                while ($date_ini->format('w') != '1') {
+                    // deb($date_ini->format('d/m/Y [w/l]'),0);
+                    $date_ini->add(new \DateInterval('P1D'));
+                }
+                // deb($date_ini->format('d/m/Y [w/l]'), 0);
+            }
+            $date_end = new \DateTime($date_end_str);
+            { // shift ate uma segunda-feira
+                while ($date_end->format('w') != '5' && (floatval($date_ini->format('Ymd')) < floatval($date_end->format('Ymd')))) {
+                    // deb($date_ini->format('d/m/Y [w/l]'),0);
+                    $date_end->sub(new \DateInterval('P1D'));
+                }
+                // deb($date_end->format('d/m/Y [w/l]'), 0);
+            }
+        }
+        // retorna um array vazio caso o inicio e o fim nao compreendam uma semana (seg-sex)
+        if ($date_ini == $date_end) {
+            return $return;
+        }
+        // --------------------------------------------------------------------------------------------------------------
+        {
+            { // calculo semanas iniciais
+                $week_ini = new \DateTime($date_ini->format('Y-m-d'));
+                $week_end = new \DateTime($date_ini->format('Y-m-d'));
+                // shift de 5 dias (sexta-feira)
+                $week_end->add(new \DateInterval('P4D'));
+            }
+
+            while (floatval($week_end->format('Ymd')) <= floatval($date_end->format('Ymd'))) {
+
+                $return[] = [
+                    $week_ini->format('Y-m-d'),
+                    $week_end->format('Y-m-d')
+                ];
+                { // shift 7 dias
+                    $week_ini->add(new \DateInterval('P7D'));
+                    $week_end->add(new \DateInterval('P7D'));
+                }
+            }
+
+            return $return;
+        }
+        // --------------------------------------------------------------------------------------------------------------
+        /*
+         * { // calculo de semanas em questao
+         * $interval = $date_ini->diff($date_end);
+         * $weeks = floor(($interval->days) / 7);
+         * deb($weeks, 0);
+         * }
+         * { // calculo semanas iniciais
+         * $week_ini = new \DateTime($date_ini_str);
+         * $week_end = new \DateTime($date_ini_str);
+         * // shift de 5 dias (sexta-feira)
+         * $week_end->add(new \DateInterval('P4D'));
+         * }
+         *
+         * for ($i = 1; $i <= $weeks; $i ++) {
+         * $return[] = [
+         * $week_ini->format('Y-m-d'),
+         * $week_end->format('Y-m-d')
+         * ];
+         * { // shift 7 dias
+         * $week_ini->add(new \DateInterval('P7D'));
+         * $week_end->add(new \DateInterval('P7D'));
+         * }
+         * }
+         * return $return;/*
+         */
+    }
 }
 
-/** 
+/**
  * =====================================================================================================================================
  * =====================================================================================================================================
  * =====================================================================================================================================

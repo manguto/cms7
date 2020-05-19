@@ -810,6 +810,21 @@ class Strings
         return $return;
     }
 
+    /**
+     * realiza a substituicao apenas na primeira ocorrencia do termo procurado
+     * @param string $search
+     * @param string $replace
+     * @param string $subject
+     * @return string
+     */
+    static function str_replace_first(string $search,string $replace,string $subject):string{
+        $pos = strpos($subject, $search);
+        if ($pos !== false) {
+            return substr_replace($subject, $replace, $pos, strlen($search));
+        }
+        return $subject;
+    }
+    
     static function SubstituirConteudoEntreTextos(string $searchIni, string $searchEnd, string $replace, string $subject, bool $removeSearch = true)
     {
         { // VERIFICACOES INICIAIS
