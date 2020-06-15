@@ -143,7 +143,9 @@ class Files
         // ---salvar o arquivo
         if (! file_put_contents($filename, $data, $flags)) {
             if ($throwException) {
-                throw new Exception("Não foi possível salvar o arquivo solicitado ($filename).");
+                //echo exec('whoami');
+                $error = implode('<br/>', error_get_last());
+                throw new Exception("Não foi possível salvar o arquivo '$filename'.<hr/>$error");
             } else {
                 return false;
             }

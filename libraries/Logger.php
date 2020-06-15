@@ -1,301 +1,265 @@
 <?php
 namespace manguto\cms7\libraries;
 
-class Logs
+/**
+ * Logger ultra basico (temporario)
+ *
+ * @author Marcos
+ *        
+ */
+class Logger
 {
 
-    const dir = 'log';
+    const neededConstants = [
+        'APP_LOG_DIR',
+        'APP_USER_IP_MASKED',
+        'APP_ITERATION'
+    ];
 
-    const name = APP_ABREV . '_LOG';
+    const folderDateFormat = 'Y-m-d';
 
-    const global_varname = 'logger';
+    const lineTimeFormat = 'H:i:s:# d-m-Y';
 
-    const formato_datahora = 'Y-m-d H_i_s';
+    // # => microtime
+    const lineChar = '=';
 
-    const formato_data_arquivo = 'Ymd_H';
+    const parametersBoxChar = '|';
 
-    const formato_data_arquivo_diario = 'Ymd_H'; //para visualizacao no modulo de LOG (dev)
+    const lineLengthLevel1 = '100';
 
-    // Detailed debug information
-    public const TYPE_DEBUG = 'debug';
+    const lineLengthLevel2 = '75';
 
-    // Interesting events Examples: User logs in, SQL logs.
-    public const TYPE_INFO = 'info';
- 
-    // Uncommon events
-    public const TYPE_NOTICE = 'notice';
+    const lineLengthLevel3 = '50';
 
-    // Exceptional occurrences that are not errors Examples: Use of deprecated APIs, poor use of an API,undesirable things that are not necessarily wrong.
-    public const TYPE_WARNING = 'warning';
+    const lineLengthLevel4 = '25';
 
-    // Runtime errors
-    public const TYPE_ERROR = 'error';
+    // ####################################################################################################
+    // #################################################################################### STATIC / PUBLIC
+    // ####################################################################################################
 
-    // Critical conditions Example: Application component unavailable, unexpected exception.
-    public const TYPE_CRITICAL = 'critical';
-
-    // Action must be taken immediately Example: Entire website down, database unavailable, etc.This should trigger the SMS alerts and wake you up.
-    public const TYPE_ALERT = 'alert';
-
-    // Urgent alert.
-    public const TYPE_EMERGENCY = 'emergency';
-
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-    public function __construct() {
-        
-    }
-    
-    // ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Registra uma mengagem no 'log' do sistema
-     * @param string $type
-     * @param string $msg
-     * @param array $parameters
-     */
-    static function set(string $type = 'info', string $msg = 'Ponto de Verificação!',array $parameters = [])
+    // ####################################################################################################
+    static function info(string $msg, array $parameters = [])
     {
-        { // get log instance
-            $logger = self::getLogInstance();
+        { // confeccao do conteudo do registro
+            $data = self::getData(__FUNCTION__, $msg, $parameters);
         }
-        { // set!
+        self::save($data);
+    }
+
+    // ####################################################################################################
+    static function error(string $msg, array $parameters = [])
+    {
+        if (self::checkConstants()) {
             {
-                $type = trim($type)=='' ? 'info' : $type;
+                $data = self::getData(__FUNCTION__, $msg, $parameters);
             }
-            $logger->$type("$msg", $parameters);
-        }
-        { // save log instance
-            self::setLogInstance($logger);
+            self::save($data);
         }
     }
 
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    /**
-     * reinicia o arquivo de registro da iteracao
-     */
-    static function restart(){
-        if (isset($GLOBALS[self::global_varname])) {
-            unset($GLOBALS[self::global_varname]);
-        }        
-    }
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    /**
-     * obtem a instancia do objeto Logger, criando-a caso nao exista
-     * @return mixed
-     */
-    static private function getLogInstance()
+    // ####################################################################################################
+    static function proc(string $msg, array $parameters = [])
     {
-        if (! isset($GLOBALS[self::global_varname])) {
-
-            // Create the logger
-            $logger = new self();
-
-            // Save on globals
-            self::setLogInstance($logger);
-        }
-        return $GLOBALS[self::global_varname];
-    }
-
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    static private function setLogInstance($logger)
-    {
-        $GLOBALS[self::global_varname] = $logger;
-    }
-
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    static function getFilename()
-    {
-        {
-            $date =  date(self::formato_data_arquivo);        
-            $sid = session_id();
-            $user = '?';
-            if ($user !== false) {
-                $userid = Numbers::str_pad_left($user->getId(), 3);
-            } else {
-                $userid = '000';
+        if (self::checkConstants()) {
+            {
+                $data = self::getData(__FUNCTION__, $msg, $parameters);
             }
+            self::save($data);
         }
-        
-        {//montagem do nome do arquivo com base na estrutura padrao
-            $filename = self::filenameStruct();
-            $filename = str_replace('DATE', $date, $filename);
-            $filename = str_replace('SID', $sid, $filename);
-            $filename = str_replace('USERID', $userid, $filename);
-        }        
-        
-        return $filename;
     }
-    
-    /***
-     * estrutura dos dados contidos no nome do arquivo de log
+
+    // ####################################################################################################
+    static function success(string $msg, array $parameters = [])
+    {
+        if (self::checkConstants()) {
+            {
+                $data = self::getData(__FUNCTION__, $msg, $parameters);
+            }
+            self::save($data);
+        }
+    }
+
+    // ####################################################################################################
+    /**
+     * obtem uma sequencia de caracteres (delimitacao ou separacao de textos) de 1ª ordem
+     *
      * @return string
      */
-    private static function filenameStruct($complete=true){
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        $return = "DATE_SID_USERID";
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        if($complete){
-            $return = self::dir . DIRECTORY_SEPARATOR . $return . '.log';
-        }
-        return $return;
-    }
-
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    static function getLastLogFileHTML()
+    static private function getLineLevel1(string $char = self::lineChar): string
     {
-        
-        {//obtem arquivos de log
-            $logs = Diretorios::obterArquivosPastas(self::dir, false, true, false,['log']);
-        }
-        
-        //deb($logs);
-        {//remove logs que nao pertencam a session atual
-            {//obtem o codigo da session atual
-                {
-                    $sid = session_id();
-                    //deb($sid);
-                    
-                    $u = false;                    
-                    $uid = $u===false ? '000' : Numbers::str_pad_left($u->getId(),3);
-                    //deb($uid);
-                }
-                $term = $sid."_".$uid;
-                //deb($term,0);
-            }
-            foreach ($logs as $k=>$log) {
-                if(strpos($log, $term)===false){
-                    unset($logs[$k]);
-                }
-            }
-            //deb($logs,0);
-        }
-        
-        if(sizeof($logs)>0){
-            {
-                $filename = array_pop($logs);
-                $content = Files::obterConteudo($filename);
-                {//substituicoes para evitar interpretacao de JSON do navegador, entre outras
-                    $content = str_replace('[]', '', $content);
-                    $content = str_replace('[', '', $content);
-                    $content = str_replace(']', ' |', $content);
-                }
-            }
-            
-            
-            $return = "<pre>".chr(10);
-            $return .= $content;
-            $return .= chr(10)."</pre>";
-        }else{
-            $return = "Nenhum arquivo de log encontrado para a sessão ($sid) e usuário atuais ($uid). [$term]";
-        }
-        
-        return $return;
+        return self::getLine($char, self::lineLengthLevel1);
     }
 
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    
-    
-    static function getDayLogs($day) {
-        $dayLogs = [];
-        
-        $logs = Diretorios::obterArquivosPastas(self::dir, false, true, false,['log']);
-        //deb($logs,0);
-        
-        foreach ($logs as $key=>$filepath) {
-            //deb($log);
-            
-            //evita arquivos que nao tenham o dia (data) informada
-            if(strpos($filepath, $day)!==false){
-                
-                $dayLogs[$key] = self::getLogfileInfo($filepath);
-                
-            }
-        }
-        
-        return $dayLogs;
-    }
-
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    
-    
-    static function getYearLogs($year) {
-        //deb($year);
-        $dayLogs = [];
-        
-        $logs = Diretorios::obterArquivosPastas(self::dir, false, true, false);
-        //deb($logs,0);
-        
-        foreach ($logs as $key=>$filepath) {
-            //deb($log);
-            
-            $filename = Files::getBaseName($filepath);
-            //deb($filename);
-            
-            $log_year = substr($filename, 0,4);
-            //deb($log_year);
-            
-            //evita arquivos que nao tenham o dia (data) informada
-            if(strval($year)==strval($log_year)){                
-               
-                $dayLogs[$key]=self::getLogfileInfo($filepath);                               
-                                
-            }
-        }
-        
-        return $dayLogs;
-    }
-    
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
-    static private function getLogfileInfo($filepath) {
-        $return=[];
-        
-        {//filename
-            $return['FILENAME'] = $filepath;
-        }
-        
-        {//outras informacoes padrao
-            $logInfo = str_replace(self::dir.DIRECTORY_SEPARATOR, '', $filepath);
-            $logInfo = str_replace('.log', '', $logInfo);            
-            $logInfo = explode('_', $logInfo);
-            //deb($logInfo);
-            
-            $fileStruct = explode('_',self::filenameStruct(false));
-            //deb($fileStruct);
-            
-            foreach ($fileStruct as $index=>$infoName){
-                $return[$infoName] = $logInfo[$index];
-            }
-        }
-        {//informacoes extras
-            $DATE = $return['DATE'];
-            $date_o = new Datas($DATE,self::formato_data_arquivo);
-            
-            $return['YEAR'] = $date_o->getDate('Y');
-            $return['MONTH'] = $date_o->getDate('m');
-            $return['DAY'] = $date_o->getDate('d');
-        }
-        return $return;
-    }
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ####################################################################################################
     /**
-     * registra um log temporario para testes/visualizacao
-     * @param string $msg
+     * obtem uma sequencia de caracteres (delimitacao ou separacao de textos) de 2ª ordem
+     *
+     * @return string
      */
-    static function temp(string $msg='') {
-        $filename = 'log/temp_'.date('Ymd').'.txt';
-        $msg = date('H:i:s d-m-Y').' | '.$msg.chr(10);        
-        Files::escreverConteudo($filename, $msg, FILE_APPEND);
+    static private function getLineLevel2(string $char = self::lineChar): string
+    {
+        return self::getLine($char, self::lineLengthLevel2);
     }
-    // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    // ####################################################################################################
+    /**
+     * obtem uma sequencia de caracteres (delimitacao ou separacao de textos) de 3ª ordem
+     *
+     * @return string
+     */
+    static private function getLineLevel3(string $char = self::lineChar): string
+    {
+        return self::getLine($char, self::lineLengthLevel3);
+    }
+
+    // ####################################################################################################
+    /**
+     * obtem uma sequencia de caracteres (delimitacao ou separacao de textos) de 4ª ordem
+     *
+     * @return string
+     */
+    static private function getLineLevel4(string $char = self::lineChar): string
+    {
+        return self::getLine($char, self::lineLengthLevel4);
+    }
+
+    // ####################################################################################################
+    // ############################################################################################ PRIVATE
+    // ####################################################################################################
+
+    /**
+     * obtem uma sequencia de caracteres (delimitacao ou separacao de textos)
+     *
+     * @param int $multiplier
+     * @return string
+     */
+    static private function getLine(string $char = self::lineChar, int $multiplier): string
+    {
+        return str_repeat($char, $multiplier);
+    }
+
+    /**
+     * verifica se todas as constantes necessarias foram definidas
+     *
+     * @throws Exception
+     */
+    static private function checkConstants()
+    {
+        foreach (self::neededConstants as $cteName) {
+            if (! defined($cteName)) {
+                // throw new Exception("Constante necessária não definida ($cteName).");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // ####################################################################################################
+    /**
+     * retorna o nome do arquivo de log (atual)
+     *
+     * @return string
+     */
+    static private function getFilename(): string
+    {
+        {
+            $dir = APP_LOG_DIR;
+            $folder = date(self::folderDateFormat) . DIRECTORY_SEPARATOR;
+            $filename = APP_USER_IP_MASKED . '__' . APP_ITERATION . '.txt';
+            // $filename = APP_USER_IP_MASKED . '.txt';
+        }
+        // ==============================================================
+        return $dir . $folder . $filename;
+    }
+
+    // ####################################################################################################
+    /**
+     * registra temporariamente o registro para insercao no log quando das definicoes das constantes necessarias
+     * ou
+     * salva todos os registros previamente anotados 
+     *
+     * @param string|bool $data
+     */
+    static private function saveOrCheckCache($data)
+    {
+        if($data!==true){
+            //no caso de uma mensagem
+            if (! isset($_SESSION[__DIR__]['logger'])) {
+                $_SESSION[__DIR__]['logger'] = [];
+            }
+            $_SESSION[__DIR__]['logger'][] = $data;
+        }else{
+            //no caso do salvamento efetivo
+            if(isset($_SESSION[__DIR__]['logger']) && sizeof($_SESSION[__DIR__]['logger'])>0){
+                $logsTemp = $_SESSION[__DIR__]['logger'];
+                unset($_SESSION[__DIR__]['logger']);
+                foreach ($logsTemp as $dataTemp){
+                    self::save($dataTemp);
+                }
+            }
+        }        
+    }    
+    // ####################################################################################################
+    /**
+     * salva os dados informados no arquivo de log
+     *
+     * @param string $data
+     */
+    static private function save(string $data)
+    {
+        if (self::checkConstants()) {
+            self::saveOrCheckCache(true);            
+            Files::escreverConteudo(self::getFilename(), $data, FILE_APPEND);
+        } else {
+            self::saveOrCheckCache($data);
+        }
+    }
+
+    // ####################################################################################################
+    static private function getLineInfo(string $type = '')
+    {
+        {
+            $dateTime = date(self::lineTimeFormat);
+            $dateTime = str_replace('#', Datas::getMicrotime(), $dateTime);
+            $type = strtoupper($type);
+        }
+        return "[$dateTime][$type]";
+    }
+
+    // ####################################################################################################
+    /**
+     * monta o conteudo a ser registrado (logado)
+     *
+     * @param string $method
+     * @param string $msg
+     * @param array $parameters
+     * @return string
+     */
+    static private function getData(string $method, string $msg, array $parameters): string
+    {
+        { // line info
+            $lineInfo = self::getLineInfo($method);
+        }
+        { // parameters
+            if (sizeof($parameters) > 0) {
+                $parameters_show = [];
+                {
+                    $parameters_show[] = ':';
+                    $parameters_show[] = ' ';
+                    $parameters_show[] = Arrays::arrayShow($parameters);
+                    $parameters_show[] = ' ';
+                }
+                $parameters_show = str_replace(chr(10) . ' ', chr(10) . self::parametersBoxChar . ' ', implode(chr(10), $parameters_show));
+            } else {
+                $parameters_show = '';
+            }
+        }
+        // =======================================
+        return $lineInfo . ' ' . $msg . ' ' . $parameters_show . chr(10);
+    }
+    // ####################################################################################################
+    // ####################################################################################################
+    // ####################################################################################################
 }
 
 ?>

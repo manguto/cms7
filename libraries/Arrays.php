@@ -55,14 +55,41 @@ class Arrays
     }
 
     // ######################################################################################################################################
-    
+    static function arrayShowSingleLine(array $array, string $arrayName = '',string $separator = ', ',$removeBrackets=true): string
+    {
+        $return = [];
+        $array_string = self::arrayShow($array,$arrayName);
+        $return_array = explode(chr(10), $array_string);
+        //deb($return_array);
+        foreach ($return_array as $line) {
+            $info = explode('=', $line);
+            {
+                $varName = $info[0];
+                if($removeBrackets){
+                    $varName = substr_replace($varName, '', strpos($varName, '['),1);
+                    $varName = substr_replace($varName, '', strpos($varName, ']'),1);
+                }                                
+                $varName = str_replace(' ', '', $varName);                
+            }
+            {
+                $varValue = $info[1];
+                $varValue=str_replace(' ', '', $varValue);
+                $varValue=str_replace('"', "'", $varValue);
+                //$varValue=Strings::removeQuotationMarks($varValue);
+            }
+            $return[] = "$varName=$varValue";
+        }
+        return implode($separator, $return);
+    }
+
+    // ######################################################################################################################################
     static function arrayShow($array, string $arrayName = '', string $continuacao = '', int $level = 1)
     {
         $return = [];
 
         // array name
         if ($arrayName != '' && $level == 1) {
-            $pre = "\$$arrayName [";
+            $pre = "$arrayName [";
             $pos = "]";
         } else {
             $pre = "$continuacao [";
@@ -77,7 +104,7 @@ class Arrays
             }
         } else {
             // $termo = $pre.$arrayName.$pos;
-            return "$continuacao = \"$array\"<br/>";
+            return "$continuacao = \"$array\"";
         }
 
         return implode(chr(10), $return);

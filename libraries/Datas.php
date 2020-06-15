@@ -715,6 +715,17 @@ class Datas
          * return $return;/*
          */
     }
+    
+    /**
+     * obtem o microtempo atual
+     * @return string
+     */
+    static function getMicrotime():string{
+        $return = \DateTime::createFromFormat('U.u', microtime(true));
+        $return = $return->format("u");
+        $return = strval($return);
+        return $return;
+    }
 }
 
 /**

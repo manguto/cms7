@@ -301,7 +301,7 @@ class Repository implements Database
     {
         // deb($this);
         $ClassNameFull = ModelHelper::getObjectClassName_by_ClassName($this->ClassName);
-        // deb($ClassNameFull);
+        //deb($ClassNameFull);
         $tempObject = new $ClassNameFull();
         $data = $tempObject->GET_DATA(false, true);
         $data = array_keys($data);

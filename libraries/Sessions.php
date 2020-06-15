@@ -11,17 +11,17 @@ class Sessions
      * @param string $value
      * @param bool $increment
      *            - define se é uma definicao ou um incremento de um array(array[])
-     * @param string $APP_FOLDERNAME
+     * @param string $APP_BASENAME
      *            - pasta do sistema em questão ('' => sistema atual)
      * @throws Exception
      */
-    static function set(string $key, $value, bool $arrayIncrement = false, string $APP_FOLDERNAME = '')
+    static function set(string $key, $value, bool $arrayIncrement = false, string $APP_BASENAME = '')
     {
-        $APP_FOLDERNAME = $APP_FOLDERNAME == '' ? APP_FOLDERNAME : $APP_FOLDERNAME;
+        $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
 
         if ($arrayIncrement == false) {
 
-            $_SESSION[$APP_FOLDERNAME][$key] = serialize($value);
+            $_SESSION[$APP_BASENAME][$key] = serialize($value);
         } else {
             if (! self::isset($key)) {
                 $variable = [];
@@ -42,18 +42,18 @@ class Sessions
      * @param string $key
      * @param bool $throwException
      * @param bool $unset
-     * @param string $APP_FOLDERNAME
+     * @param string $APP_BASENAME
      * @throws Exception
      * @return mixed|boolean
      */
-    static function get(string $key, bool $throwException = true, bool $unset = false, string $APP_FOLDERNAME = '')
+    static function get(string $key, bool $throwException = true, bool $unset = false, string $APP_BASENAME = '')
     {
-        $APP_FOLDERNAME = $APP_FOLDERNAME == '' ? APP_FOLDERNAME : $APP_FOLDERNAME;
+        $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
 
         if (self::isset($key)) {
-            $return = unserialize($_SESSION[$APP_FOLDERNAME][$key]);
+            $return = unserialize($_SESSION[$APP_BASENAME][$key]);
             if($unset){
-                self::unset($key,$throwException,$APP_FOLDERNAME);
+                self::unset($key,$throwException,$APP_BASENAME);
             }
             
         } else {
@@ -73,12 +73,12 @@ class Sessions
      * @param bool $throwException
      * @throws Exception
      */
-    static function unset(string $key = '', $throwException = false, string $APP_FOLDERNAME = '')
+    static function unset(string $key = '', $throwException = false, string $APP_BASENAME = '')
     {
-        $APP_FOLDERNAME = $APP_FOLDERNAME == '' ? APP_FOLDERNAME : $APP_FOLDERNAME;
+        $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
 
         if (self::isset($key)) {
-            unset($_SESSION[$APP_FOLDERNAME][$key]);
+            unset($_SESSION[$APP_BASENAME][$key]);
         } else {
             if ($throwException) {
                 throw new Exception("Foi solicitada a limpeza de uma variável da sessão, mas esta não foi encontrada ('$key').");
@@ -92,10 +92,10 @@ class Sessions
      * @param string $key
      * @return bool
      */
-    static function isset(string $key = '', string $APP_FOLDERNAME = ''): bool
+    static function isset(string $key = '', string $APP_BASENAME = ''): bool
     {
-        $APP_FOLDERNAME = $APP_FOLDERNAME == '' ? APP_FOLDERNAME : $APP_FOLDERNAME;
-        return isset($_SESSION[$APP_FOLDERNAME][$key]);
+        $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
+        return isset($_SESSION[$APP_BASENAME][$key]);
     }
 
     /**
@@ -113,9 +113,12 @@ class Sessions
      */
     static function Reset()
     {
-        session_destroy();
-        session_start();
-        ProcessResult::setSuccess('Sessão reinicializada com sucesso!');
+        if(isset($_SESSION[APP_BASENAME])){
+            unset($_SESSION[APP_BASENAME]);
+            ProcessResult::setSuccess('Sessão reinicializada com sucesso!');
+        }else{
+            ProcessResult::setSuccess('Sessão inexistente. Procedimento realizado com sucesso!');
+        }
         return true;
     }
 }

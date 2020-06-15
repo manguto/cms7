@@ -5,12 +5,13 @@ use manguto\cms7\libraries\Diretorios;
 use manguto\cms7\libraries\Files;
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\libraries\Strings;
+use manguto\cms7\libraries\Logger;
 
 class ModelHelper
 {
 
     const model_class_folders = [
-        APP_CMS_MODEL_PATH
+        APP_MODEL_DIR
     ];
     
     const funcoes_padrao = ['__construct','preLoad','posLoad'];
@@ -67,25 +68,40 @@ class ModelHelper
      * @param string $repositoryname
      * @return string
      */
-    static function getObjectClassName_by_ClassName(string $ClassName): string
+    static function getObjectClassName_by_ClassName(string $searchedPathClass_className): string
     {   
+        Logger::proc("Busca do nome completo da classe '$searchedPathClass_className' - ".__METHOD__);
+        Logger::proc("Diretorio(s) com modelo(s): '".implode("','", self::model_class_folders)."' ");
+        
+        //ciclo pelas pastas de modelos informada 
         foreach (self::model_class_folders as $model_class_folder) {            
-            $php_files = Diretorios::obterArquivosPastas($model_class_folder, true, true, false, [
+            
+            //obtencao dos arquivos php da pasta deste ciclo
+            $dir_php_files = Diretorios::obterArquivosPastas($model_class_folder, true, true, false, [
                 'php'
             ]);
-            foreach ($php_files as $php_file) {
-                $nomeClasse = Files::getBaseName($php_file, false);
-                $path = $model_class_folder;                
-                if ($nomeClasse == $ClassName) {
-                    $objectClassname = '\\' . $path . $ClassName;
-                    $objectClassname = str_replace('/', '\\', $objectClassname);
-                    $objectClassname = str_replace('\vendor', '', $objectClassname);
+            //percorrimento dos arquivos encontrados no diretorio atual
+            foreach ($dir_php_files as $dir_php_file) {
+                //nome base do arquivo da classe encontrado
+                $ClassBaseFilename_noExt = Files::getBaseName($dir_php_file, false);
+                                
+                Logger::proc("Arquivo da classe '$ClassBaseFilename_noExt'");
+                
+                Logger::proc("Teste: '$ClassBaseFilename_noExt' == '$searchedPathClass_className' ");
+                if ($ClassBaseFilename_noExt == $searchedPathClass_className) {
+                    
+                    $classFullPath = '\\' . $model_class_folder . $searchedPathClass_className;
+                    
+                    $classFullPath = str_replace('/', '\\', $classFullPath);
+                    
                     //deb($objectClassname);
-                    return $objectClassname;
+                    Logger::proc("Classe alvo encontrada! ($classFullPath)");
+                    
+                    return $classFullPath;
                 }
             }
         }
-        throw new Exception("Classe não encontrada ($ClassName).");
+        throw new Exception("A classe '$searchedPathClass_className' não foi encontrada!");
     }
     
     
