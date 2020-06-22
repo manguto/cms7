@@ -116,9 +116,9 @@ class Diretorios {
 	 * @param int $mode
 	 * @param bool $throwException
 	 * @throws Exception
-	 * @return boolean
+	 * @return boolean 
 	 */
-	static function mkdir(string $pathname, bool $recursive = true,int $mode=777, bool $throwException=true) {
+	static function mkdir(string $pathname, bool $recursive = true,int $mode=0777, bool $throwException=true) {
 	    
 	    if(trim($pathname)!=''){
 	        if (! file_exists ( $pathname )) {

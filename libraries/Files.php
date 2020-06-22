@@ -149,7 +149,8 @@ class Files
             } else {
                 return false;
             }
-        }
+        } 
+        chmod($filename, 0755);
         return true;
     }
 

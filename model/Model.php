@@ -59,7 +59,7 @@ abstract class Model
      * obtem um array com os parametros do objeto
      * @return array
      */
-    public function GetAttributesArray():array
+    /*public function GetAttributesArray():array
     {
         $return = [];
         foreach ($this->attributes as $attribute){
@@ -70,7 +70,7 @@ abstract class Model
             $return[$attribute->getName()]=$attribute->getValue();
         }
         return $return;
-    }
+    }/**/
 
     /**
      * obtem o atributo solicitado

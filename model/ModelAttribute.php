@@ -2,8 +2,6 @@
 namespace manguto\cms7\model;
 
 use manguto\cms7\libraries\Exception;
-use manguto\cms7\libraries\Numbers;
-use manguto\cms7\libraries\Moedas;
 
 class ModelAttribute
 {
@@ -23,6 +21,7 @@ class ModelAttribute
     private $value;
 
     // ------------------------------------------------------------------------------------------------------------------------
+    
     const TYPE_CHAR = 'char';
 
     const TYPE_VARCHAR = 'varchar';

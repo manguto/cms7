@@ -46,10 +46,8 @@ class Sessions
      * @throws Exception
      * @return mixed|boolean
      */
-    static function get(string $key, bool $throwException = true, bool $unset = false, string $APP_BASENAME = '')
+    static function get(string $key, bool $throwException = true, bool $unset = false, string $APP_BASENAME = APP_BASENAME)
     {
-        $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
-
         if (self::isset($key)) {
             $return = unserialize($_SESSION[$APP_BASENAME][$key]);
             if($unset){
@@ -73,10 +71,8 @@ class Sessions
      * @param bool $throwException
      * @throws Exception
      */
-    static function unset(string $key = '', $throwException = false, string $APP_BASENAME = '')
+    static function unset(string $key, $throwException = false, string $APP_BASENAME = APP_BASENAME)
     {
-        $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
-
         if (self::isset($key)) {
             unset($_SESSION[$APP_BASENAME][$key]);
         } else {
@@ -92,9 +88,8 @@ class Sessions
      * @param string $key
      * @return bool
      */
-    static function isset(string $key = '', string $APP_BASENAME = ''): bool
-    {
-        $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
+    static function isset(string $key, string $APP_BASENAME = APP_BASENAME): bool
+    {   
         return isset($_SESSION[$APP_BASENAME][$key]);
     }
 
@@ -115,9 +110,9 @@ class Sessions
     {
         if(isset($_SESSION[APP_BASENAME])){
             unset($_SESSION[APP_BASENAME]);
-            ProcessResult::setSuccess('Sessão reinicializada com sucesso!');
+            Logger::success('Sessão reinicializada com sucesso!');
         }else{
-            ProcessResult::setSuccess('Sessão inexistente. Procedimento realizado com sucesso!');
+            Logger::warning('Sessão inexistente. Procedimento realizado com sucesso!');
         }
         return true;
     }

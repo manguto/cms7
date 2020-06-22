@@ -155,7 +155,7 @@ class _OFF_RepositoryCMSAssist
 
             { // verifica se o arquivo do repositorio existe
                 if (! Repository::repositoryFileExist($repositoryname)) {
-                    ProcessResult::setSuccess("Repositório '<b>$repositoryname</b>' não encontrado.");
+                    Alert::setSuccess("Repositório '<b>$repositoryname</b>' não encontrado.");
                 }
             }
 
@@ -172,15 +172,15 @@ class _OFF_RepositoryCMSAssist
 
                 if (file_exists($repositoryIniFilename)) {
                     Files::copiarArquivo($repositoryIniFilename, $repositoryFilename);
-                    ProcessResult::setSuccess("Repositório '<b>$repositoryname</b>' preenchido (via '$repositoryIniFilename') com sucesso.");
+                    Alert::setSuccess("Repositório '<b>$repositoryname</b>' preenchido (via '$repositoryIniFilename') com sucesso.");
                 } else {
-                    ProcessResult::setWarning("A inicialização do repositório '<b>$repositoryname</b>' não pode ser realizada, pois não foi encontrado nenhum arquivo base para inicialização.");
+                    Alert::setWarning("A inicialização do repositório '<b>$repositoryname</b>' não pode ser realizada, pois não foi encontrado nenhum arquivo base para inicialização.");
                 }
             } else {
-                ProcessResult::setWarning("A inicialização do repositório '<b>$repositoryname</b>' não foi realizada por este já possui conteúdo (<b>$quantRegistros registro(s)</b>).");
+                Alert::setWarning("A inicialização do repositório '<b>$repositoryname</b>' não foi realizada por este já possui conteúdo (<b>$quantRegistros registro(s)</b>).");
             }
         } catch (Exception $e) {
-            ProcessResult::setError($e);
+            Alert::setDanger($e);
         }*/
     }
 }

@@ -2,7 +2,7 @@
 namespace manguto\cms7\model;
 
 use manguto\cms7\libraries\Exception;
-use manguto\cms7\libraries\ProcessResult;
+use manguto\cms7\libraries\Alert;
 
 trait ModelStart
 {
@@ -35,12 +35,12 @@ trait ModelStart
         if(defined('self::default') && sizeof(self::default)>0){            
             $n = (new self())->length();
             if ($n == 0) {
-                ProcessResult::setWarning("Processo de inicialização do repositório '".__CLASS__."' inicializada.");
+                Alert::setWarning("Processo de inicialização do repositório '".__CLASS__."' inicializada.");
                 foreach (self::default as $data){
                     $new = new self();
                     $new->SET_DATA($data);
                     $new->save();
-                    ProcessResult::setWarning("Registro da classe '".__CLASS__."' inserido com sucesso ({$new->getId()})!");
+                    Alert::setWarning("Registro da classe '".__CLASS__."' inserido com sucesso ({$new->getId()})!");
                 }
             }
         }        

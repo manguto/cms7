@@ -31,7 +31,7 @@ class Email
         $this->user = $user;
         $this->pass = $pass;
         $this->port = $port;
-        
+
         $this->connect();
     }
 
@@ -40,7 +40,7 @@ class Email
     {
         $this->inbox = array();
         $this->msg_cnt = 0;
-        
+
         imap_close($this->conn);
     }
 
@@ -101,16 +101,16 @@ class Email
         // deb($structure);
         $attachments = array();
         if (isset($structure->parts) && count($structure->parts)) {
-            
+
             for ($i = 0; $i < count($structure->parts); $i ++) {
-                
+
                 $attachments[$i] = array(
                     'is_attachment' => false,
                     'filename' => '',
                     'name' => '',
                     'attachment' => ''
                 );
-                
+
                 if ($structure->parts[$i]->ifdparameters) {
                     foreach ($structure->parts[$i]->dparameters as $object) {
                         if (strtolower($object->attribute) == 'filename') {
@@ -119,7 +119,7 @@ class Email
                         }
                     }
                 }
-                
+
                 if ($structure->parts[$i]->ifparameters) {
                     foreach ($structure->parts[$i]->parameters as $object) {
                         if (strtolower($object->attribute) == 'name') {
@@ -128,7 +128,7 @@ class Email
                         }
                     }
                 }
-                
+
                 if ($attachments[$i]['is_attachment']) {
                     $attachments[$i]['attachment'] = imap_fetchbody($this->conn, $msg_index, $i + 1);
                     if ($structure->parts[$i]->encoding == 3) { // 3 = BASE64
@@ -159,39 +159,96 @@ class Email
 
     /**
      * Envia um email com as informacoes fornecidas
+     *
+     * @param string $from
+     * @param string $to
+     * @param string $cc
+     * @param string $cco
+     * @param string $subject
+     * @param string $content
+     * @param boolean $alternative_manguto_sendmail_password
+     * @return string
      */
-    static function Enviar($from, $to, $cc, $cco, $subject, $content,$alternative_manguto_sendmail_password=false)
+    static function Enviar(string $from, string $to, string $cc, string $cco, string $subject, string $content, bool $password = false): string
     {
+        Logger::proc("Envio de E-mail => " . __METHOD__);
+        
         if (self::CheckServerMailService()) {
-            {//parameters
+            
+            //SERVICO DE EMAIL OFICIAL (SERVER)
+            //SERVICO DE EMAIL OFICIAL (SERVER)
+            //SERVICO DE EMAIL OFICIAL (SERVER)
+            
+            { // parameters
                 $headers = "From: $from \r\n";
                 $headers .= "Reply-To: $from \r\n";
                 $headers .= $cc != "" ? "CC: $cc\r\n" : "";
                 $headers .= $cco != "" ? "CCO: $cco\r\n" : "";
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+            }
+            Logger::proc("Tentativa de envio pelo servidor próprio (to:$to/subject:$subject).");            
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            $mailResult = mail($to, $subject, $content, $headers);
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            if ($mailResult===true) {
+                $mailResult = "E-mail enviado com sucesso!";
+                Logger::success($mailResult);               
+            } else {
+                $mailResult = "Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes => ".error_get_last()['message'];
+                Logger::error($mailResult);  
             }            
-            $return = mail($to, $subject, $content, $headers);
+            return $mailResult;
             
-        } else {
-            if($alternative_manguto_sendmail_password!==false){
-                $formParameters = [
-                    'from' => $from,
-                    'to' => $to,
-                    'cc' => $cc,
-                    'cco' => $cco,
-                    'subject' => $subject,
-                    'content' => $content,
-                    'password' => $alternative_manguto_sendmail_password
-                ];
-                $s2s = new ServerToServer();
-                $return = $s2s->setContent('http://manguto.com/email/go/index.php', $formParameters);
-            }else{
-                throw new Exception("Não foi possível o envio da mensagem de e-mail solicitada através do sistema de envio deste servidor e a senha para envio via servidor alternativo não foi informada. Verifique os parâmetros necessários e tente novamente.");
+        } else {            
+             
+            //SERVICO DE EMAIL ALTERNATIVO!
+            //SERVICO DE EMAIL ALTERNATIVO!
+            //SERVICO DE EMAIL ALTERNATIVO!
+            
+            Logger::proc("Tentativa de envio através de servidor alternativo (to:$to/subject:$subject).");
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            $emailAlternativeServer = new EmailAlternative($from, $to, $cc, $cco, $subject, $content, $password);
+            $mailResult = $emailAlternativeServer->send();
+            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            if ($mailResult===true) {
+                $mailResult = "E-mail enviado com sucesso!";
+                Logger::success($mailResult);
+            } else {
+                $mailResult = "$mailResult"; //Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes => 
+                Logger::error($mailResult);
             }
         }
-        return ($return===false ? 'Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes.' : true);        
+        
+        return $mailResult;
     }
+    
+    // ####################################################################################################
+    
+    static function EnviarAlternativo(string $from, string $to, string $cc, string $cco, string $subject, string $content, bool $password)
+    {
+
+            $formParameters = [
+                'from' => $from,
+                'to' => $to,
+                'cc' => $cc,
+                'cco' => $cco,
+                'subject' => $subject,
+                'content' => $content,
+                'password' => $password
+            ];
+            Logger::proc("Tentativa de disparo e-mails pelo servidor alternativo (to:$to/subject:$subject).");
+            $s2s = new ServerToServer();
+            $return = $s2s->setContent('http://manguto.com/email/go/index.php', $formParameters);
+            Logger::proc("RETORNO do SERVIDOR DE E-MAIL ALTERNATIVO: $return");
+        
+        //$return = "Não foi possível o envio da mensagem de e-mail solicitada através do sistema de envio deste servidor e a senha para envio via servidor alternativo não foi informada. Verifique os parâmetros necessários e tente novamente.";
+        //Logger::error($return);
+        
+    }
+    
+    // ####################################################################################################
+    
 
     /**
      * Verifica se o servido de envio de email
@@ -199,14 +256,17 @@ class Email
      */
     static function CheckServerMailService()
     {
-        $all = ini_get_all();        
-        $sendmail_path = $all['sendmail_path'];        
+        Logger::proc("Verificação de status de serviço de disparo de E-mails =>" . __METHOD__);
+        $all = ini_get_all();
+        $sendmail_path = $all['sendmail_path'];
         $global_value = $sendmail_path['global_value'];
         $local_value = $sendmail_path['local_value'];
-        //deb($global_value,0); deb($local_value);
+        // deb($global_value,0); deb($local_value);
         if ($global_value == NULL && $local_value == NULL) {
+            Logger::error("Serviço de disparo de e-mails DESABILITADO.");
             return false;
         } else {
+            Logger::success("Serviço de disparo de e-mails HABILITADO.");
             return true;
         }
     }

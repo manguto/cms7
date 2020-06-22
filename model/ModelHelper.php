@@ -6,6 +6,7 @@ use manguto\cms7\libraries\Files;
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\libraries\Strings;
 use manguto\cms7\libraries\Logger;
+use manguto\cms7\libraries\Alert;
 
 class ModelHelper
 {
@@ -70,7 +71,7 @@ class ModelHelper
      */
     static function getObjectClassName_by_ClassName(string $searchedPathClass_className): string
     {   
-        Logger::proc("Busca do nome completo da classe '$searchedPathClass_className' - ".__METHOD__);
+        Logger::proc("Busca do nome completo da classe '$searchedPathClass_className' - ");
         Logger::proc("Diretorio(s) com modelo(s): '".implode("','", self::model_class_folders)."' ");
         
         //ciclo pelas pastas de modelos informada 
@@ -288,8 +289,30 @@ class ModelHelper
         }
     }
     
+    static function Initializer()
+    {
+        Alert::setWarning("Inicialização de Modelos solicitada.");
+        $models = Diretorios::obterArquivosPastas(APP_MODEL_DIR, false, true, false, [
+            'php'
+        ]);
+        // deb($models);
+        $msg = "Modelos encontrados: <b>".sizeof($models)."</b>";
+        Logger::info($msg);
+        Alert::setWarning($msg);
+        foreach ($models as $model) {
+            $modelClassName = Files::getBaseName($model, false);
+            if ($modelClassName == 'Zzz' || substr($modelClassName, 0, 1) == '_') {
+                continue;
+            }
+            $modelClassNamePath = ModelHelper::getObjectClassName_by_ClassName($modelClassName);
+            $modelClassNamePath::initialize();
+            $msg = "Modelo <b>$modelClassName</b> inicializado.";
+            Logger::success($msg);
+            Alert::setWarning($msg);
+        }
+    }
     
-    static function get_repository_extended_tablenames(){
+    /*static function get_repository_extended_tablenames(){
         $model_array = ModelHelper::get();
         //deb($model_array);
         foreach ($model_array as $tablename=>$model_information){
@@ -307,7 +330,7 @@ class ModelHelper
         }
         //deb($model_array);
         return $model_array;
-    }
+    }/**/
    
 }
 

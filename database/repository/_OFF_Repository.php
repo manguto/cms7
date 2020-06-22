@@ -6,7 +6,7 @@ use manguto\cms7\libraries\Diretorios;
 use manguto\cms7\libraries\Strings;
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\libraries\ServerHelp;
-use manguto\cms7\libraries\ProcessResult;
+use manguto\cms7\libraries\Alert;
 
 use manguto\cms7\libraries\Datas;
 use manguto\cms7\libraries\Arrays;
@@ -1029,20 +1029,20 @@ class _OFF_Repository extends Model
             }
 
             if (! self::repositoryFileExist($repositoryname)) {
-                ProcessResult::setWarning("Não foi encontrado o arquivo do repositorio para o modelo '$repositoryname'.");
+                Alert::setWarning("Não foi encontrado o arquivo do repositorio para o modelo '$repositoryname'.");
 
                 // cria o arquivo repositorial (vazio)
-                ProcessResult::setWarning("Arquivo inicial do repositorio '$repositoryname' não encontrado.");
+                Alert::setWarning("Arquivo inicial do repositorio '$repositoryname' não encontrado.");
                 self::getRepositoryLength($repositoryname);
-                ProcessResult::setSuccess("Repositorio '$repositoryname' inicializado sem registros (VAZIO).");
+                Alert::setSuccess("Repositorio '$repositoryname' inicializado sem registros (VAZIO).");
             } else {
-                ProcessResult::setSuccess("O arquivo do repositorio '$repositoryname' já foi inicializado. Não há nenhum procedimento a ser realizado.");
+                Alert::setSuccess("O arquivo do repositorio '$repositoryname' já foi inicializado. Não há nenhum procedimento a ser realizado.");
             }
 
             // inicializacao do modelo
             parent::inicializar();
         } catch (Exception $e) {
-            ProcessResult::setError($e);
+            Alert::setDanger($e);
         }
     }
 }
