@@ -150,7 +150,7 @@ class Logger
     {
         if (self::checkConstants()) {
             self::saveOrCheckCache(true);
-            Files::escreverConteudo(self::getFilename(), $data, FILE_APPEND);
+            Files::escreverConteudo(self::getFilename(), utf8_decode($data), FILE_APPEND);
         } else {
             self::saveOrCheckCache($data);
         }
