@@ -12,7 +12,8 @@ class ModelHelper
 {
 
     const model_class_folders = [
-        APP_MODEL_DIR
+        APP_MODEL_DIR,
+        APP_MODULES_DIR
     ];
     
     const funcoes_padrao = ['__construct','preLoad','posLoad'];
@@ -85,17 +86,19 @@ class ModelHelper
             foreach ($dir_php_files as $dir_php_file) {
                 //nome base do arquivo da classe encontrado
                 $ClassBaseFilename_noExt = Files::getBaseName($dir_php_file, false);
-                                
-                Logger::proc("Arquivo da classe '$ClassBaseFilename_noExt'");
+                $ClassBasePath = substr($dir_php_file,0, -1*(strlen($ClassBaseFilename_noExt)+4));
+                //debc("$ClassBasePath - $ClassBaseFilename_noExt",0);                
+                Logger::proc("Arquivo da classe '$dir_php_file'");
                 
                 Logger::proc("Teste: '$ClassBaseFilename_noExt' == '$searchedPathClass_className' ");
+                
                 if ($ClassBaseFilename_noExt == $searchedPathClass_className) {
                     
-                    $classFullPath = '\\' . $model_class_folder . $searchedPathClass_className;
+                    $classFullPath = '\\' . $ClassBasePath . $searchedPathClass_className;
                     
                     $classFullPath = str_replace('/', '\\', $classFullPath);
                     
-                    //deb($objectClassname);
+                    //deb($classFullPath);
                     Logger::proc("Classe alvo encontrada! ($classFullPath)");
                     
                     return $classFullPath;

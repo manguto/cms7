@@ -4,6 +4,8 @@ namespace manguto\cms7\libraries;
 class Sessions
 {
 
+    const serialize = false;
+    
     /**
      * Aloca variáveis/parametros na sessao atual do sistema em questao
      *
@@ -20,8 +22,9 @@ class Sessions
         $APP_BASENAME = $APP_BASENAME == '' ? APP_BASENAME : $APP_BASENAME;
 
         if ($arrayIncrement == false) {
-
-            $_SESSION[$APP_BASENAME][$key] = serialize($value);
+            
+            $_SESSION[$APP_BASENAME][$key] = self::serialize ? serialize($value) : $value;
+            
         } else {
             if (! self::isset($key)) {
                 $variable = [];
@@ -49,7 +52,10 @@ class Sessions
     static function get(string $key, bool $throwException = true, bool $unset = false, string $APP_BASENAME = APP_BASENAME)
     {
         if (self::isset($key)) {
-            $return = unserialize($_SESSION[$APP_BASENAME][$key]);
+            
+            $return = $_SESSION[$APP_BASENAME][$key];
+            $return = self::serialize ? unserialize($return) : $return;
+            
             if($unset){
                 self::unset($key,$throwException,$APP_BASENAME);
             }

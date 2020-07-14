@@ -7,6 +7,7 @@ use manguto\cms7\libraries\Exception;
 use manguto\cms7\database\Database; 
 use manguto\cms7\libraries\Diretorios;
 use manguto\cms7\libraries\Strings;
+use manguto\cms7\libraries\Logger;
 
 class Repository implements Database
 {
@@ -129,14 +130,6 @@ class Repository implements Database
             // $conditions = str_replace('""', '"', $conditions); ERRO!!! (idade=="" => idade=")
         }
         
-        { // excecao quando da utilizacao de "=" ao inves de "=="
-            $conditions = str_replace('!=', '<>', $conditions);
-            $conditions = str_replace('==', '=', $conditions);
-            $conditions = str_replace('=', '==', $conditions);
-            $conditions = str_replace('<==', '<=', $conditions);
-            $conditions = str_replace('>==', '>=', $conditions); /* */
-        }
-        
         // deb($conditions);
         return $conditions;
     }
@@ -179,6 +172,7 @@ class Repository implements Database
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            Logger::proc("Query: '$conditions'");
             $approved = false;
             {
                 eval($conditions);

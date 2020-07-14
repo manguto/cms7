@@ -81,7 +81,7 @@ trait ModelRepository
         // carrega algum objeto caso o id do mesmo tiver sido informado
         if ($id != 0) {
             // deb($this);
-            $object_array = self::search(' $id={id} ', $this->getParameters('id'));
+            $object_array = self::search(' $id=={id} ', $this->getParameters('id'));
             // deb($object_array);
             
             $registerAmount = sizeof($object_array);

@@ -4,7 +4,7 @@ namespace manguto\cms7\model;
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\libraries\Alert;
 
-trait ModelStart
+trait ModelSetup
 {
 
     public function __construct($id = 0)
@@ -32,18 +32,37 @@ trait ModelStart
      */
     static function initialize()
     {   
-        if(defined('self::default') && sizeof(self::default)>0){            
-            $n = (new self())->length();
-            if ($n == 0) {
-                Alert::setWarning("Processo de inicialização do repositório '".__CLASS__."' inicializada.");
-                foreach (self::default as $data){
+        Alert::setWarning("Inicialização do modelo '".__CLASS__."' iniciado.");
+        $n = (new self())->length();
+        if ($n == 0) {
+            Alert::setWarning("Repositório '".__CLASS__."' vazio. Processo de inserção de registros base iniciada.");
+            {
+                $default = [];
+                if(defined('self::default') && sizeof(self::default)>0){
+                    Alert::setWarning(sizeof(self::default)." Registro(s) base encontrado(s).");
+                    foreach (self::default as $register){
+                        $default[] = $register; 
+                    }
+                }else{
+                    Alert::setWarning("Nenhum registros base encontrado.");
+                    $default[] = false;
+                }
+                
+                foreach ($default as $k=>$register){
                     $new = new self();
-                    $new->SET_DATA($data);
+                    if($register!==false){
+                        $new->SET_DATA($register);
+                    }
                     $new->save();
-                    Alert::setWarning("Registro da classe '".__CLASS__."' inserido com sucesso ({$new->getId()})!");
+                    Alert::setSuccess("Registro base Nº ".($k+1)." inserido com sucesso (ID: {$new->getId()}).");
                 }
             }
-        }        
+            
+        }else{
+            Alert::setWarning("Repositório '".__CLASS__."' NÃO se encontra vazio. Inicialização NÃO realizada!");
+        }
+        
+        
     }
     
     /**
