@@ -721,10 +721,18 @@ class Datas
      * @return string
      */
     static function getMicrotime():string{
-        $return = \DateTime::createFromFormat('U.u', microtime(true));
-        $return = $return->format("u");
-        $return = strval($return);
-        return $return;
+        return round(microtime(true) * 1000);
+        
+        /*$return = \DateTime::createFromFormat('U.u', microtime(true));
+        if($return!==false){
+            $return = $return->format("u");
+            $return = strval($return);
+            return $return;
+        }else{
+            $error = error_get_last();
+            throw new Exception($error['message']);
+        }/**/        
+        
     }
 }
 
