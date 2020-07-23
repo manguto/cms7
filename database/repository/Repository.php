@@ -12,9 +12,12 @@ use manguto\cms7\libraries\Logger;
 class Repository implements Database
 {
 
-    // pasta onde serao disponibilizados os arquivos de dados
+    // pasta onde serao disponibilizados os arquivos do repositorio por padrao
     const dir = 'repository';
 
+    //local para armazenamento do arquivo do repositorio
+    private $repository_directory;
+    
     private $ClassName;
 
     private $tablename;
@@ -36,9 +39,10 @@ class Repository implements Database
         ]
     ];
 
-    public function __construct($ClassName)
+    public function __construct($ClassName,$repository_directory=self::dir)
     {
         $this->ClassName = $ClassName;
+        $this->repository_directory = $repository_directory;
         $this->tablename = strtolower($ClassName);
         $this->filename = $this->getFilename();
         $this->table = $this->getTable();
@@ -232,7 +236,10 @@ class Repository implements Database
     {
         $tablename = $this->tablename;
         $filename = strtolower($tablename);
-        return self::dir . DIRECTORY_SEPARATOR . "$filename.csv";
+        $return = $this->repository_directory . DIRECTORY_SEPARATOR . "$filename.csv";
+        $return = Strings::removeRepeatedOccurrences('/', $return);
+        $return = Strings::removeRepeatedOccurrences('\\', $return);
+        return $return;
     }
 
     /**

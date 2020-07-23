@@ -43,8 +43,8 @@ trait ModelRepository
         {
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            $repository = new Repository($this->GetClassName());
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<            
+            $repository = new Repository($this->GetClassName(),$this->GetRepositoryDirectory());
             // deb($repository);
             $parameters = $this->getParameters();
             // deb($parameters);
@@ -62,7 +62,17 @@ trait ModelRepository
             }
         }
     }
-
+    
+    /**
+     * obtem o diretorio definido 
+     * para o armazenamento do arquivo 
+     * deste repositorio 
+     * @return string
+     */
+    public function GetRepositoryDirectory():string{
+        return $this->repository_directory;
+    }
+    
     /**
      * carrega o objeto com base no ID informado
      *
@@ -124,9 +134,8 @@ trait ModelRepository
             //deb($query,0);
         }        
         //=======================================================================================
-        {// obtencao dos registros no respectivo repositorio
-            $className = $this->GetClassName(true);
-            $repository = new Repository($className);
+        {// obtencao dos registros no respectivo repositorio            
+            $repository = new Repository($this->GetClassName(true),$this->GetRepositoryDirectory());
             $table = $repository->select($query, $parameters);                     
         }
         //=======================================================================================
