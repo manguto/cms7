@@ -61,6 +61,8 @@ class ProcessResult
             }
         }
 
+        Logger::proc("Resultados de processos encontrados: ".sizeof($return)." (limpeza de memória:".$unset_all ? 'sim' : 'nao'.")");
+        
         // deb($return);
         return $return;
     }

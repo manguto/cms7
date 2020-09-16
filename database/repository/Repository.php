@@ -12,10 +12,11 @@ use manguto\cms7\libraries\Logger;
 class Repository implements Database
 {
 
-    // pasta onde serao disponibilizados os arquivos do repositorio por padrao
-    const dir = 'repository';
+    // diretorio padrao dos arquivos repositoriais
+    //const default_repository_directory = 'repository';
+    const default_repository_directory = APP_REPOSITORY_DIR;
 
-    //local para armazenamento do arquivo do repositorio
+    // diretorio especifico do arquivo repositorial (caso este tenha sido alterado)
     private $repository_directory;
     
     private $ClassName;
@@ -39,7 +40,7 @@ class Repository implements Database
         ]
     ];
 
-    public function __construct($ClassName,$repository_directory=self::dir)
+    public function __construct($ClassName,$repository_directory=self::default_repository_directory)
     {
         $this->ClassName = $ClassName;
         $this->repository_directory = $repository_directory;

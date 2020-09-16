@@ -55,27 +55,27 @@ class Arrays
     }
 
     // ######################################################################################################################################
-    static function arrayShowSingleLine(array $array, string $arrayName = '',string $separator = ', ',$removeBrackets=true): string
+    static function arrayShowSingleLine(array $array, string $arrayName = '', string $separator = ', ', $removeBrackets = true): string
     {
         $return = [];
-        $array_string = self::arrayShow($array,$arrayName);
+        $array_string = self::arrayShow($array, $arrayName);
         $return_array = explode(chr(10), $array_string);
-        //deb($return_array);
+        // deb($return_array);
         foreach ($return_array as $line) {
             $info = explode('=', $line);
             {
                 $varName = $info[0];
-                if($removeBrackets){
-                    $varName = substr_replace($varName, '', strpos($varName, '['),1);
-                    $varName = substr_replace($varName, '', strpos($varName, ']'),1);
-                }                                
-                $varName = str_replace(' ', '', $varName);                
+                if ($removeBrackets) {
+                    $varName = substr_replace($varName, '', strpos($varName, '['), 1);
+                    $varName = substr_replace($varName, '', strpos($varName, ']'), 1);
+                }
+                $varName = str_replace(' ', '', $varName);
             }
             {
                 $varValue = $info[1];
-                $varValue=str_replace(' ', '', $varValue);
-                $varValue=str_replace('"', "'", $varValue);
-                //$varValue=Strings::removeQuotationMarks($varValue);
+                $varValue = str_replace(' ', '', $varValue);
+                $varValue = str_replace('"', "'", $varValue);
+                // $varValue=Strings::removeQuotationMarks($varValue);
             }
             $return[] = "$varName=$varValue";
         }
@@ -141,6 +141,38 @@ class Arrays
             }
         }
         return $array;
+    }
+
+    static function strtoupper($array)
+    {   
+        foreach ($array as &$v) {
+            if (is_array($v)) {
+                $v = self::strtoupper($v);
+            } else {
+                $v = strtoupper($v);
+            }
+        }     
+        return $array;
+    }
+
+    /**
+     * veririfa se em algums dos registros do array de pilhas de palha (haystack) ha a agulha (needle) procurada
+     * @param array $haystack_array
+     * @param string $needle
+     * @param int $offset
+     * @return boolean|number
+     */
+    static function strpos(array $needle_array, string $haystack, int $offset = null)
+    {   
+        foreach ($needle_array as $needle) {
+            if(trim($needle)=='') continue;
+            $strpos = strpos($haystack, $needle, $offset);
+            //Logger::info("$haystack ($needle) => $strpos");
+            if ($strpos !== false) {                
+                return $strpos;
+            }
+        }
+        return false;
     }
 
     static function utf8_encode($array)

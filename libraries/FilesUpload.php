@@ -2,31 +2,23 @@
 namespace manguto\cms7\libraries;
 
 /**
- * Classe de suporte para
- * tratamento de arquivos
- * enviados via formulario.
- *
+ * Classe de suporte para tratamento de arquivos enviados via formulario.
  * @author Marcos Torres
  */
-class ArquivosEnviados
+class FilesUpload
 {
 
-    public function __construct()
-    {}
-
-    static function ObterArquivosEnviados()
+    static function GetUploadedFilesInfo():array
     {
-        // deb($_FILES);
-        $arquivos = [];
-        foreach ($_FILES as $id => $files_info) {
-            // deb($files_info);
+        $return = [];
+        foreach ($_FILES as $files_info) {
             foreach ($files_info as $file_info_key => $files_info_value) {
                 foreach ($files_info_value as $key => $file_info_value) {
-                    $arquivos[$key][$file_info_key] = $file_info_value;
+                    $return[$key][$file_info_key] = $file_info_value;
                 }
             }
         }
-        return $arquivos;
+        return $return;
     }
     
     /**
@@ -39,7 +31,7 @@ class ArquivosEnviados
      * @throws Exception
      * @return boolean|string
      */
-    static function SalvarArquivo(string $fieldName,string $targetDir='data',bool $randomName=true,int $filesize=500000,bool $throwException=true)
+    static function SaveUploadedFile(string $fieldName,string $targetDir='data',bool $randomName=true,int $filesize=500000,bool $throwException=true)
     {
         if(isset($_FILES[$fieldName])){
             

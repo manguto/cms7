@@ -5,7 +5,10 @@ use manguto\cms7\libraries\Exception;
 
 trait ModelRepository
 {
-
+        
+    //local de armazenamento do repositorio
+    private $repository_directory = Repository::default_repository_directory . DS;
+    
     public function getDatabaseName()
     {
         return 'Repository';

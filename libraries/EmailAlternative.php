@@ -4,7 +4,8 @@ namespace manguto\cms7\libraries;
 class EmailAlternative
 {
 
-    const form_action_url = 'http://manguto.com/email/send.php';
+    //servico alternativo disparo email url    
+    const form_action_url = 'http://manguto.com/mail/send.php';
 
     private $from;
 
@@ -70,20 +71,18 @@ class EmailAlternative
                 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             }                        
-            debc($result);
+            //debc($result,0);
             if($result!==false && trim($result)==''){
                 Logger::success("Envio de e-mail realizado com sucesso ($this->subject | from: $this->from | to:$this->to).");
-                return true;
+                $result = true;
             }else{
-                Logger::error("Não foi possível o envio do e-mail. Retorno obtido: '$result'");
-                return $result;
+                Logger::error("Não foi possível o envio do e-mail. Retorno obtido: '$result'");                
             }
         }else{
             $result = "O servidor alternativo de envio de mensagens de e-mail encontra-se inativo. Aguarde alguns instantes e tente novamente.";
-            Logger::error($result);
-            return $result;
+            Logger::error($result);            
         }       
-
+        return $result;
     }
 
     // ####################################################################################################
