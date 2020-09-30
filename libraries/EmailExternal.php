@@ -2,8 +2,7 @@
 namespace manguto\cms7\libraries;
 
 /**
- * Gerenciamento de acesso/disparo de e-mails
- * via servidor externo
+ * Gerenciamento de acesso/disparo de e-mails via servidor externo
  * @author Marcos
  *
  */
@@ -42,7 +41,7 @@ class EmailExternal
     }
 
     // close the server connection
-    function close()
+    private function close()
     {
         $this->inbox = array();
         $this->msg_cnt = 0;
@@ -53,14 +52,14 @@ class EmailExternal
     // open the server connection
     // the imap_open function parameters will need to be changed for the particular server
     // these are laid out to connect to a Dreamhost IMAP server
-    function connect()
+    private function connect()
     {
         $this->conn = imap_open('{' . $this->server . '/notls}', $this->user, $this->pass);
         self::msg_cnt();
     }
 
     // move the message to a new folder
-    function move($msg_index, $folder = 'INBOX.Processed')
+    private function move($msg_index, $folder = 'INBOX.Processed')
     {
         // move on server
         imap_mail_move($this->conn, $msg_index, $folder);
@@ -68,7 +67,7 @@ class EmailExternal
     }
 
     // read the inbox
-    function get_all()
+    private function get_all()
     {
         $in = array();
         for ($i = 1; $i <= $this->msg_cnt; $i ++) {
@@ -79,7 +78,7 @@ class EmailExternal
     }
 
     // get a specific message (1 = first email, 2 = second email, etc.)
-    function get($msg_index)
+    private function get($msg_index)
     {
         if (intval($msg_index) && ($this->msg_cnt > 0) && ($msg_index > 0) && ($msg_index <= $this->msg_cnt)) {
             $return = array(
@@ -95,10 +94,14 @@ class EmailExternal
         return $return;
     }
 
-    function msg_cnt()
+    private function msg_cnt()
     {
         $this->msg_cnt = imap_num_msg($this->conn);
         // debug($this->msg_cnt);
+    }
+    
+    public function send(){
+        
     }
 
     public function save_attachments($msg_index)
@@ -157,7 +160,7 @@ class EmailExternal
             while (file_exists($filename)) {
                 $filename = str_replace('.', '_.', $filename);
             }
-            Files::escreverConteudo($filename, $contents);
+            Files::writeContent($filename, $contents);
             $attachments_saved[$name] = $filename;
         }
         return $attachments_saved;

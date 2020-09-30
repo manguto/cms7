@@ -166,9 +166,9 @@ class simple_html_dom_parser
 
         if (! Files::verificarArquivoOuPastaExiste($filename, false)) {
             $html_content = file_get_contents($this->url);
-            Files::escreverConteudo($filename, $html_content);
+            Files::writeContent($filename, $html_content);
         } else {
-            $html_content = Files::obterConteudo($filename);
+            $html_content = Files::getContent($filename);
         }
         $this->loadHTMLContent_fromString($html_content);
     }

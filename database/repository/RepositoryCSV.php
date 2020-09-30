@@ -5,10 +5,9 @@ namespace manguto\cms7\database\repository;
 use manguto\cms7\libraries\Exception;
 
 class RepositoryCSV{
-
+    
     const valuesDelimiter = ';';
-    const reservedCharacters = [';','
-'];        
+    const reservedCharactersAscii = [59,10,13]; //==> (59-;) (10-\n) (13-\r)
     
     /**
      * Converte um ARRAY para uma string no formato CSV
@@ -17,11 +16,11 @@ class RepositoryCSV{
      * @return string
      */
     static function ArrayToCSV(array $array):string{
-
+        
         $lines = [];
         if(sizeof($array)>0){
             
-            {//HEADER                 
+            {//HEADER
                 $columnNameArray = [];
                 //percorre todos os registros
                 foreach ($array as $line){
@@ -31,18 +30,18 @@ class RepositoryCSV{
                     foreach ($entry_columnNameArray as $columnName) {
                         //verifica se ja foi registrado e caso contrario o registra
                         if(!in_array($columnName, $columnNameArray)){
-                            $columnNameArray[] = $columnName;                            
+                            $columnNameArray[] = $columnName;
                         }
                     }
                 }
-                //insere no topo do futuro arquivo csv o cabecalho das colunas 
+                //insere no topo do futuro arquivo csv o cabecalho das colunas
                 $lines[] = implode(RepositoryCSV::valuesDelimiter, $columnNameArray);
             }
             {//BODY
-
+                
                 foreach ($array as $lineValues) {
-
-                    if(is_array($lineValues)){                        
+                    
+                    if(is_array($lineValues)){
                         //pula as linhas vazias
                         if(trim(implode('', $lineValues))==''){
                             continue;
@@ -59,15 +58,15 @@ class RepositoryCSV{
                             }
                         }
                         $lines[]=implode(RepositoryCSV::valuesDelimiter, $line);
-                                             
+                        
                     }else{
                         throw new Exception("Não foi possível converter o array para uma string (CSV).");
                     }
                 }
             }
         }
-        $lineBreak = chr(10); 
-        $csv=implode($lineBreak, $lines).$lineBreak;        
+        $lineBreak = chr(10);
+        $csv=implode($lineBreak, $lines).$lineBreak;
         return $csv;
         
     }
@@ -81,7 +80,7 @@ class RepositoryCSV{
         
         //deb($csv);
         $array=[];
-        $lineBreak = chr(10); 
+        $lineBreak = chr(10);
         $csvLineArray = explode($lineBreak, $csv);
         //deb($csvLineArray,0);
         if(sizeof($csvLineArray)>1){
@@ -90,15 +89,15 @@ class RepositoryCSV{
                 
                 //retirada da primeira linha (em csv) que seria o cabecalho das colunas (titulos)
                 $csvHeaderLineCSV = array_shift($csvLineArray);
-
+                
                 //transformacao em array
                 $csvHeaderLine_ = explode(RepositoryCSV::valuesDelimiter, $csvHeaderLineCSV);
                 
                 $headerLineArray = [];
                 
-                foreach ($csvHeaderLine_ as $key=>$p){                    
-                    $p = RepositoryCSV::unmascString($p);                    
-                    $headerLineArray[$key] = $p;                    
+                foreach ($csvHeaderLine_ as $key=>$p){
+                    $p = RepositoryCSV::unmascString($p);
+                    $headerLineArray[$key] = $p;
                     if($p=='id'){
                         $idKey = $key;
                     }
@@ -112,25 +111,25 @@ class RepositoryCSV{
             {//body
                 //deb($csvLines);
                 foreach ($csvLineArray as $csvLine) {
-                    //pula linhas vazias 
+                    //pula linhas vazias
                     if(trim($csvLine)==""){
                         continue;
                     }
                     
-                    $csvBodyLine_ = explode(RepositoryCSV::valuesDelimiter, $csvLine);                        
+                    $csvBodyLine_ = explode(RepositoryCSV::valuesDelimiter, $csvLine);
                     $id = $csvBodyLine_[$idKey];
                     foreach ($csvBodyLine_ as $key=>$p){
                         {
                             $columnName = trim($headerLineArray[$key]);
                             $columnValue = trim(RepositoryCSV::unmascString($p));
-                        }                        
+                        }
                         $array[$id][$columnName] = $columnValue;
-                    }                    
+                    }
                 }
             }
         }
         //deb($array);
-        return $array;        
+        return $array;
     }
     
     //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -145,9 +144,9 @@ class RepositoryCSV{
      * @return string
      */
     static private function mascString(string $string):string{
-        foreach (RepositoryCSV::reservedCharacters as $key=>$rc) {
+        foreach (RepositoryCSV::reservedCharactersAscii as $key=>$rc) {
             {
-                $search = $rc;
+                $search = chr($rc);
                 $replace = "<$key>";
             }
             $string = str_replace($search, $replace, $string);
@@ -162,10 +161,10 @@ class RepositoryCSV{
      * @return string
      */
     static private function unmascString(string $string):string{
-        foreach (RepositoryCSV::reservedCharacters as $key=>$rc) {
-            {   
+        foreach (RepositoryCSV::reservedCharactersAscii as $key=>$rc) {
+            {
                 $search = "<$key>";
-                $replace = $rc;
+                $replace = chr($rc);
             }
             $string = str_replace($search, $replace, $string);
         }

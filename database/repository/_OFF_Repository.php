@@ -632,7 +632,7 @@ class _OFF_Repository extends Model
         self::saveRepositoryCSV_START($repositoryname, $repositoryFilename);
 
         // obtencao do conteudo
-        $repositoryCSV = Files::obterConteudo($repositoryFilename);
+        $repositoryCSV = Files::getContent($repositoryFilename);
 
         // transformar codificacao do texto
         $repositoryCSV = utf8_encode($repositoryCSV);
@@ -655,7 +655,7 @@ class _OFF_Repository extends Model
         // transformar codificacao do texto
         $repositoryCSV = utf8_decode($repositoryCSV);
         // salvar arquivo
-        Files::escreverConteudo(Repository::getRepositoryFilename($repositoryname), $repositoryCSV);
+        Files::writeContent(Repository::getRepositoryFilename($repositoryname), $repositoryCSV);
     }
 
     // ==============================================================================================================================-

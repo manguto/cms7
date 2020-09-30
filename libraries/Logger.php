@@ -24,10 +24,12 @@ class Logger
     const lineChar = '=';
 
     const parametersBoxChar = '|';
-    
+
     const lineSpacer = '_';
-    
+
     const lineLen = 80;
+
+    const SessionKey = 'Logger';
 
     // ####################################################################################################
     // #################################################################################### STATIC / PUBLIC
@@ -47,12 +49,13 @@ class Logger
 
     // ######################################################################
     static function error(string $msg, array $parameters = [])
-    {   
+    {
         self::save(self::getData(__FUNCTION__, $msg, $parameters));
     }
+
     // ######################################################################
     static function exception(string $msg, array $parameters = [])
-    {   
+    {
         self::save(self::getData(__FUNCTION__, $msg, $parameters));
     }
 
@@ -82,7 +85,6 @@ class Logger
     {
         foreach (self::neededConstants as $cteName) {
             if (! defined($cteName)) {
-                // throw new Exception("Constante necessária não definida ($cteName).");
                 return false;
             }
         }
@@ -113,28 +115,16 @@ class Logger
 
     // ####################################################################################################
     /**
-     * registra temporariamente o registro para insercao no
-     * log quando das definicoes das constantes necessarias
-     * ou
-     * salva todos as notas previamente registradas
-     *
-     * @param string|bool $data
+     * salva todos as notas previamente 'cacheadas'
      */
-    static private function saveOrCheckCache($data)
+    static private function save_cached_logs()
     {
-        if ($data !== true) {
-            // no caso de uma mensagem
-            if (! isset($_SESSION[__DIR__]['logger'])) {
-                $_SESSION[__DIR__]['logger'] = [];
-            }
-            $_SESSION[__DIR__]['logger'][] = $data;
-        } else {
-            // no caso do salvamento efetivo
-            if (isset($_SESSION[__DIR__]['logger']) && sizeof($_SESSION[__DIR__]['logger']) > 0) {
-                $logsTemp = $_SESSION[__DIR__]['logger'];
-                unset($_SESSION[__DIR__]['logger']);
-                foreach ($logsTemp as $dataTemp) {
-                    self::save($dataTemp);
+        // registro de dados previamente 'cacheados'
+        if (Sessions::isset(self::SessionKey)) {
+            $cached_log_array = Sessions::get(self::SessionKey, true, true);
+            if (is_array($cached_log_array) && sizeof($cached_log_array) > 0) {
+                foreach ($cached_log_array as $cached_log) {
+                    self::write($cached_log);
                 }
             }
         }
@@ -142,20 +132,50 @@ class Logger
 
     // ####################################################################################################
     /**
-     * salva os dados informados no arquivo de log
+     * guarda informacoes de 'logs' para escrita futura
+     * (quando todas as constantes necessarias estiverem definidas)
+     *
+     * @param string $data
+     */
+    static private function cache(string $data)
+    {
+        // inicializa parametro como array (caso necessario)
+        if (! Sessions::isset(self::SessionKey)) {
+            Sessions::set(self::SessionKey, []);
+        }
+        Sessions::set(self::SessionKey, $data, true);
+    }
+
+    // ####################################################################################################
+    /**
+     * tenta salvar as informacoes passadas no arquivo de log
+     * e caso contrario, registra na sessao para escrita futura
+     * quando possivel.
      *
      * @param string $data
      */
     static private function save(string $data)
     {
         if (self::checkConstants()) {
-            self::saveOrCheckCache(true);
-            Files::escreverConteudo(self::getFilename(), utf8_decode($data), FILE_APPEND);
+            self::save_cached_logs();
+            self::write($data);
         } else {
-            self::saveOrCheckCache($data);
+            self::cache($data);
         }
     }
-    
+
+    // ####################################################################################################
+    /**
+     * escreve arquivo na pasta informada para insercao de logs
+     *
+     * @param string $data
+     * @return boolean
+     */
+    static private function write(string $data)
+    {
+        return Files::writeContent(self::getFilename(), utf8_decode($data), FILE_APPEND);
+    }
+
     // ####################################################################################################
     static private function getLineInfo(string $type = '')
     {
@@ -163,36 +183,36 @@ class Logger
             $time = str_replace('#', Datas::getMicrotime(), date(self::lineTimeFormat));
             $type = str_pad(strtoupper($type), 10, '_', STR_PAD_RIGHT);
         }
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
         $return = "$time | $type";
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+
         return $return;
     }
-    
+
     // ####################################################################################################
     static private function getCallInfo()
     {
         {
             $backtrace = debug_backtrace();
-            //deb($backtrace);
-            {//verificacao do passo da chamada
+            // deb($backtrace);
+            { // verificacao do passo da chamada
                 $caller = $backtrace[3];
-                {//verificacao do arquivo de origem. Caso seja a classe Exception o passo precisa ser antecipado
-                    if(strpos($caller['file'],'Exception')!==false){
-                        $caller = $backtrace[4];     
+                { // verificacao do arquivo de origem. Caso seja a classe Exception o passo precisa ser antecipado
+                    if (strpos($caller['file'], 'Exception') !== false) {
+                        $caller = $backtrace[4];
                     }
                 }
             }
-            
+
             {
                 $file = $caller['file'];
                 $function = $caller['function'];
-                {   
+                {
                     $file = str_replace(dirname(__DIR__, 4) . DIRECTORY_SEPARATOR, '', $file);
                     $file = str_replace(DIRECTORY_SEPARATOR, '.', $file);
                     $file = str_replace('.php', '', $file);
@@ -200,21 +220,21 @@ class Logger
                 $line = $caller['line'];
             }
         }
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
         $return = "{$file} ({$line}) # {$function}";
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        {//espacamento linha
-            
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        { // espacamento linha
+
             $lineLenTemp = strlen($return);
-            if($lineLenTemp < self::lineLen){
+            if ($lineLenTemp < self::lineLen) {
                 $multiplier = self::lineLen - $lineLenTemp;
                 $shift = str_repeat(self::lineSpacer, $multiplier);
-            }else{
-                $shift = '';   
+            } else {
+                $shift = '';
             }
         }
         $return = str_replace('#', $shift, $return);
@@ -223,27 +243,62 @@ class Logger
     }
 
     // ####################################################################################################
-    static private function getParametersInfo(array $parameters)
+    /*
+     * static private function getParametersInfo(array $parameters)
+     * {
+     * if (sizeof($parameters) > 0) {
+     * $parameters_show = [];
+     * {
+     * $parameters_show[] = ':';
+     * $parameters_show[] = ' ';
+     * $parameters_show[] = Arrays::arrayShow($parameters);
+     * $parameters_show[] = ' ';
+     * }
+     * // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+     * // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+     * // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+     * $parameters_show = ' | ' . str_replace(chr(10) . ' ', chr(10) . self::parametersBoxChar . ' ', implode(chr(10), $parameters_show));
+     * // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+     * // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+     * // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+     * } else {
+     * $parameters_show = '';
+     * }
+     * return $parameters_show;
+     * }/*
+     */
+
+    // ####################################################################################################
+    /**
+     * formata a mensagem para uma melhor exibicao no log quanto a quebras de linha
+     * @param string $message
+     * @return string
+     */
+    private static function formatMultipleLineMessage(string $message):string
     {
-        if (sizeof($parameters) > 0) {
-            $parameters_show = [];
-            {
-                $parameters_show[] = ':';
-                $parameters_show[] = ' ';
-                $parameters_show[] = Arrays::arrayShow($parameters);
-                $parameters_show[] = ' ';
-            }
-            //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-            //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-            //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-            $parameters_show = ' | ' . str_replace(chr(10) . ' ', chr(10) . self::parametersBoxChar . ' ', implode(chr(10), $parameters_show));
-            //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-            //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-            //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        } else {
-            $parameters_show = '';
+        {
+            $test = '#@#';
+            $nl = chr(10).str_repeat(' ', 3);
+            $pre_extra_lines = 2;
+            $pos_extra_lines = 5;
         }
-        return $parameters_show;
+        
+        {//teste
+            $message_test = Strings::RemoverQuebrasDeLinha($message,$test);
+        }
+        
+        //existem quebras de linha na mensagem?
+        if(strlen($message)!=strlen($message_test)){            
+            
+            {//quebras de linha encontradas!
+                $message = '...';
+                $message .= str_repeat($nl,$pre_extra_lines);
+                $message .= str_replace($test, $nl, $message_test);
+                $message .= str_repeat($nl,$pos_extra_lines);
+            }               
+        }
+        
+        return $message;
     }
 
     // ####################################################################################################
@@ -260,21 +315,18 @@ class Logger
         {
             $lineInfo = self::getLineInfo($method);
             $callInfo = self::getCallInfo();
-            $parametersInfo = self::getParametersInfo($parameters);
-        }        
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        $return = "{$lineInfo} | {$callInfo} | {$msg} {$parametersInfo} " . chr(10);
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
-        //<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+            $msg = self::formatMultipleLineMessage($msg);
+            {
+                $parameters = sizeof($parameters) > 0 ? self::formatMultipleLineMessage(json_encode($parameters)) : '';
+            }
+        }
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        $return = "{$lineInfo} | {$callInfo} | {$msg} {$parameters} " . chr(10);
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
+        // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===
 
         return $return;
     }

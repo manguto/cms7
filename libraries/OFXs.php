@@ -87,7 +87,7 @@ class OFXs
     private function loadFileBaseXMLStructure($filename)
     {
         {
-            $xml_file_content = Files::obterConteudo($filename);
+            $xml_file_content = Files::getContent($filename);
             $ofx_tag_position = strpos($xml_file_content, '<OFX>');
             $xml_info = substr($xml_file_content, 0, $ofx_tag_position);
             $xml_str = trim(substr($xml_file_content, $ofx_tag_position));

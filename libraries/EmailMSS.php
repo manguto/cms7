@@ -1,12 +1,20 @@
 <?php
 namespace manguto\cms7\libraries;
 
-class EmailAlternative
+/**
+ * MANGUTO SENDEMAIL SERVICE (MSS)
+ * @author Marcos
+ *
+ */
+class EmailMSS 
 {
 
     //servico alternativo disparo email url    
     const form_action_url = 'http://manguto.com/mail/send.php';
 
+    //retorno de sucesso (string)
+    const success_response = '1';
+    
     private $from;
 
     private $to;
@@ -47,7 +55,7 @@ class EmailAlternative
      */
     public function send()
     {     
-        if(EmailAlternative::checkAlternativeMailService()){
+        if(EmailMSS::checkAlternativeMailService()){
             Logger::proc("Tentativa de disparo de e-mail (assunto: $this->subject).");
             //=============================================================================
             {
@@ -72,7 +80,7 @@ class EmailAlternative
                 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             }                        
             //debc($result,0);
-            if($result!==false && trim($result)==''){
+            if($result!==false && trim($result)==self::success_response){
                 Logger::success("Envio de e-mail realizado com sucesso ($this->subject | from: $this->from | to:$this->to).");
                 $result = true;
             }else{

@@ -13,15 +13,15 @@ class Strings
     const textosNaoMaiusculantes = [
         'da',
         'das',
-        'de',        
+        'de',
         'do',
         'dos',
         'e',
         'o',
         'os',
-        'em',        
+        'em',
         'a',
-        'as',
+        'as'
     ];
 
     const textosNaoAbreviaveis = [
@@ -55,15 +55,15 @@ class Strings
         return $return;
     }
 
-    static function RemoverConteudoAnteriorEPosteriorA($needleIni,$needleEnd,$string)
+    static function RemoverConteudoAnteriorEPosteriorA($needleIni, $needleEnd, $string)
     {
-        if(substr_count($string, $needleIni)!=1 || substr_count($string, $needleEnd)!=1){
+        if (substr_count($string, $needleIni) != 1 || substr_count($string, $needleEnd) != 1) {
             throw new Exception("Os parâmetros informados não foram encontrados ou foram encontrados mais vezes do que o esperado.");
         }
         $posIni = strpos($string, $needleIni);
         $posEnd = strpos($string, $needleEnd);
-        $length = ($posEnd+strlen($needleEnd))-$posIni;
-        $return = substr($string, $posIni,$length);        
+        $length = ($posEnd + strlen($needleEnd)) - $posIni;
+        $return = substr($string, $posIni, $length);
         return $return;
     }
 
@@ -96,7 +96,7 @@ class Strings
     static function abreviacao($strString, $intLength = NULL)
     {
         $defaultAbbrevLength = 8; // Default abbreviation length if none is specified
-                                  
+
         // Set up the string for processing
         $strString = preg_replace("/[^A-Za-z0-9]/", '', $strString); // Remove non-alphanumeric characters
         $strString = ucfirst($strString); // Capitalize the first character (helps with abbreviation calcs)
@@ -538,7 +538,7 @@ class Strings
             'Ж' => 'zh',
             'ж' => 'zh'
         ];
-        
+
         $return = strtr($string, $replace);
         if ($strtolower) {
             $return = strtolower($return);
@@ -591,11 +591,11 @@ class Strings
     {
         $return = array();
         for ($c = 0; $c < strlen($string); $c ++) {
-            
+
             $caracter = $string[$c];
             $ascii = ord($caracter);
-            
-            $caracter_show = trim($caracter)=='' ? '_' : $caracter;
+
+            $caracter_show = trim($caracter) == '' ? '_' : $caracter;
             $return[] = "<a href='#' title='$caracter($ascii)'>$caracter</a>";
         }
         return implode('', $return);
@@ -617,9 +617,37 @@ class Strings
      * @param number $ascii_out
      * @return string
      */
-    static function AleatorioCaractere($ascii_in = 97, $ascii_out = 122): string
+    static function AleatorioCaractere($ascii_in = 97, $ascii_out = 122, array $ascii_extra = []): string
     {
-        return chr(rand($ascii_in, $ascii_out));
+        $scope = [];
+        for ($i = $ascii_in; $i <= $ascii_out; $i ++) {
+            $scope[] = $i;
+        }
+        foreach ($ascii_extra as $x) {
+            $scope[] = $x;
+        }
+        $random_key = rand(0, count($scope)-1);
+
+        $choosed_char = chr($scope[$random_key]);
+
+        return $choosed_char;
+    }
+
+    /**
+     * retorna uma frase aleatoria
+     *
+     * @param number $ascii_in
+     * @param number $ascii_out
+     * @return string
+     */
+    static function randomSentence($length=20): string
+    {
+        $length = intval($length);
+        $return = '';
+        for ($i = 1; $i <= $length; $i++) {
+            $return.= self::AleatorioCaractere(97,122,[32]);
+        }
+        return $return;
     }
 
     /**
@@ -630,12 +658,19 @@ class Strings
      * @param number $ascii_out
      * @return string
      */
-    static function AleatoriaString($quantCaracteres = 1, $ascii_in = 97, $ascii_out = 122): string
+    static function AleatoriaString($quantCaracteres = 1, $ascii_in = 97, $ascii_out = 122, $spaced = false): string
     {
         $quantCaracteres = intval($quantCaracteres);
         $return = '';
         for ($i = 0; $i < $quantCaracteres; $i ++) {
-            $return .= self::AleatorioCaractere($ascii_in, $ascii_out);
+            if ($spaced) {
+                $c = self::AleatorioCaractere($ascii_in, $ascii_out, [
+                    32
+                ]); // 32 - space
+            } else {
+                $c = self::AleatorioCaractere($ascii_in, $ascii_out);
+            }
+            $return .= $c;
         }
         return $return;
     }
@@ -678,7 +713,7 @@ class Strings
      */
     static function AleatorioCelular($ddd = 87): string
     {
-        return "(87) 9." . rand(8, 9) . self::AleatoriosNumeros(3) . '-' . self::AleatoriosNumeros(4);
+        return "(87) 9." . rand(4, 7) . self::AleatoriosNumeros(3) . '-' . self::AleatoriosNumeros(4);
     }
 
     /**
@@ -708,7 +743,7 @@ class Strings
         return $return;
     }
 
-    static function unwrap(string $string, string $delimiterLeft, string $delimiterRight,$replaceDelimiters=true): string
+    static function unwrap(string $string, string $delimiterLeft, string $delimiterRight, $replaceDelimiters = true): string
     {
         $string_ = explode($delimiterLeft, $string);
         $sizeof = sizeof($string_);
@@ -724,49 +759,53 @@ class Strings
         } else {
             throw new Exception("Foram encontrados mais de um ($sizeof) delimitador esquerdo na conteúdo informado (Delimitar Esquerdo: '$delimiterLeft').");
         }
-        if($replaceDelimiters){
-            $string = $delimiterLeft.$string.$delimiterRight;
+        if ($replaceDelimiters) {
+            $string = $delimiterLeft . $string . $delimiterRight;
         }
         return $string;
     }
-    
+
     /**
-     * Remove todas as ocorrências de conteudos delimitados pelas strings informadas 
+     * Remove todas as ocorrências de conteudos delimitados pelas strings informadas
+     *
      * @param string $string
      * @param string $delimiterLeft
      * @param string $delimiterRight
      * @param boolean $replaceDelimiters
      * @return array
      */
-    static function RemoverOcorrenciasEntreDelimitadores(string $string, string $delimiterLeft, string $delimiterRight,$replaceDelimiters=false,$quantidadeOcorrencias=0): array
-    {   
+    static function RemoverOcorrenciasEntreDelimitadores(string $string, string $delimiterLeft, string $delimiterRight, $replaceDelimiters = false, $quantidadeOcorrencias = 0): array
+    {
         $return = $string;
         $searchs = [];
-        $posl=true;
-        $posr=true;
+        $posl = true;
+        $posr = true;
         $ocorrencias = 0;
         while ($posl && $posr) {
-            $posl = strpos($return,$delimiterLeft);
-            if($posl!==false){
-                $posr = strpos($return,$delimiterRight,$posl);
-                if($posr!==false){
-                    if($quantidadeOcorrencias==0 || ($quantidadeOcorrencias>0 && $ocorrencias<$quantidadeOcorrencias) ){
-                        $length = $posr-$posl+strlen($delimiterRight);
-                        $search = substr($return, $posl,$length);
+            $posl = strpos($return, $delimiterLeft);
+            if ($posl !== false) {
+                $posr = strpos($return, $delimiterRight, $posl);
+                if ($posr !== false) {
+                    if ($quantidadeOcorrencias == 0 || ($quantidadeOcorrencias > 0 && $ocorrencias < $quantidadeOcorrencias)) {
+                        $length = $posr - $posl + strlen($delimiterRight);
+                        $search = substr($return, $posl, $length);
                         $searchs[] = $search;
                         $return = str_replace($search, '', $return);
-                        //-------------------------------------------
-                        $ocorrencias++;
-                    }else{
-                        $posl=false;
-                        $posr=false;
+                        // -------------------------------------------
+                        $ocorrencias ++;
+                    } else {
+                        $posl = false;
+                        $posr = false;
                     }
                 }
             }
         }
-        return [$return,$searchs];
+        return [
+            $return,
+            $searchs
+        ];
     }
-    
+
     static function showCSV(string $text): string
     {
         // ajuste correcional de caracteres especiais
@@ -797,9 +836,9 @@ class Strings
                     continue;
                 $csvLinhaConteudos = explode(';', $csvLinha);
                 foreach ($csvLinhaConteudos as $coluna => &$csvLinhaConteudo) {
-                    
+
                     $csvLinhaConteudo = trim($csvLinhaConteudo);
-                    
+
                     $csvLinhaConteudo = ' ' . str_pad($csvLinhaConteudo, $quantMaxCaracteresColuna[$coluna] + 1, ' ', STR_PAD_RIGHT);
                 }
                 $return[] = '|' . implode('|', $csvLinhaConteudos) . '|';
@@ -812,19 +851,21 @@ class Strings
 
     /**
      * realiza a substituicao apenas na primeira ocorrencia do termo procurado
+     *
      * @param string $search
      * @param string $replace
      * @param string $subject
      * @return string
      */
-    static function str_replace_first(string $search,string $replace,string $subject):string{
+    static function str_replace_first(string $search, string $replace, string $subject): string
+    {
         $pos = strpos($subject, $search);
         if ($pos !== false) {
             return substr_replace($subject, $replace, $pos, strlen($search));
         }
         return $subject;
     }
-    
+
     static function SubstituirConteudoEntreTextos(string $searchIni, string $searchEnd, string $replace, string $subject, bool $removeSearch = true)
     {
         { // VERIFICACOES INICIAIS
@@ -841,7 +882,7 @@ class Strings
         }
         { // SEPARACAO DAS PARTES ( A | B | C )
             $data = explode($searchIni, $subject);
-            
+
             if (sizeof($data) == 2) {
                 $A = $data[0];
                 $BC = $data[0];
@@ -849,7 +890,7 @@ class Strings
                 $A = '';
                 $BC = $data[0];
             }
-            
+
             $data = explode($searchEnd, $BC);
             if (sizeof($BC) == 2) {
                 $B = $data[0];
@@ -865,24 +906,25 @@ class Strings
         return $return;
     }
 
-    
     /**
      * inverte cada caractere da string informada
-     * de forma que esta se torna ordenalmente inversa 
+     * de forma que esta se torna ordenalmente inversa
      * a string original
-     * @param $string
+     *
+     * @param
+     *            $string
      * @return string
      */
-    static function str_inverter($string):string
+    static function str_inverter($string): string
     {
         $string = strval($string);
         // deb(chr(65));
-        
+
         // 0-255
         for ($c = 0; $c < strlen($string); $c ++) {
-            
+
             { // rotation
-                
+
                 { // actual
                     $chr = $string[$c];
                     $ord = ord($chr);
@@ -893,30 +935,32 @@ class Strings
                 }
                 // deb("'$chr'[$ord] => '$chrNew'[$ordNew] ",0);
             }
-            
+
             $string[$c] = $chrNew;
         }
         return $string;
     }
 
     /**
-     * 
      *
      * @param string $str1
      * @param string $str2
      */
-    
-    
+
     /**
      * retorna o percentual de igualdade entre as strings
+     *
      * @param string $str1
      * @param string $str2
-     * @param int $length - quantidade de caracteres a partir do inicio a serem utilizados
-     * @param bool $lowercase - transformar para minuculas
-     * @param number $precision - precisao da porcentagem
+     * @param int $length
+     *            - quantidade de caracteres a partir do inicio a serem utilizados
+     * @param bool $lowercase
+     *            - transformar para minuculas
+     * @param number $precision
+     *            - precisao da porcentagem
      * @return number
      */
-    static function PercentualIdentical(string $str1, string $str2, int $length = 0, bool $lowercase = false):int
+    static function PercentualIdentical(string $str1, string $str2, int $length = 0, bool $lowercase = false): int
     {
         $return = 0;
         if ($lowercase) {
@@ -927,10 +971,10 @@ class Strings
             $str1 = substr($str1, 0, $length);
             $str2 = substr($str2, 0, $length);
         }
-        //deb("'$str1' x '$str2'",0);
+        // deb("'$str1' x '$str2'",0);
         $strlen1 = strlen($str1);
         $strlen2 = strlen($str2);
-        
+
         { // especificacao do limite maximo do loop
             if ($strlen1 < $strlen2) {
                 $max = $strlen2;
@@ -940,7 +984,7 @@ class Strings
                 $min = $strlen2;
             }
         }
-        
+
         $match = 0;
         for ($c = 0; $c < $min; $c ++) {
             if ($str1[$c] == $str2[$c]) {
@@ -952,90 +996,99 @@ class Strings
         }
         return $return;
     }
-    
+
     /**
      * retorna a frase informada com as primeiras letras maiusculas
+     *
      * @param string $string
      * @return string
      */
-    static function ucfirst_frases(string $string):string{
+    static function ucfirst_frases(string $string): string
+    {
         $string = trim($string);
         $string_array = explode(' ', $string);
         $return = [];
         foreach ($string_array as $s) {
-            $s = mb_convert_case($s,MB_CASE_LOWER);
-            if (in_array(strtolower($s), self::textosNaoMaiusculantes)){
-                $return[]= $s;
-            }else{
-                $return[]= mb_convert_case($s,MB_CASE_TITLE);
+            $s = mb_convert_case($s, MB_CASE_LOWER);
+            if (in_array(strtolower($s), self::textosNaoMaiusculantes)) {
+                $return[] = $s;
+            } else {
+                $return[] = mb_convert_case($s, MB_CASE_TITLE);
             }
         }
         $return = implode(' ', $return);
         return $return;
     }
-    
+
     /**
      * remove ocorrencias repetidas de uma string em outra
+     *
      * @param string $search
      * @param string $string
      * @return string
      */
-    static function removeRepeatedOccurrences(string $search, string $string):string{
-        while(strpos($string, $search.$search)!==false){
-            $string = str_replace($search.$search, $search, $string);
+    static function removeRepeatedOccurrences(string $search, string $string): string
+    {
+        while (strpos($string, $search . $search) !== false) {
+            $string = str_replace($search . $search, $search, $string);
         }
         return $string;
     }
-    
+
     /**
      * verifica se a string eh iniciada pelo termo informado,
-     * retornando o conteudo (com/sem o termo) ou 'false' 
+     * retornando o conteudo (com/sem o termo) ou 'false'
+     *
      * @param string $term
      * @param string $string
      * @return bool|string
      */
-    static function checkIni(string $term, string $string,bool $termRemove=true){
+    static function checkIni(string $term, string $string, bool $termRemove = true)
+    {
         $return = false;
-        if(substr($string, 0,strlen($term))==$term){
-            if($termRemove){
+        if (substr($string, 0, strlen($term)) == $term) {
+            if ($termRemove) {
                 $return = substr($string, strlen($term));
-            }else{
+            } else {
                 $return = $string;
             }
         }
         return $return;
     }
-    
+
     /**
      * verifica se a string eh finalizada pelo termo informado,
-     * retornando o conteudo (com/sem o termo) ou 'false' 
+     * retornando o conteudo (com/sem o termo) ou 'false'
+     *
      * @param string $term
      * @param string $string
      * @return bool|string
      */
-    static function checkEnd(string $term, string $string,bool $termRemove=true){
+    static function checkEnd(string $term, string $string, bool $termRemove = true)
+    {
         $return = false;
-        if(substr($string,-strlen($term))==$term){
-            if($termRemove){
-                $return = substr($string,0,-strlen($term));
-            }else{
+        if (substr($string, - strlen($term)) == $term) {
+            if ($termRemove) {
+                $return = substr($string, 0, - strlen($term));
+            } else {
                 $return = $string;
             }
         }
         return $return;
     }
-    
+
     /**
      * remove as aspas da string
+     *
      * @param string $string
      * @return string
      */
-    static function removeQuotationMarks(string $string):string
+    static function removeQuotationMarks(string $string): string
     {
         $return = $string;
         $return = str_replace('"', '', $return);
         $return = str_replace("'", '', $return);
-        $return = str_replace("`", '', $return);        
+        $return = str_replace("`", '', $return);
         return $return;
     }
 }

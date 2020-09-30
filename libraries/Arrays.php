@@ -211,7 +211,7 @@ class Arrays
                     $previousSavedValue = $return[$argKey];
                     $actualValue = $argValue;
                     if ($previousSavedValue != $actualValue) {
-                        throw new Exception("Ocorreu uma inconssistência na mesclagem de arrays. Existem conteúdos diferentes para a mesma chave ($argKey => '$previousSavedValue' | '$actualValue' ).");
+                        throw new Exception("Ocorreu uma inconsistência na mesclagem de arrays. Existem conteúdos diferentes para a mesma chave ($argKey => '$previousSavedValue' | '$actualValue' ).");
                     }
                 }
                 $return[$argKey] = $argValue;

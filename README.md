@@ -1,34 +1,6 @@
-# Manguto - Library & Content Management System
+# manguto/cms7
 
-> Library & Mini Content Management System - Little help on developing simple personal solutions. 
-
-----
-## composer.json
-    {
-	"require" : {
-		"manguto/cms7" : "*"
-	},
-	"autoload" : {
-		"psr-4" : {
-			"sis\\" : "sis/"
-		}
-	},
-	"minimum-stability" : "dev"
-	}
-
-## Git Bash
-composer install
-
-## setup.php
-    <?php    
-    session_start();
-    session_unset();    
-    use manguto\cms7\libraries\cms\CMSSetup;
-    require_once "vendor/autoload.php";
-    CMSSetup::Run('cms7');        
-    ?>
-
-## Done!
-
-
-[Markdown - Help](http://markdownlivepreview.com)
+SETUP:
+1. git clone https://github.com/manguto/cms7-skeleton
+2. git rm -r --cached .
+3. composer install

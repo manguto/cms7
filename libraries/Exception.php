@@ -1,6 +1,8 @@
 <?php
 namespace manguto\cms7\libraries;
 
+use application\core\Controller;
+
 class Exception extends \Exception
 {
 
@@ -9,26 +11,45 @@ class Exception extends \Exception
     // ####################################################################################################
     public function __construct($message = null, $code = null, $previous = null)
     {
-        Logger::exception($message);
+        { // log
+            Logger::exception($message);
+        }
+        { // e-mail
+            self::sendEmail($message);
+        }
         parent::__construct($message, $code, $previous);
     }
 
     // ####################################################################################################
-    
     /**
-     * imprime ou obtem o html com as informacoes da excecao
-     * @param bool $print
-     * @return string
+     * envia um email para o administrador da aplicacao
+     * @param string $message
      */
-    public function show(bool $print=true){
-        return Exception::static_show($this,$print);
+    static private function sendEmail(string $message){
+        $email = new Email();
+        {
+            $from = APP_EMAIL;
+            $to = APP_EMAIL_ADMIN;
+            $cc = '';
+            $cco = '';
+            $subject = APP_SHORT_NAME. " - EXCEPTION";
+            $content = 'MENSAGEM DA EXCEÇÃO: <hr/>'.$message;
+            $password = APP_EMAIL_MSS_PASSWORD;
+        }
+        $emailResult = $email->Enviar($from, $to, $cc, $cco, $subject, $content, $password);
+        if($emailResult===true){
+            Logger::success("'Exception' e-mail enviado com sucesso!");
+        }else{
+            Logger::error("Não foi possível enviar 'Exception' e-mail. Resultado obtido: ".$emailResult);
+        }
     }
-    
+
     // ####################################################################################################
     // ############################################################################################# static
     // ####################################################################################################
     /**
      * imprime o caminho percorrido ate o local quantas vezes o codigo passar pelo mesmo
+     *
      * @param string $msg
      * @throws Exception
      */
@@ -40,13 +61,14 @@ class Exception extends \Exception
             Exception::static_show($e, true);
         }
     }
- 
+
     // ####################################################################################################
     // ############################################################################################ private
     // ####################################################################################################
-    
+
     /**
      * exibe a excecao informada
+     *
      * @param Exception $e
      * @param boolean $echo
      * @return string
@@ -70,30 +92,39 @@ class Exception extends \Exception
     // ####################################################################################################
     /**
      * realiza o manipulacao de eventos indevidos do sistema (Error, Throwable, Exception)
+     *
      * @param mixed $e
      */
-    static function handleEvent($e)
+    static function handleEvent($e,$redirect=true)
     {
-        // tipo do evento
-        $event_class = get_class($e);
         
+        // tipo do evento (classe)
+        $event_class = get_class($e);
+
         if (strpos($event_class, 'Exception') !== false) {
-            {// EXCEPTION
-                $e->show(true);
+            { // EXCEPTION                
+                $message = $e->getMessage();
             }
-            
         } else if (strpos($event_class, 'Error') !== false) {
-            {// ERROR
-                
-                echo "<pre>$e</pre>";
-                die();
+            { // ERROR
+                $message = "$e";                
             }
         } else {
-            echo "Não foi possível identificar o tipo do erro reportado. Verifique os detalhes abaixo:";
-            debc($e);
+            $message = "Evento ($event_class): ".strval($e);            
         }
+        
+        //Cria os alertas!
+        //Alert::setDanger("ATENÇÃO! Ocorreu um ERRO CRÍTICO no sistema. <br/>Por favor, tente novamente e caso a inconssistência persista, <br/>anote as informações descritas abaixo e contate o Administrador através do e-mail: ".APP_EMAIL_ADMIN.".<br/>Obrigado!");
+        
+        Logger::error("Exception!!! ".chr(10).$message);
+        Alert::setDanger($message);
+        
+        //redireciona para a tela principal
+        if($redirect){
+            Controller::HeaderLocation('/');
+        }        
     }
-    
+
     // ####################################################################################################
     // ####################################################################################################
     // ####################################################################################################
@@ -181,11 +212,10 @@ class Exception extends \Exception
 
         return $return;
     }
-    
+
     // ####################################################################################################
     // ####################################################################################################
     // ####################################################################################################
-    
 }
 
 ?>

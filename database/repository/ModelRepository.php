@@ -14,7 +14,11 @@ trait ModelRepository
         return 'Repository';
     }
 
-    public function save()
+    /**
+     * salva o registro
+     * @return bool
+     */
+    public function save():bool
     {
         {
             // validacao de dados (caso necessaria)
@@ -50,8 +54,8 @@ trait ModelRepository
             $repository = new Repository($this->GetClassName(),$this->GetRepositoryDirectory());
             // deb($repository);
             $parameters = $this->getParameters();
-            // deb($parameters);
-            $repository->save($parameters);
+            //deb($parameters);
+            $return = $repository->save($parameters);
             // deb($repository);
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -64,6 +68,7 @@ trait ModelRepository
                 $this->setId($lastInsertedId);
             }
         }
+        return $return;
     }
     
     /**

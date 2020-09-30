@@ -22,15 +22,15 @@ class Datas
     const FormatoDatahora = 'd/m/Y H:i';
 
     /**
-     * Cria uma data de acordo com o FORMATO e DATAHORA informados.
-     *
+     * Cria uma data de acordo com o FORMATO e DATAHORA informados
+     * e já verifica se é uma data válida!
      *
      * @param string $data
      * @param string $dateFormat
      */
-    public function __construct(string $dateStr, string $dateFormat = 'd-m-Y')
+    public function __construct(string $dateStr, string $dateFormat = 'd-m-Y',bool $throwException=true)
     {
-        self::checkdate($dateFormat, $dateStr);
+        self::checkdate($dateFormat, $dateStr,$throwException);
         $this->format = $dateFormat;
         $this->datestr = $dateStr;
         $this->timestamp = self::mktime($this->format, $this->datestr);
@@ -151,9 +151,9 @@ class Datas
 
         if (! checkdate($month, $day, $year)) {
             if ($throwException) {
-                throw new Exception("Data incorreta ou inexistente ('$datestr' => DIA:$day | MÊS:$month | ANO:$year).");
+                throw new Exception("Não foi possível criar a data informada. Formato incorreto ou data inexistente ('$format','$datestr').");
             } else {
-                return true;
+                return false;
             }
         } else {
             return true;
@@ -232,8 +232,10 @@ class Datas
             throw new Exception("Número inadequado para um dia da semana [0-6]('$dayNumber').");
         } else {
             $code = $fullName ? '%A' : '%a';
-            return strftime($code, strtotime("Sunday +{$dayNumber} days"));
+            $return = strftime($code, strtotime("Sunday +{$dayNumber} days"));
         }
+        $return = utf8_encode($return);
+        return $return;
     }
 
     static function staticGetWeekDayName(int $dayNumber, string $size = 'p', bool $uppercase = true, bool $ucfirst = false): string
@@ -290,7 +292,7 @@ class Datas
     }
 
     /**
-     * Retorna o nome do dia da semana conforme o número do mesmo informado [0-6]
+     * Retorna o nome do dia da semana
      *
      * @param int $dayNumber
      * @param boolean $abrev

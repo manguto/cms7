@@ -19,8 +19,7 @@ class ProcessResult
         $return = [];
 
         if (Sessions::isset(self::key)) {
-            $process_results = Sessions::get(self::key,false);
-            //deb($_SESSION);
+            $process_results = Sessions::get(self::key,false);            
             //deb(gettype($prs));
             //deb($prs);
             $process_results = $process_results=='' ? [] : $process_results;

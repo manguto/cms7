@@ -4,8 +4,8 @@ namespace manguto\cms7\libraries;
 class Alert
 {
 
-    const key = 'Alert';
-
+    const key = 'ALERT';
+    
     // ####################################################################################################
     // ####################################################################################################
     // ####################################################################################################
@@ -26,7 +26,10 @@ class Alert
         }
         return $return;
     }
-
+   
+    
+    // ####################################################################################################
+    // ####################################################################################################
     // ####################################################################################################
     /**
      * registra uma mensagem de perigo ou erro (danger)
@@ -36,6 +39,7 @@ class Alert
      */
     static function setDanger($expection_or_message): string
     {   
+        Logger::error('Alerta! '.chr(10).$expection_or_message);
         return self::SET(__FUNCTION__, $expection_or_message);
     }
 
@@ -48,6 +52,7 @@ class Alert
      */
     static function setWarning($expection_or_message): string
     {
+        Logger::warning('Alerta! '.chr(10).$expection_or_message);
         return self::SET(__FUNCTION__, $expection_or_message);
     }
 
@@ -60,6 +65,7 @@ class Alert
      */
     static function setInfo($expection_or_message): string
     {
+        Logger::info('Alerta! '.chr(10).$expection_or_message);
         return self::SET(__FUNCTION__, $expection_or_message);
     }
     // ####################################################################################################
@@ -71,6 +77,7 @@ class Alert
      */
     static function setSuccess($expection_or_message): string
     {
+        Logger::success('Alerta! '.chr(10).$expection_or_message);
         return self::SET(__FUNCTION__, $expection_or_message);
     }
 

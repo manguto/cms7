@@ -2,7 +2,7 @@
 namespace manguto\cms7\libraries;
 
 /**
- * envio de mensagens de email
+ * Envio de mensagens de e-mail principalmente por via direta e secundariamente por via alternativa (manguto sendmail service) 
  * @author Marcos
  *
  */
@@ -17,7 +17,7 @@ class Email
      * @param string $cco
      * @param string $subject
      * @param string $content
-     * @param boolean $alternative_manguto_sendmail_password
+     * @param boolean $password - manguto sendmail service password
      * @return string|bool
      */
     static function Enviar(string $from, string $to, string $cc, string $cco, string $subject, string $content, bool $password = false)
@@ -40,13 +40,13 @@ class Email
             }
             Logger::proc("Tentativa de envio pelo servidor próprio (to:$to/subject:$subject).");            
             //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            $mailResult = mail($to, $subject, $content, $headers);
+            $return = mail($to, $subject, $content, $headers);
             //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            if ($mailResult===true) {               
-                Logger::success($mailResult);               
+            if ($return===true) {               
+                Logger::success("E-mail enviado com sucesso!");               
             } else {
-                $mailResult = "Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes => ".error_get_last()['message'];
-                Logger::error($mailResult);  
+                $return = "Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes => ".error_get_last()['message'];
+                Logger::error($return);  
             }
             
         } else {
@@ -57,18 +57,18 @@ class Email
             
             Logger::proc("Tentativa de envio através de servidor alternativo (to:$to/subject:$subject).");
             //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            $emailAlternativeServer = new EmailAlternative($from, $to, $cc, $cco, $subject, $content, $password);
-            $mailResult = $emailAlternativeServer->send();
+            $emailAlternativeServer = new EmailMSS($from, $to, $cc, $cco, $subject, $content, $password);
+            $return = $emailAlternativeServer->send();
             //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            if ($mailResult===true) {                
-                Logger::success($mailResult);
+            if ($return===true) {                
+                Logger::success("E-mail enviado com sucesso! (to:$to)");
             } else {
-                $mailResult = "$mailResult"; //Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes => 
-                Logger::error($mailResult);
+                $return = strval($return); //Não foi possível o envio da mensagem de e-mail. Tente novamente em alguns instantes => 
+                Logger::error($return);
             }
         }
         
-        return $mailResult;
+        return $return;
     }
     
     // ####################################################################################################

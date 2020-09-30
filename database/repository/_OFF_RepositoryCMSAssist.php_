@@ -22,7 +22,7 @@ class _OFF_RepositoryCMSAssist
 
             $repositorioEncontrado = self::repositoryExists($tablename);
             if ($repositorioEncontrado !== false) {
-                $csvContent = Files::obterConteudo($repositorioEncontrado);
+                $csvContent = Files::getContent($repositorioEncontrado);
             } else {
                 $csvContent = '';
             }
@@ -108,7 +108,7 @@ class _OFF_RepositoryCMSAssist
             }
             // deb($modelContent);
             $modelFilenameNew = "prj/model/$Tablename.php";
-            Files::escreverConteudo($modelFilenameNew, $modelContent);
+            Files::writeContent($modelFilenameNew, $modelContent);
             return "Um modelo para '$Tablename' foi criado com sucesso!";
         }
     }
@@ -171,7 +171,7 @@ class _OFF_RepositoryCMSAssist
                 }
 
                 if (file_exists($repositoryIniFilename)) {
-                    Files::copiarArquivo($repositoryIniFilename, $repositoryFilename);
+                    Files::copy($repositoryIniFilename, $repositoryFilename);
                     Alert::setSuccess("Repositório '<b>$repositoryname</b>' preenchido (via '$repositoryIniFilename') com sucesso.");
                 } else {
                     Alert::setWarning("A inicialização do repositório '<b>$repositoryname</b>' não pode ser realizada, pois não foi encontrado nenhum arquivo base para inicialização.");

@@ -6,6 +6,9 @@ class Files
 
     const backupCopy_dateMasc = 'Y-m-d_His';
 
+    //define quantas iteracoes sao consideradas normais para a tentativa de escrita controlada 
+    const wait_loop_limit = 3;
+    
     /**
      * obtem a extensao do arquivo informado
      * @param string $path
@@ -51,9 +54,16 @@ class Files
         }
     }
 
-    static function obterNomePasta($path)
+    /**
+     * optem o nome especifico da pasta
+     * @param string $path
+     * @return string
+     */
+    static function getFolderName(string $path):string
     {
-        $path = Diretorios::fixDirectorySeparator($path);
+        $return = basename(dirname($path));
+        return $return;
+        /*$path = Diretorios::fixDirectorySeparator($path);
         $path = explode(DIRECTORY_SEPARATOR, $path);
         // debug($filepath);
         { // ---verificacao se parametro eh de uma pasta ou de um arquivo
@@ -68,16 +78,17 @@ class Files
         }
 
         $path = array_pop($path);
-        return $path;
+        return $path;*/
     }
 
     /**
-     * OBTEM O CONTEUDO (STRING) DE UM ARQUIVO
-     * E CASO NÃO O ENCONTRE, SOLTA UMA EXCESSÃO.
-     *
+     * obtem o conteudo (string) de um arquivo
+     * @param string $filename
+     * @param boolean $throwException
      * @throws Exception
+     * @return string
      */
-    static function obterConteudo($filename, $throwException = true)
+    static function getContent(string $filename, $throwException = true):string
     {
         // config
         {
@@ -133,7 +144,7 @@ class Files
      * @throws Exception
      * @return bool
      */
-    static function escreverConteudo(string $filename, string $data, $flags = NULL, $throwException = true)
+    static function writeContent(string $filename, string $data, $flags = NULL, $throwException = true):bool
     {
         // ---verificar diretorio
         $caminho = self::getPath($filename);
@@ -163,10 +174,10 @@ class Files
      * @throws Exception
      * @return boolean
      */
-    static function copiarArquivo(string $filenameSource, string $filenameDestination, $throwException = true)
+    static function copy(string $filenameSource, string $filenameDestination, $throwException = true)
     {
         if (! file_exists($filenameDestination)) {
-            self::escreverConteudo($filenameDestination, ' ' . chr(10));
+            self::writeContent($filenameDestination, ' ' . chr(10));
         }
 
         if (copy($filenameSource, $filenameDestination) == false) {
@@ -188,7 +199,7 @@ class Files
      * @throws Exception
      * @return boolean
      */
-    static function excluir(string $filename, bool $throwException = true)
+    static function delete(string $filename, bool $throwException = true)
     {
         // ---verificar diretorio
         if (file_exists($filename)) {
@@ -363,7 +374,7 @@ class Files
     // ###################################################################################################################################################
 
     /**
-     * escreve um arquivo tendo o cuidado de que este não seja escrito durante o processo.
+     * 
      *
      * @param string $filename
      * @param string $data
@@ -371,22 +382,41 @@ class Files
      *            $flags
      * @param boolean $throwException
      */
-    static function escreverConteudoControlado(string $filename, string $data, $flags = NULL, $throwException = true)
+      
+    /**
+     * escreve um arquivo tendo o cuidado de que este não seja escrito durante o processo.
+     * @param string $filename
+     * @param string $data
+     * @param $flags
+     * @param boolean $throwException
+     * @param int $loop - NÃO UTILIZAR (VARIAVEL DE CONTROLE) 
+     * @throws Exception
+     * @return bool
+     */
+    static function escreverConteudoControlado(string $filename, string $data, $flags = NULL, $throwException = true,int $loop=0):bool
     {
         if (self::arquivoEstaTravado($filename) == false) {
             self::arquivoTravar($filename);
-            self::escreverConteudo($filename, $data, $flags, $throwException);
+            $return = self::writeContent($filename, $data, $flags, $throwException);
             self::arquivoDestravar($filename);
         } else {
+            //aguarda alguns milisegundos
             sleep(1);
-            self::escreverConteudoControlado($filename, $data, $flags, $throwException);
+            //quantidade de 'loops' em espera foi atingido?
+            if($loop<self::wait_loop_limit){
+                //tenta escrever novamente
+                $return = self::escreverConteudoControlado($filename, $data, $flags, $throwException,($loop+1));
+            }else{
+                throw new Exception("Não foi possível salvar o conteúdo do arquivo controlado: '$filename'. Tente novamente em breve!");
+            }            
         }
+        return $return;
     }
 
     static private function arquivoTravar($filename)
     {
         $filename_temp = $filename . '_';
-        self::escreverConteudo($filename_temp, "TRAVA CONTRA ESCRITA DO ARQUIVO: $filename");
+        self::writeContent($filename_temp, "TRAVA CONTRA ESCRITA DO ARQUIVO: $filename");
     }
 
     static private function arquivoEstaTravado($filename)
@@ -403,7 +433,7 @@ class Files
     {
         $filename_temp = $filename . '_';
         if (self::arquivoEstaTravado($filename)) {
-            self::excluir($filename_temp);
+            self::delete($filename_temp);
         }
     }
 

@@ -52,7 +52,12 @@ class Repository implements Database
         // deb($this);
     }
 
-    public function save(array $parameters = [])
+    /**
+     * salva o repositorio
+     * @param array $parameters
+     * @return bool
+     */
+    public function save(array $parameters = []):bool
     {
         // deb($parameters);
         { // definicao de id no caso de novos registros
@@ -80,9 +85,9 @@ class Repository implements Database
             }
         }
         { // salvamento
-            $this->setTable();
+           $return = $this->saveRepository();
         }
-        // deb($this->table);
+        return $return;
     }
 
     public function length(): int
@@ -252,12 +257,12 @@ class Repository implements Database
     private function getTable(): array
     {
         // obtencao do conteudo
-        $repositoryCSV = Files::obterConteudo($this->filename, false);
+        $repositoryCSV = Files::getContent($this->filename, false);
         // debc($repositoryCSV);
         
         // obtencao ou inicializacao e caso ainda nao exista, cria-o!
         if ($repositoryCSV == false) {
-            $repositoryCSV = $this->tableInit();
+            $repositoryCSV = $this->reposotoryInitialize();
             // debc($repositoryCSV);
         }
         
@@ -270,7 +275,7 @@ class Repository implements Database
         // debc($repository);
         
         // ordenacao pelo id virtual
-        $table = $this->sortTable($table);
+        $table = $this->sortRepository($table);
         // deb($table);
         
         return $table;
@@ -284,7 +289,7 @@ class Repository implements Database
      * @param array $table
      * @return array
      */
-    private function sortTable(array $table): array
+    private function sortRepository(array $table): array
     {
         $sortedTable = [];
         { // ajuste ordenacao e filtragem de registros removidos virtualmente
@@ -299,7 +304,7 @@ class Repository implements Database
     /**
      * cria arquivo CSV caso nao exista
      */
-    private function tableInit()
+    private function reposotoryInitialize()
     {
         // deb($this);
         $ClassNameFull = ModelHelper::getObjectClassName_by_ClassName($this->ClassName);
@@ -312,28 +317,28 @@ class Repository implements Database
         // deb($titles);
         Files::escreverConteudoControlado($this->filename, $titles);
     }
-
+    
     /**
      * converte o array em csv e o salva
-     *
-     * @param string $repositoryname
-     * @param string $repositoryARRAY
+     * @return bool
      */
-    private function setTable()
+    private function saveRepository():bool
     {
         // array sort
-        $table = $this->sortTable($this->table);
+        $table = $this->sortRepository($this->table);
         
         // array - csv
         $repositoryCSV = RepositoryCSV::ArrayToCSV($table);
-        // deb($repositoryCSV);
+        //deb($repositoryCSV);
         
         // utf8 decode
         $repositoryCSV = utf8_decode($repositoryCSV);
         // deb($repositoryCSV);
         
         // salvar arquivo
-        Files::escreverConteudoControlado($this->getFilename(), $repositoryCSV);
+        $return = Files::escreverConteudoControlado($this->getFilename(), $repositoryCSV);
+        
+        return $return;
     }
 
     /**
@@ -522,7 +527,7 @@ class Repository implements Database
         ]);
         foreach ($modelFiles as $modelFile) {
             // deb($modelFile);
-            $conteudo = Files::obterConteudo($modelFile);
+            $conteudo = Files::getContent($modelFile);
             
             $modelRepositoryFile = strpos($conteudo, 'use ModelRepository') !== false;
             // deb($modelFile,0); deb($modelRepositoryFile,0);
