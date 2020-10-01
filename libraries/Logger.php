@@ -27,7 +27,7 @@ class Logger
 
     const lineSpacer = '_';
 
-    const lineLen = 80;
+    const lineLen = 100;
 
     const SessionKey = 'Logger';
 
@@ -274,8 +274,19 @@ class Logger
      * @param string $message
      * @return string
      */
-    private static function formatMultipleLineMessage(string $message):string
+    private static function formatMessage(string $message):string
     {
+        {//remocao tags html
+            {//replace quebras de linha em HTML para nao perde-las
+                $message = str_replace('<br>', chr(10), $message);
+                $message = str_replace('<br/>', chr(10), $message);
+                $message = str_replace('<br />', chr(10), $message);                
+                $message = str_replace('<BR>', chr(10), $message);
+                $message = str_replace('<BR/>', chr(10), $message);
+                $message = str_replace('<BR />', chr(10), $message);                
+            }
+            $message = Strings::RemoverTagsHTML($message);
+        }
         {
             $test = '#@#';
             $nl = chr(10).str_repeat(' ', 3);
@@ -315,9 +326,9 @@ class Logger
         {
             $lineInfo = self::getLineInfo($method);
             $callInfo = self::getCallInfo();
-            $msg = self::formatMultipleLineMessage($msg);
+            $msg = self::formatMessage($msg);
             {
-                $parameters = sizeof($parameters) > 0 ? self::formatMultipleLineMessage(json_encode($parameters)) : '';
+                $parameters = sizeof($parameters) > 0 ? self::formatMessage(json_encode($parameters)) : '';
             }
         }
         // <===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===<===

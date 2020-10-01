@@ -1,26 +1,26 @@
 {
-	"name": "manguto/cms7",
-	"type": "library",
-	"description": "Content management system suport libraries.",
-	"authors": [
-		{
-			"name": "Manguto",
-			"email": "admin@manguto.com"
+	"name" : "manguto/cms7",
+	"type" : "library",
+	"description" : "Content management system suport libraries.",
+	"authors" : [{
+			"name" : "Manguto",
+			"email" : "admin@manguto.com"
 		}
 	],
-	"require": {
-		"php": "^7.0.0"
+	"require" : {
+		"php" : "^7.0.0",
+		"phpmailer/phpmailer": "6.0.7"
 	},
-	"autoload": {
-		"psr-4": {			
-			"manguto\\cms7\\database\\":"database/",
+	"autoload" : {
+		"psr-4" : {
+			"manguto\\cms7\\database\\" : "database/",
 			"manguto\\cms7\\libraries\\" : "libraries/",
-			"manguto\\cms7\\model\\":"model/"
+			"manguto\\cms7\\model\\" : "model/"
 		},
-		"files": [
+		"files" : [
 			"functions/functions.php"
 		]
 	},
-	"minimum-stability": "dev",
-	"license": "GPL-3.0-or-later"
+	"minimum-stability" : "dev",
+	"license" : "GPL-3.0-or-later"
 }
