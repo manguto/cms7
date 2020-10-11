@@ -59,7 +59,7 @@ class Images
     static function setHeaderContentType($src){
         
         {//extension get
-            $ext = Files::getExtension($src);
+            $ext = File::getExtension($src);
             $ext = strtolower($ext);
         }
         // content type

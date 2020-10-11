@@ -1,7 +1,7 @@
 <?php
 namespace manguto\cms7\database\repository;
 
-use manguto\cms7\libraries\Files;
+use manguto\cms7\libraries\File;
 use manguto\cms7\model\ModelHelper; 
 use manguto\cms7\libraries\Exception; 
 use manguto\cms7\database\Database; 
@@ -182,7 +182,7 @@ class Repository implements Database
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            Logger::proc("Query: '$conditions'");
+            //Logger::proc("Query: '$conditions'");
             $approved = false;
             {
                 eval($conditions);
@@ -257,7 +257,7 @@ class Repository implements Database
     private function getTable(): array
     {
         // obtencao do conteudo
-        $repositoryCSV = Files::getContent($this->filename, false);
+        $repositoryCSV = File::getContent($this->filename, false);
         // debc($repositoryCSV);
         
         // obtencao ou inicializacao e caso ainda nao exista, cria-o!
@@ -315,7 +315,7 @@ class Repository implements Database
         // deb($data);
         $titles = implode(RepositoryCSV::valuesDelimiter, $data) . chr(10);
         // deb($titles);
-        Files::escreverConteudoControlado($this->filename, $titles);
+        File::escreverConteudoControlado($this->filename, $titles);
     }
     
     /**
@@ -336,7 +336,7 @@ class Repository implements Database
         // deb($repositoryCSV);
         
         // salvar arquivo
-        $return = Files::escreverConteudoControlado($this->getFilename(), $repositoryCSV);
+        $return = File::escreverConteudoControlado($this->getFilename(), $repositoryCSV);
         
         return $return;
     }
@@ -527,13 +527,13 @@ class Repository implements Database
         ]);
         foreach ($modelFiles as $modelFile) {
             // deb($modelFile);
-            $conteudo = Files::getContent($modelFile);
+            $conteudo = File::getContent($modelFile);
             
             $modelRepositoryFile = strpos($conteudo, 'use ModelRepository') !== false;
             // deb($modelFile,0); deb($modelRepositoryFile,0);
             
             if ($modelRepositoryFile) {
-                $tablename = strtolower(Files::getBaseName($modelFile, false));
+                $tablename = strtolower(File::getBaseName($modelFile, false));
                 // deb($tablename);
                 
                 // inicializa o modelo repositorial

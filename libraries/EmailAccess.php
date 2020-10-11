@@ -6,7 +6,7 @@ namespace manguto\cms7\libraries;
  * @author Marcos
  *
  */
-class EmailExternal
+class EmailAccess
 {
 
     // imap server connection
@@ -160,7 +160,7 @@ class EmailExternal
             while (file_exists($filename)) {
                 $filename = str_replace('.', '_.', $filename);
             }
-            Files::writeContent($filename, $contents);
+            File::writeContent($filename, $contents);
             $attachments_saved[$name] = $filename;
         }
         return $attachments_saved;

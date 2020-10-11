@@ -1,7 +1,7 @@
 <?php
 namespace manguto\cms7\database\repository;
 
-use manguto\cms7\libraries\Files;
+use manguto\cms7\libraries\File;
 use manguto\cms7\libraries\Diretorios;
 use manguto\cms7\libraries\Strings;
 use manguto\cms7\libraries\Exception;
@@ -631,7 +631,7 @@ class OFF_Repository extends Model
         self::saveRepositoryCSV_START($repositoryname, $repositoryFilename);
 
         // obtencao do conteudo
-        $repositoryCSV = Files::getContent($repositoryFilename);
+        $repositoryCSV = File::getContent($repositoryFilename);
 
         // transformar codificacao do texto
         $repositoryCSV = utf8_encode($repositoryCSV);
@@ -654,7 +654,7 @@ class OFF_Repository extends Model
         // transformar codificacao do texto
         $repositoryCSV = utf8_decode($repositoryCSV);
         // salvar arquivo
-        Files::writeContent(Repository::getRepositoryFilename($repositoryname), $repositoryCSV);
+        File::writeContent(Repository::getRepositoryFilename($repositoryname), $repositoryCSV);
     }
 
     // ==============================================================================================================================-

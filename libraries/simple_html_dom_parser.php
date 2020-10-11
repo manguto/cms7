@@ -164,11 +164,11 @@ class simple_html_dom_parser
 
         $filename = $this->getFilename();
 
-        if (! Files::verificarArquivoOuPastaExiste($filename, false)) {
+        if (! File::verificarArquivoOuPastaExiste($filename, false)) {
             $html_content = file_get_contents($this->url);
-            Files::writeContent($filename, $html_content);
+            File::writeContent($filename, $html_content);
         } else {
-            $html_content = Files::getContent($filename);
+            $html_content = File::getContent($filename);
         }
         $this->loadHTMLContent_fromString($html_content);
     }

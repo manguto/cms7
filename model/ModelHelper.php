@@ -2,7 +2,7 @@
 namespace manguto\cms7\model;
 
 use manguto\cms7\libraries\Diretorios;
-use manguto\cms7\libraries\Files;
+use manguto\cms7\libraries\File;
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\libraries\Strings;
 use manguto\cms7\libraries\Logger;
@@ -53,8 +53,8 @@ class ModelHelper
             ]);
             // deb($php_files,0);
             foreach ($php_files as $php_file) {
-                $nomeClasse = Files::getBaseName($php_file, false);
-                $path = Files::getPath($php_file);
+                $nomeClasse = File::getBaseName($php_file, false);
+                $path = File::getPath($php_file);
                 // deb($nomeClasse,0); deb($tablename,0);
                 if ($nomeClasse == $tablename) {
 
@@ -93,7 +93,7 @@ class ModelHelper
             // percorrimento dos arquivos encontrados no diretorio atual
             foreach ($dir_php_files as $dir_php_file) {
                 // nome base do arquivo da classe encontrado
-                $ClassBaseFilename_noExt = Files::getBaseName($dir_php_file, false);
+                $ClassBaseFilename_noExt = File::getBaseName($dir_php_file, false);
                 $ClassBasePath = substr($dir_php_file, 0, - 1 * (strlen($ClassBaseFilename_noExt) + 4));
                 // debc("$ClassBasePath - $ClassBaseFilename_noExt",0);
                 Logger::proc("Arquivo da classe '$dir_php_file'");
@@ -143,7 +143,7 @@ class ModelHelper
     {
         $models = [];
         foreach ($files as $file) {
-            $model_name = Files::getBaseName($file, false);
+            $model_name = File::getBaseName($file, false);
             $models[$model_name] = [];
         }
         return $models;
@@ -236,10 +236,10 @@ class ModelHelper
         $funcoes = [];
         foreach ($filename_array as $filename) {
 
-            $conteudo = Files::getContent($filename);
+            $conteudo = File::getContent($filename);
             // debc($conteudo);
 
-            $model_name = Files::getBaseName($filename, false);
+            $model_name = File::getBaseName($filename, false);
             // deb($model_name,0);
 
             { // parameters
@@ -312,7 +312,7 @@ class ModelHelper
     {
         { // parametros
             { // conteudo arquivo
-                $haystack = Files::getContent($filename);
+                $haystack = File::getContent($filename);
             }
         }
         // percorre os identificadores especificados
@@ -375,7 +375,7 @@ class ModelHelper
         Logger::info($msg);
         Alert::setWarning($msg);
         foreach ($models as $model) {
-            $modelClassName = Files::getBaseName($model, false);
+            $modelClassName = File::getBaseName($model, false);
             if ($modelClassName == 'Zzz' || substr($modelClassName, 0, 1) == '_') {
                 continue;
             }

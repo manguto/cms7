@@ -1,16 +1,29 @@
 <?php
 namespace manguto\cms7\libraries;
 
-class Files
+class File
 {
-
+    //mascara para copia de reserva
     const backupCopy_dateMasc = 'Y-m-d_His';
-
-    //define quantas iteracoes sao consideradas normais para a tentativa de escrita controlada 
+    
+    // define quantas iteracoes sao consideradas normais para a tentativa de escrita controlada
     const wait_loop_limit = 3;
+    
+    // ####################################################################################################
+    // ############################################################################################ PUBLIC
+    // ####################################################################################################
+    
+    public function __construct(){
+        
+    }
+    
+    // ####################################################################################################
+    // ############################################################################################ STATIC
+    // ####################################################################################################
     
     /**
      * obtem a extensao do arquivo informado
+     *
      * @param string $path
      * @return mixed
      */
@@ -18,9 +31,11 @@ class Files
     {
         return pathinfo($path, PATHINFO_EXTENSION);
     }
-
+    
+    // ####################################################################################################
     /**
      * obtem o tamanho do arquivo informado
+     *
      * @param string $path
      * @return number
      */
@@ -28,9 +43,11 @@ class Files
     {
         return filesize($path);
     }
-
+    
+    // ####################################################################################################
     /**
      * obterm o caminho onde se encontra o arquivo ou caminho informado
+     *
      * @param string $path
      * @return string
      */
@@ -39,8 +56,10 @@ class Files
         return pathinfo($path, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR;
     }
     
+    // ####################################################################################################
     /**
      * obtem o nome do arquivo
+     *
      * @param string $path
      * @param bool $withExtension
      * @return mixed
@@ -53,42 +72,48 @@ class Files
             return pathinfo($path, PATHINFO_FILENAME);
         }
     }
-
+    
+    // ####################################################################################################
     /**
      * optem o nome especifico da pasta
+     *
      * @param string $path
      * @return string
      */
-    static function getFolderName(string $path):string
+    static function getFolderName(string $path): string
     {
         $return = basename(dirname($path));
         return $return;
-        /*$path = Diretorios::fixDirectorySeparator($path);
-        $path = explode(DIRECTORY_SEPARATOR, $path);
-        // debug($filepath);
-        { // ---verificacao se parametro eh de uma pasta ou de um arquivo
-            if (strpos($path[sizeof($path) - 1], '.') !== false) {
-                $arquivo = true;
-            } else {
-                $arquivo = false;
-            }
-        }
-        if ($arquivo) {
-            array_pop($path);
-        }
-
-        $path = array_pop($path);
-        return $path;*/
+        /*
+         * $path = Diretorios::fixDirectorySeparator($path);
+         * $path = explode(DIRECTORY_SEPARATOR, $path);
+         * // debug($filepath);
+         * { // ---verificacao se parametro eh de uma pasta ou de um arquivo
+         * if (strpos($path[sizeof($path) - 1], '.') !== false) {
+         * $arquivo = true;
+         * } else {
+         * $arquivo = false;
+         * }
+         * }
+         * if ($arquivo) {
+         * array_pop($path);
+         * }
+         *
+         * $path = array_pop($path);
+         * return $path;
+         */
     }
-
+    
+    // ####################################################################################################
     /**
      * obtem o conteudo (string) de um arquivo
+     *
      * @param string $filename
      * @param boolean $throwException
      * @throws Exception
      * @return string
      */
-    static function getContent(string $filename, $throwException = true):string
+    static function getContent(string $filename, $throwException = true): string
     {
         // config
         {
@@ -104,7 +129,7 @@ class Files
                 return 'Conteúdo não renderizável.';
             }
         }
-
+        
         // ############ log::open(__METHOD__,"Obtém o conteúdo do arquivo '$filename'.");
         if (file_exists($filename)) {
             // ############ log::add("Arquivo encontrado.");
@@ -128,9 +153,9 @@ class Files
                 return '';
             }
         }
-        // ############ log::close();
     }
-
+    
+    // ####################################################################################################
     /**
      * Salva um texto ($data) em um arquivo ($filename)
      * e caso o parametro $flags esteja especificado como
@@ -144,7 +169,7 @@ class Files
      * @throws Exception
      * @return bool
      */
-    static function writeContent(string $filename, string $data, $flags = NULL, $throwException = true):bool
+    static function writeContent(string $filename, string $data, $flags = NULL, $throwException = true): bool
     {
         // ---verificar diretorio
         $caminho = self::getPath($filename);
@@ -154,17 +179,18 @@ class Files
         // ---salvar o arquivo
         if (! file_put_contents($filename, $data, $flags)) {
             if ($throwException) {
-                //echo exec('whoami');
+                // echo exec('whoami');
                 $error = implode('<br/>', error_get_last());
                 throw new Exception("Não foi possível salvar o arquivo '$filename'.<hr/>$error");
             } else {
                 return false;
             }
-        } 
+        }
         chmod($filename, 0755);
         return true;
     }
-
+    
+    // ####################################################################################################
     /**
      * clona um arquivo
      *
@@ -179,7 +205,7 @@ class Files
         if (! file_exists($filenameDestination)) {
             self::writeContent($filenameDestination, ' ' . chr(10));
         }
-
+        
         if (copy($filenameSource, $filenameDestination) == false) {
             if ($throwException) {
                 throw new Exception("Não foi possível copiar o arquivo ($filenameDestination).");
@@ -190,7 +216,8 @@ class Files
             return true;
         }
     }
-
+    
+    // ####################################################################################################
     /**
      * exclui um determinado arquivo
      *
@@ -221,7 +248,8 @@ class Files
         }
         return true;
     }
-
+    
+    // ####################################################################################################
     /**
      * verifica se os arquivos são identicos
      *
@@ -235,11 +263,11 @@ class Files
         if (filesize($filename_a) !== filesize($filename_b)) {
             return false;
         }
-
+        
         // Check if content is different
         $ah = fopen($filename_a, 'rb');
         $bh = fopen($filename_b, 'rb');
-
+        
         $result = true;
         while (! feof($ah)) {
             if (fread($ah, 8192) != fread($bh, 8192)) {
@@ -247,13 +275,14 @@ class Files
                 break;
             }
         }
-
+        
         fclose($ah);
         fclose($bh);
-
+        
         return $result;
     }
-
+    
+    // ####################################################################################################
     /**
      * verifica se um arquivo ou pasta existem
      *
@@ -274,7 +303,8 @@ class Files
             return true;
         }
     }
-
+    
+    // ####################################################################################################
     /**
      * obtem as permissoes atuais de um arquivo ou pasta
      *
@@ -292,7 +322,8 @@ class Files
         }
         return $return;
     }
-
+    
+    // ####################################################################################################
     /**
      * altera as permissoes de uma determinado arquivo ou pasta
      *
@@ -303,7 +334,7 @@ class Files
      */
     static function permissoesAlterar(string $fileOrFolderName, int $newPermissions, bool $throwException = true)
     {
-        if (Files::verificarArquivoOuPastaExiste($fileOrFolderName, $throwException)) {
+        if (File::verificarArquivoOuPastaExiste($fileOrFolderName, $throwException)) {
             if (chmod($fileOrFolderName, $newPermissions) == false) {
                 if ($throwException) {
                     $permissionsActual = self::permissoesObter($fileOrFolderName, $throwException);
@@ -318,7 +349,9 @@ class Files
             return false;
         }
     }
-
+    
+    // ####################################################################################################
+    
     /**
      * realiza uma copia de seguranca do arquivo
      * reproduzindo-o em uma pasta e
@@ -333,7 +366,7 @@ class Files
     static function copiaSeguranca(string $filename, bool $dateMascSideRight = true, string $dateMasc = '', string $backupFolderName = '', bool $throwException = false): bool
     {
         if (file_exists($filename)) {
-
+            
             { // backup filepath
                 { // datemasc
                     $dateMasc = $dateMasc == '' ? self::backupCopy_dateMasc : $dateMasc;
@@ -358,7 +391,7 @@ class Files
                     $filename_new = str_replace('.php', '.php_', $filename_new);
                 }
             }
-
+            
             self::copiarArquivo($filename, $filename_new, true);
             return true;
         } else {
@@ -368,57 +401,50 @@ class Files
             return false;
         }
     }
-
+    
     // ###################################################################################################################################################
+    // ############################################################################################################################## CONTROLE DE ESCRITA
     // ###################################################################################################################################################
-    // ###################################################################################################################################################
-
+    
     /**
-     * 
+     * escreve um arquivo tendo o cuidado de que este não esteja sendo escrito por outro processo.
      *
      * @param string $filename
      * @param string $data
      * @param
      *            $flags
      * @param boolean $throwException
-     */
-      
-    /**
-     * escreve um arquivo tendo o cuidado de que este não seja escrito durante o processo.
-     * @param string $filename
-     * @param string $data
-     * @param $flags
-     * @param boolean $throwException
-     * @param int $loop - NÃO UTILIZAR (VARIAVEL DE CONTROLE) 
+     * @param int $loop
+     *            - NÃO UTILIZAR (VARIAVEL DE CONTROLE)
      * @throws Exception
      * @return bool
      */
-    static function escreverConteudoControlado(string $filename, string $data, $flags = NULL, $throwException = true,int $loop=0):bool
+    static function escreverConteudoControlado(string $filename, string $data, $flags = NULL, $throwException = true, int $loop = 0): bool
     {
         if (self::arquivoEstaTravado($filename) == false) {
             self::arquivoTravar($filename);
             $return = self::writeContent($filename, $data, $flags, $throwException);
             self::arquivoDestravar($filename);
         } else {
-            //aguarda alguns milisegundos
+            // aguarda alguns milisegundos
             sleep(1);
-            //quantidade de 'loops' em espera foi atingido?
-            if($loop<self::wait_loop_limit){
-                //tenta escrever novamente
-                $return = self::escreverConteudoControlado($filename, $data, $flags, $throwException,($loop+1));
-            }else{
+            // quantidade de 'loops' em espera foi atingido?
+            if ($loop < self::wait_loop_limit) {
+                // tenta escrever novamente
+                $return = self::escreverConteudoControlado($filename, $data, $flags, $throwException, ($loop + 1));
+            } else {
                 throw new Exception("Não foi possível salvar o conteúdo do arquivo controlado: '$filename'. Tente novamente em breve!");
-            }            
+            }
         }
         return $return;
     }
-
+    
     static private function arquivoTravar($filename)
     {
         $filename_temp = $filename . '_';
         self::writeContent($filename_temp, "TRAVA CONTRA ESCRITA DO ARQUIVO: $filename");
     }
-
+    
     static private function arquivoEstaTravado($filename)
     {
         $filename_temp = $filename . '_';
@@ -428,7 +454,7 @@ class Files
             return false;
         }
     }
-
+    
     static private function arquivoDestravar($filename)
     {
         $filename_temp = $filename . '_';
@@ -436,7 +462,9 @@ class Files
             self::delete($filename_temp);
         }
     }
-
+    
+    // ###################################################################################################################################################
+    
     // ###################################################################################################################################################
     // ###################################################################################################################################################
     // ###################################################################################################################################################

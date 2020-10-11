@@ -173,7 +173,7 @@ class Logger
      */
     static private function write(string $data)
     {
-        return Files::writeContent(self::getFilename(), utf8_decode($data), FILE_APPEND);
+        return File::writeContent(self::getFilename(), utf8_decode($data), FILE_APPEND);
     }
 
     // ####################################################################################################

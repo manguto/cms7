@@ -28,9 +28,9 @@ class Datas
      * @param string $data
      * @param string $dateFormat
      */
-    public function __construct(string $dateStr, string $dateFormat = 'd-m-Y',bool $throwException=true)
+    public function __construct(string $dateStr, string $dateFormat = 'd-m-Y', bool $throwException = true)
     {
-        self::checkdate($dateFormat, $dateStr,$throwException);
+        self::checkdate($dateFormat, $dateStr, $throwException);
         $this->format = $dateFormat;
         $this->datestr = $dateStr;
         $this->timestamp = self::mktime($this->format, $this->datestr);
@@ -238,18 +238,18 @@ class Datas
         return $return;
     }
 
-    static function staticGetWeekDayName(int $dayNumber, string $size = 'p', bool $uppercase = true, bool $ucfirst = false): string
+    static function staticGetWeekDayName(int $dayNumber, string $size = 'P', bool $uppercase = true, bool $ucfirst = false): string
     {
         if ($dayNumber >= 0 && $dayNumber <= 6) {
 
             // tamanho ----------------------------------------------------------------------------------------------------
-            $size = strtolower($size);
-            if ($size == 'p') {
+            $size = strtoupper($size);
+            if ($size == 'P') {
                 $return = strftime('%a', strtotime("Sunday +{$dayNumber} days"));
                 $return = substr($return, 0, 1);
-            } else if ($size == 'm') {
+            } else if ($size == 'M') {
                 $return = strftime('%a', strtotime("Sunday +{$dayNumber} days"));
-            } else if ($size == 'g') {
+            } else if ($size == 'G') {
                 $return = strftime('%A', strtotime("Sunday +{$dayNumber} days"));
             } else {
                 throw new Exception("Tamanho inadequado ('$size'). Tamanhos permitidos: P, M e G.");
@@ -269,7 +269,7 @@ class Datas
         } else {
             throw new Exception("Número inadequado para um dia da semana [0-6]('$dayNumber').");
         }
-
+        $return = utf8_encode($return);
         return $return;
     }
 
@@ -690,51 +690,32 @@ class Datas
 
             return $return;
         }
-        // --------------------------------------------------------------------------------------------------------------
-        /*
-         * { // calculo de semanas em questao
-         * $interval = $date_ini->diff($date_end);
-         * $weeks = floor(($interval->days) / 7);
-         * deb($weeks, 0);
-         * }
-         * { // calculo semanas iniciais
-         * $week_ini = new \DateTime($date_ini_str);
-         * $week_end = new \DateTime($date_ini_str);
-         * // shift de 5 dias (sexta-feira)
-         * $week_end->add(new \DateInterval('P4D'));
-         * }
-         *
-         * for ($i = 1; $i <= $weeks; $i ++) {
-         * $return[] = [
-         * $week_ini->format('Y-m-d'),
-         * $week_end->format('Y-m-d')
-         * ];
-         * { // shift 7 dias
-         * $week_ini->add(new \DateInterval('P7D'));
-         * $week_end->add(new \DateInterval('P7D'));
-         * }
-         * }
-         * return $return;/*
-         */
     }
-    
+
     /**
      * obtem o microtempo atual
+     *
      * @return string
      */
-    static function getMicrotime():string{
+    static function getMicrotime(): string
+    {
         return round(microtime(true) * 1000);
-        
-        /*$return = \DateTime::createFromFormat('U.u', microtime(true));
-        if($return!==false){
-            $return = $return->format("u");
-            $return = strval($return);
-            return $return;
-        }else{
-            $error = error_get_last();
-            throw new Exception($error['message']);
-        }/**/        
-        
+    }
+
+    /**
+     * obtem um array com os dias da semana
+     * @param string $size
+     * @param bool $uppercase
+     * @param bool $ucfirst
+     * @return array
+     */
+    static function getWeekdays(string $size = 'p', bool $uppercase = true, bool $ucfirst = false): array
+    {
+        $return = [];
+        for ($i = 0; $i < 7; $i ++) {
+            $return[$i] = self::staticGetWeekDayName($i, $size, $uppercase, $ucfirst);
+        }
+        return $return;
     }
 }
 
