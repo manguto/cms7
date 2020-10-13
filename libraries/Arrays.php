@@ -104,7 +104,7 @@ class Arrays
             }
         } else {
             // $termo = $pre.$arrayName.$pos;
-            return "$continuacao = \"$array\"";
+            return "$continuacao = \"".trim($array)."\"";
         }
 
         return implode(chr(10), $return);
