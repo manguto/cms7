@@ -18,7 +18,7 @@ class Logger
     ];
 
     //pasta para registro dos acessos em geral
-    const foldernameUserAccess = '_user_access' . DS;
+    const foldernameUserAccess = '_steps' . DS;
     
     //pasta para as excecoes
     const foldernameException = '_exception' . DS;
@@ -36,7 +36,7 @@ class Logger
 
     const lineSpacer = '_';
 
-    const lineLen = 100;
+    const lineLen = 70;
 
     const SessionKey = 'Logger';
 
