@@ -151,7 +151,7 @@ class Datas
 
         if (! checkdate($month, $day, $year)) {
             if ($throwException) {
-                throw new Exception("Não foi possível criar a data informada. Formato incorreto ou data inexistente ('$format','$datestr').");
+                throw new Exception("Data com formato incorreto ou inexistente: $datestr.");
             } else {
                 return false;
             }
@@ -218,6 +218,16 @@ class Datas
         return self::staticItsWeekend($this->datestr, $this->format);
     }
 
+    /**
+     * retorna a data/hora no formato solicitado
+     * @param string $format
+     * @return string
+     */
+    public function strftime(string $format):string{
+        
+        return strftime($format,$this->getTimestamp());
+    }
+    
     /**
      * Retorna o nome do dia da semana conforme o número do mesmo informado [0-6]
      *
@@ -306,13 +316,19 @@ class Datas
     }
 
     /**
-     * Obtem o número do dia da semana [0=>Dom,...,6=>Sab]
+     * Obtem o número do dia da semana.
+     * Por padrão no formato "0=>Dom,...,6=>Sab"
+     * e caso sunZero==false "1=>Dom,...,7=>Sab"
      *
      * @return int
      */
-    public function getWeekDayNumber(): int
+    public function getWeekDayNumber($sunZero=true): int
     {
-        return self::staticGetWeekDayNumber($this->getTimestamp());
+        $return = self::staticGetWeekDayNumber($this->getTimestamp());
+        if($sunZero==false){
+            $return++;
+        }
+        return $return;
     }
 
     /**
@@ -454,7 +470,13 @@ class Datas
         $this->timestamp = self::mktime($this->format, $this->datestr);
     }
 
-    static function getDateDifference(Datas $data1, Datas $data2)
+    /**
+     * obtem o intervalo entre duas datas
+     * @param Datas $data1
+     * @param Datas $data2
+     * @return \DateInterval
+     */
+    static function getDateDifference(Datas $data1, Datas $data2):\DateInterval
     {
         $datetime1 = $data1->getDatetime();
         $datetime2 = $data2->getDatetime();
@@ -717,6 +739,43 @@ class Datas
         }
         return $return;
     }
+    
+    
+    // ####################################################################################################
+    static function getDatesBetweenDates($date_ini, $date_end,$format='Y-m-d'): array
+    {
+        $return = [];
+        $date_ini_o = new Datas($date_ini,$format);
+        $date_tmp_o = new Datas($date_ini,$format);
+        $date_end_o = new Datas($date_end,$format);        
+        
+        $dif = self::getDateDifference($date_ini_o, $date_end_o);
+        if($dif->invert==0){
+            $msg = "A ordenação das datas informadas está incorreta (Início ($date_ini) > Fim ($date_end)).";            
+            throw new Exception($msg);
+        }
+        
+        $n = $dif->days;
+        //debc($n,0);
+        if($n>0){
+            $return[] = $date_ini_o;
+            for ($i = 0; $i < $n; $i++) {
+                $date_tmp_o->Operation(1,'D');
+                $return[] = new Datas($date_tmp_o->getDate($format),$format);
+            }
+        }
+        //deb("$date_ini - $date_end [$n]",0); deb($return);
+        return $return;
+    }
+    
+    // ####################################################################################################
+    public function __toString() {
+    	return $this->getDate('d/m/Y');
+    }
+    // ####################################################################################################
+    // ####################################################################################################
+    // ####################################################################################################
+    
 }
 
 /**

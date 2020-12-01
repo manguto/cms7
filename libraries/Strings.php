@@ -29,6 +29,32 @@ class Strings
         'de',
         'do'
     ];
+    
+    static function Slugify($text,$strict = false) {
+        $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+        // replace non letter or digits by -
+        $text = preg_replace('~[^\\pL\d.]+~u', '-', $text);
+        
+        // trim
+        $text = trim($text, '-');
+        setlocale(LC_CTYPE, 'en_GB.utf8');
+        // transliterate
+        if (function_exists('iconv')) {
+            $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+        }
+        
+        // lowercase
+        $text = strtolower($text);
+        // remove unwanted characters
+        $text = preg_replace('~[^-\w.]+~', '', $text);
+        if (empty($text)) {
+            return 'empty_$';
+        }
+        if ($strict) {
+            $text = str_replace(".", "_", $text);
+        }
+        return $text;
+    }
 
     static function RemoverCaracteresDeControle($texto, $permitirQuebradeLinha = true)
     {
@@ -40,12 +66,10 @@ class Strings
         return $texto;
     }
 
-    static function RemoverCaracteresEspeciais($string)
+    static function RemoverCaracteresEspeciais(string $string,string $replaceWith='-')
     {
-        // Replaces all spaces with hyphens.
-        // $string = str_replace(' ', '-', $string);
-        // Removes special chars.
-        $string = preg_replace('/[^A-Za-z0-9\- ]/', '', $string);
+        // Removes special chars
+        $string = preg_replace('/[^A-Za-z0-9\- ]/', $replaceWith, $string);
         return $string;
     }
 
@@ -139,7 +163,7 @@ class Strings
         return $abbreviation;
     }
 
-    static function RemoverAcentosECaracteresLinguisticos($string, $strtolower = false)
+    static function SubstituirCaracteresLinguisticos($string, $strtolower = false)
     {
         $replace = [
             'Š' => 'S',
@@ -813,7 +837,7 @@ class Strings
     static function showCSV(string $text): string
     {
         // ajuste correcional de caracteres especiais
-        $text = Strings::RemoverAcentosECaracteresLinguisticos($text);
+        $text = Strings::SubstituirCaracteresLinguisticos($text);
         $csvLinhas = explode(chr(10), $text);
         { // levantamento de informacoes
             $quantMaxCaracteresColuna = [];

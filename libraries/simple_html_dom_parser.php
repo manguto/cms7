@@ -130,7 +130,7 @@ class simple_html_dom_parser
      */
     public function __construct(string $name, string $url = '')
     {
-        $this->name = Strings::RemoverAcentosECaracteresLinguisticos($name);
+        $this->name = Strings::SubstituirCaracteresLinguisticos($name);
 
         if ($url != '') {
             $this->loadHTMLContent_fromUrl($url);

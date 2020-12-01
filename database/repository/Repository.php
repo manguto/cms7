@@ -350,7 +350,9 @@ class Repository implements Database
      */
     static function search_query_parse(string $query): array
     {
-        // ---------------------------------------------------------------------
+        return Repository::search_query_parse_orderby($query);
+        
+        /*// ---------------------------------------------------------------------
         { // verificacao de palavara chave de ordenacao (order by)
             [
                 $query,
@@ -363,7 +365,7 @@ class Repository implements Database
             $order_by
         ];
         // ---------------------------------------------------------------------
-        return $return;
+        return $return;*/
     }
 
     /**
@@ -402,13 +404,16 @@ class Repository implements Database
                 }
                 $query = array_shift($query_explode);
                 $order_by = array_pop($query_explode);
+                
+                //debc($query,0); debc($order_by,0);
             }
         }
         // ================================================================================
-        return [
+        $return = [
             $query,
             $order_by
         ];
+        return $return;
     }
 
     /**
@@ -430,8 +435,7 @@ class Repository implements Database
             // ======================================================================================================
             { // condition analysis                
                 $order_by_array = explode(',', $order_by);
-                $parameter_info_array = [];
-                $sortKeyFormer = [];
+                $parameter_info_array = [];                
                 foreach ($order_by_array as $term) {
                     $term = trim($term);
                     $term_array = explode(' ', $term);                    
@@ -448,6 +452,7 @@ class Repository implements Database
                         throw new Exception("Parâmetro da ordem de indexação incorreto ('$parameterOrder' != '$ASC' != '$DESC').");
                     }                    
                     $parameter_info_array[$parameterName] = $parameterOrder;
+                    //deb($parameter_info_array);
                 }
             }
             // ======================================================================================================
@@ -471,6 +476,12 @@ class Repository implements Database
      */
     static private function result_order_by_indexation(array $array_messy, array $parameter_info_array): array
     {
+        //incremento de parametro de indexacao para evitar substituicao por chave identica (key)
+        if(!isset($parameter_info_array['id'])){
+            $parameter_info_array['id']='ASC';
+        }
+        
+        //deb(sizeof($array_messy),0);
         $return = [];
         $DESC = Repository::search_query_keywords['order_by']['descendent_order'];
         // ==================================================================================================
@@ -493,7 +504,7 @@ class Repository implements Database
                     $key[] = $parameterValue;
                 }
                 $key = implode('.', $key);
-                //deb($key,0);
+                //deb($key);
             }
             $return[$key] = $register;
         }
@@ -514,7 +525,6 @@ class Repository implements Database
                 }
                 $return[$id] = $register;
             }
-            // deb($array);
         }
         // ==================================================================================================
         return $return;

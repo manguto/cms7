@@ -64,6 +64,25 @@ class ServerHelp
     }
 
     // ####################################################################################################
+    
+    /**
+     * retorna o ip do usuario atual no padrao DDD_DDD_DDD_DDD
+     * onde o separador (spacer) pode ser alterado
+     * @param string $spacer
+     * @return string
+     */
+    static function getStandardizedIP(string $spacer='_'):string{
+        $ip = self::getIp();
+        $ip_ = explode('.', $ip);
+        $return = [];
+        foreach ($ip_ as $ip_piece){
+            $return[] = str_pad($ip_piece, 3,'0',STR_PAD_LEFT);            
+        }
+        return implode($spacer, $return);
+    }
+    
+    
+    // ####################################################################################################
 
     /**
      * Obtem a rota solicitada via URL

@@ -3,6 +3,8 @@ namespace manguto\cms7\database\mysql\pdo;
 
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\model\ModelAttribute;
+use manguto\cms7\model\Model;
+use application\core\Access;
 
 
 trait ModelMysqlPDO
@@ -67,19 +69,17 @@ trait ModelMysqlPDO
 
             if ($id == 0) {
                 // atualizacao do datahora da atualizacao
-                $this->setInsert___datetime(date('Y-m-d H:i:s'));
+                $this->setins_dtm(date(Model::dtmFormat));
 
                 // atualizacao do usuario autor da atulizacao
-                //$this->setInsert___user_id(Access::getSessionUserAttribute('id'));
-                $this->setInsert___user_id('?');
+                $this->setins_uid(Access::getSessionUserAttribute('id'));
             }
 
             // atualizacao do datahora da atualizacao
-            $this->setUpdate___datetime(date('Y-m-d H:i:s'));
+            $this->setchg_dtm(date(Model::dtmFormat));
 
             // atualizacao do usuario autor da atulizacao
-            //$this->setUpdate___user_id(Access::getSessionUserAttribute('id'));
-            $this->setUpdate___user_id('?');
+            $this->setchg_uid(Access::getSessionUserAttribute('id'));
         }
 
         {

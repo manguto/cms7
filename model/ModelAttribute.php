@@ -297,6 +297,12 @@ class ModelAttribute
             // cria o atributo
             // deb($attributeName,0); deb($parameters,0);
             $ModelAttribute = new ModelAttribute($attributeName, $checkAttributeName);
+            //deb($attributeName,0); deb($parameters,0);
+            /*if(!is_array($parameters)){
+                debc($attributeArray,0);
+                deb($checkAttributeName,0);
+                throw new Exception("Parâmetro '$attributeName' não é um 'array' ($parameters).");
+            }/**/
             foreach ($parameters as $parameterName => $parameterValue) {
                 $setMethod = 'set' . ucfirst($parameterName);
                 // define os parametros

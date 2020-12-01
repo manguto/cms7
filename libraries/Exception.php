@@ -1,133 +1,188 @@
 <?php
 namespace manguto\cms7\libraries;
 
-use application\core\Controller;
-
+/**
+ * Controle e Gerenciamento de eventos improprio/indevidos do sistema
+ *
+ * @author Manguto
+ *        
+ */
 class Exception extends \Exception
 {
 
+    /**
+     * string que especifica que o evento segue o padrao dos 3 campos em negrito.
+     *
+     * @var string
+     */
+    const bold3PatternFlag = 'bold3Pattern';
+
+    /**
+     * informacoes para tratamento de eventos
+     *
+     * @var array
+     */
+    const Events = [
+        'Notice' => [
+            'needleStart' => '<b>Notice</b>:',
+            'needleEnd' => self::bold3PatternFlag,
+            'title' => 'Notificação'
+        ],
+        'Warning' => [
+            'needleStart' => '<b>Warning</b>:',
+            'needleEnd' => self::bold3PatternFlag,
+            'title' => 'Aviso'
+        ],
+        'FatalError' => [
+            'needleStart' => 'Fatal error:',
+            'needleEnd' => self::bold3PatternFlag,
+            'title' => 'Erro Fatal'
+        ],
+        'ParseError' => [
+            'needleStart' => 'ParserError:',
+            'needleEnd' => '{main}',
+            'title' => 'Erro de Interpretação'
+        ]
+    ];
+
+    //ajuste para exibicao da linha correta do template quando do problema (error, excep...) 
+    const templateLineFinetune = 116;
+    
     // ####################################################################################################
     // ########################################################################################## construct
     // ####################################################################################################
     public function __construct($message = null, $code = null, $previous = null)
     {
-        { // log
-            Logger::exception($message);
-        }
-        { // e-mail
-            self::sendEmail($message);
-        }
+        // construct
         parent::__construct($message, $code, $previous);
-    }
-
-    // ####################################################################################################
-    /**
-     * envia um email para o administrador da aplicacao
-     * @param string $message
-     */
-    static private function sendEmail(string $message){
-        $email = new Email();
+        // log extra
+        // Logger::EXTRA($message, $this->getFile(), $this->getLine(), APP_USER_IP,'',APP_LOG_DIR . '_exceptions'.DS);
         {
-            $from = APP_EMAIL;
-            $to = APP_EMAIL_ADMIN;
-            $cc = '';
-            $cco = '';
-            $subject = APP_SHORT_NAME. " - EXCEPTION";
-            $content = 'MENSAGEM DA EXCEÇÃO: <hr/>'.$message;
-            $password = APP_EMAIL_MSS_PASSWORD;
+            $filename = '';
+            $dir = Logger::dir . Logger::foldernameException;
+            $title = 'EXCEPTION!';
         }
-        $emailResult = $email->Enviar($from, $to, $cc, $cco, $subject, $content, $password);
-        if($emailResult===true){
-            Logger::success("'Exception' e-mail enviado com sucesso!");
-        }else{
-            Logger::error("Não foi possível enviar 'Exception' e-mail. Resultado obtido: ".$emailResult);
+        
+        {// adicao de informacoes da excecao (arquivo e linha)
+        	$file = $this->getFile();
+        	$line = intval($this->getLine());
+        	{//extra template error help!
+        		$extra = strpos($message, 'templates');
+        		if($extra!==false){
+        			$info = explode(' on line ',substr($message, $extra));        			
+        			$extra_template_line = intval(array_pop($info)) - self::templateLineFinetune;
+        			$extra_template_line = " (Tpl: $extra_template_line)";
+        		}else{
+        			$extra_template_line = '';
+        		}
+        	}
+        	$message .= " $extra_template_line | $file ({$line})" . chr(10) . '<hr/>' . implode('<br/>' . chr(10), $this->getTraceAsArray()) . chr(10) . '<br/><br/><br/>';
         }
+        
+
+        $this->message = $message;
+        // log
+        Logger::exception($message);
+        // log extra
+        Logger::EXTRA($message, $filename, $dir, $title);
     }
 
     // ####################################################################################################
-    // ############################################################################################# static
-    // ####################################################################################################
-    /**
-     * imprime o caminho percorrido ate o local quantas vezes o codigo passar pelo mesmo
-     *
-     * @param string $msg
-     * @throws Exception
-     */
-    static function deb($msg = '')
-    {
-        try {
-            throw new Exception($msg);
-        } catch (Exception $e) {
-            Exception::static_show($e, true);
-        }
-    }
-
-    // ####################################################################################################
-    // ############################################################################################ private
-    // ####################################################################################################
 
     /**
-     * exibe a excecao informada
-     *
-     * @param Exception $e
-     * @param boolean $echo
+     * retorna a mensagem de acordo com o tipo do evento    
+     * @param mixed $e
      * @return string
      */
-    private static function static_show(Exception $e, $echo = false)
+    static function getEventMessage($e):string
     {
-        $type = gettype($e);
-        $return = "<pre title='$type'><br/>";
-        $return .= '<b>' . nl2br($e->getMessage()) . '</b><br/><br/>';
-        $return .= $e->getFile() . ' (' . $e->getLine() . ')<br/><br/>';
-        $return .= nl2br($e->getTraceAsString()) . '<br/><br/>';
-        if ($echo) {
-            echo $return;
-        } else {
-            return $return;
-        }
-    }
-
-    // ####################################################################################################
-    // ####################################################################################################
-    // ####################################################################################################
-    /**
-     * realiza o manipulacao de eventos indevidos do sistema (Error, Throwable, Exception)
-     *
-     * @param mixed $e
-     */
-    static function handleEvent($e,$redirect=true)
-    {
-        
-        // tipo do evento (classe)
-        $event_class = get_class($e);
-
-        if (strpos($event_class, 'Exception') !== false) {
-            { // EXCEPTION                
-                $message = $e->getMessage();
+        if(is_object($e)){
+            { // tipo do evento (classe)
+                $event_class = get_class($e);
             }
-        } else if (strpos($event_class, 'Error') !== false) {
-            { // ERROR
-                $message = "$e";                
+            { // formatacao da mensagem de acordo com o tipo do evento
+                if (strpos($event_class, 'Exception') !== false) {
+                    { // EXCEPTION
+                        $message = $e->getMessage();
+                    }
+                } else if (strpos($event_class, 'ParserError') !== false) {
+                    { // PARSER ERROR
+                        $message = "$e";
+                    }
+                } else if (strpos($event_class, 'Error') !== false) {
+                    { // ERROR
+                        $message = "$e";
+                    }
+                } else {
+                    $message = strval($e);
+                }
             }
-        } else {
-            $message = "Evento ($event_class): ".strval($e);            
-        }
-        
-        //Cria os alertas!
-        //Alert::setDanger("ATENÇÃO! Ocorreu um ERRO CRÍTICO no sistema. <br/>Por favor, tente novamente e caso a inconssistência persista, <br/>anote as informações descritas abaixo e contate o Administrador através do e-mail: ".APP_EMAIL_ADMIN.".<br/>Obrigado!");
-        
-        Logger::error("Exception!!! ".chr(10).$message);
-        Alert::setDanger($message);
-        
-        //redireciona para a tela principal
-        if($redirect){
-            Controller::HeaderLocation('/');
+        }else{
+            $message = strval($e);
         }        
+        return self::FixMessageContent($message);
     }
 
-    // ####################################################################################################
-    // ####################################################################################################
-    // ####################################################################################################
+    // ###############################################################################################
+
+    /**
+     * realiza uma verificacao no texto enviado
+     * quanto a existencia de um padrao de texto
+     * que representa a ocorrencia de eventos indevidos
+     * (warning, notice...)
+     * e
+     * caso os encontre,
+     * retorna as suas mensagens
+     *
+     * @param string $string
+     * @throws Exception
+     * @return array
+     */
+    static function checkGetThrownEventMsg(string $string): array
+    {
+        $return = [];
+        foreach (self::Events as $eventName => $eventINFO) {
+
+            $eventStartNeedle = $eventINFO['needleStart'];
+            $eventEndNeedle = $eventINFO['needleEnd'];
+            $eventStartNeedlePoint = strpos($string, $eventStartNeedle);
+
+            if ($eventStartNeedlePoint !== false) {
+                // deb($eventINFO,0);
+                if ($eventEndNeedle == self::bold3PatternFlag) {
+
+                    // tratamento das mensagens com o padrao de 3 negritos (warning, notice, .?.)
+                    $position = $eventStartNeedlePoint;
+                    for ($i = 0; $i < 3; $i ++) {
+                        $position = strpos($string, "</b>", $position) + 1;
+                    }
+                    $eventEndPoint = $position;
+                    $eventLength = $eventEndPoint + 3 - $eventStartNeedlePoint;
+                } else {
+
+                    // tratamento de excecoes da classe e demais que nao seguem o B3P
+                    $eventEndPoint = strpos($string, $eventEndNeedle);
+                    if ($eventEndPoint === false) {
+                        // caso nao encontre o padrao de finalizacao do conteudo, retorna apenas o nome do evento
+                        $eventEndPoint = $eventStartNeedlePoint + strlen($eventStartNeedle) + 1;
+                    }
+                    $eventLength = $eventEndPoint + strlen($eventEndNeedle) - $eventStartNeedlePoint;
+                }
+                $eventMessage = substr($string, $eventStartNeedlePoint, $eventLength);
+                $eventMessage = Exception::FixMessageContent($eventMessage);
+                $eventMessage = strip_tags($eventMessage);
+                $return[$eventName] = $eventMessage;
+            }
+        }
+        return $return;
+    }
+
+    /* */
+
+    // ###############################################################################################
+    // ####################################################################################### private
+    // ###############################################################################################
+
     /**
      * Retorna um array com os caminhos percorridos na iteracao atual.
      *
@@ -213,6 +268,22 @@ class Exception extends \Exception
         return $return;
     }
 
+    // ####################################################################################################
+    /**
+     * realiza ajustes no texto da mensagem
+     *
+     * @param string $message
+     * @return string
+     */
+    static private function FixMessageContent(string $message):string
+    {
+        $return = $message;
+        {
+            // ocultacao de caminho base do servidor
+            $return = str_replace(APP_PATH, '', $return);
+        }
+        return $return;
+    }
     // ####################################################################################################
     // ####################################################################################################
     // ####################################################################################################

@@ -89,10 +89,10 @@ class Arrays
 
         // array name
         if ($arrayName != '' && $level == 1) {
-            $pre = "$arrayName [";
+            $pre = "{$arrayName}[";
             $pos = "]";
         } else {
-            $pre = "$continuacao [";
+            $pre = "{$continuacao}[";
             $pos = "]";
         }
 
@@ -104,7 +104,7 @@ class Arrays
             }
         } else {
             // $termo = $pre.$arrayName.$pos;
-            return "$continuacao = \"".trim($array)."\"";
+            return "$continuacao = \"$array\"";
         }
 
         return implode(chr(10), $return);

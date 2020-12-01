@@ -366,14 +366,14 @@ class ModelHelper
 
     static function Initializer()
     {
-        Alert::setDanger("Inicialização de Modelos solicitada.");
+        Alert::Warning("Inicialização de Modelos solicitada!");
 
         $models = self::GetModelFilename_array();
         //deb($models);
 
         $msg = "Modelos encontrados: <b>" . sizeof($models) . "</b>";
         Logger::info($msg);
-        Alert::setWarning($msg);
+        Alert::Warning($msg);
         foreach ($models as $model) {
             $modelClassName = File::getBaseName($model, false);
             if ($modelClassName == 'Zzz' || substr($modelClassName, 0, 1) == '_') {
@@ -383,7 +383,7 @@ class ModelHelper
             $modelClassNamePath::initialize();
             $msg = "Modelo <b>$modelClassName</b> inicializado.";
             Logger::success($msg);
-            Alert::setWarning($msg);
+            Alert::Warning($msg);
         }
     }
 

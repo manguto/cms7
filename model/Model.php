@@ -16,12 +16,14 @@ abstract class Model
 
     private $attributes_extra = [];
 
+    const dtmFormat = 'Ymd_His';
+    
     const fundamentalAttributes = [
         'id',
-        'insert___datetime',
-        'insert___user_id',
-        'update___datetime',
-        'update___user_id'
+        'ins_dtm', //...ins_dtm
+        'ins_uid', //....ins_uid
+        'chg_dtm', //...chg_dtm
+        'chg_uid' //.....chg_uid
     ];
 
     protected function checkSetStruct()
@@ -54,24 +56,7 @@ abstract class Model
             $this->SetAttribute($attribute);
         }
     }
-    
-    /**
-     * obtem um array com os parametros do objeto
-     * @return array
-     */
-    /*public function GetAttributesArray():array
-    {
-        $return = [];
-        foreach ($this->attributes as $attribute){
-            $return[$attribute->getName()]=$attribute->getValue();
-        }
-        
-        foreach ($this->attributes_extra as $attribute){
-            $return[$attribute->getName()]=$attribute->getValue();
-        }
-        return $return;
-    }/**/
-
+   
     /**
      * obtem o atributo solicitado
      *
@@ -99,24 +84,24 @@ abstract class Model
 
         $attributes = [
             'id' => [
-                'type' => ModelAttribute::TYPE_INT,
+                'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => $id
             ],
-            'insert___datetime' => [
-                'type' => ModelAttribute::TYPE_DATETIME,
+            'ins_dtm' => [
+                'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => null
             ],
-            'insert___user_id' => [
-                'type' => ModelAttribute::TYPE_INT,
+            'ins_uid' => [
+                'type' => ModelAttribute::TYPE_VARCHAR,
                 'nature' => ModelAttribute::NATURE_REFERENCE_SINGLE,
                 'value' => null
             ],
-            'update___datetime' => [
-                'type' => ModelAttribute::TYPE_DATETIME,
+            'chg_dtm' => [
+                'type' => ModelAttribute::TYPE_VARCHAR,
                 'value' => null
             ],
-            'update___user_id' => [
-                'type' => ModelAttribute::TYPE_INT,
+            'chg_uid' => [
+                'type' => ModelAttribute::TYPE_VARCHAR,
                 'nature' => ModelAttribute::NATURE_REFERENCE_SINGLE,
                 'value' => null
             ]
@@ -299,7 +284,7 @@ abstract class Model
 
                     if ($itsReferenceAttributeSingle || $itsReferenceAttributeMultiple) {
                         
-                        $this->loadReferences();
+                        $this->loadReferences(true);
 
                         $referencedModelName = ModelReference::getReferencedModelName($attrName);
 
@@ -324,7 +309,7 @@ abstract class Model
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // $return[] = "<span title='$attrName'>$attrValue</span>";
                 // $return[] = "$attrValue";
-                $return[] = "$attrName: $attrValue";
+                $return[] = "$attrName=$attrValue";
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -375,7 +360,7 @@ abstract class Model
             }
             
         }
-        $return = implode(', ', $return);
+        $return = implode(' / ', $return);
         return $return;
     }
 
@@ -423,30 +408,6 @@ abstract class Model
             throw new Exception("Os atributos do modelo '$class' não foram definidos. Defina-os e tente novamente!");
         }
     }
-
-    /**
-     * ordernar atributos do objeto de maneira
-     * que os atributos fundamentais esteja no
-     * inicio desta listagem
-     */
-    private function SetAttributesOrder_20191220()
-    {
-        //Logger::set(Logger::TYPE_INFO, "Ordenação dos atributos do modelo.");
-
-        $attributesOrdered = [];
-        foreach (self::fundamentalAttributes as $attributeFundamental) {
-            if (isset($this->attributes[$attributeFundamental])) {
-                $attributesOrdered[$attributeFundamental] = $this->attributes[$attributeFundamental];
-            }
-        }
-
-        foreach ($this->attributes as $attributeName => $attribute) {
-            if (! isset($attributesOrdered[$attributeName])) {
-                $attributesOrdered[$attributeName] = $attribute;
-            }
-        }
-        $this->attributes = $attributesOrdered;
-    }
     
     /**
      * ordernar atributos do objeto de maneira
@@ -458,8 +419,12 @@ abstract class Model
         //Logger::set(Logger::TYPE_INFO, "Ordenação dos atributos do modelo.");
         $attributesOrdered = [];
         
-        {//id
-            $attributesOrdered['id'] = $this->attributes['id'];
+        {//fundamental attributes
+            foreach (self::fundamentalAttributes as $attributeFundamental) {
+                if (isset($this->attributes[$attributeFundamental])) {
+                    $attributesOrdered[$attributeFundamental] = $this->attributes[$attributeFundamental];
+                }
+            }
         }
         {//attributes
             foreach ($this->attributes as $attributeName => $attribute) {                
@@ -468,14 +433,6 @@ abstract class Model
                 }
             }
         }        
-        {//fundamental attributes
-            foreach (self::fundamentalAttributes as $attributeFundamental) {
-                if (isset($this->attributes[$attributeFundamental])) {
-                    $attributesOrdered[$attributeFundamental] = $this->attributes[$attributeFundamental];
-                }
-            }
-        }
-                
         $this->attributes = $attributesOrdered;
     }
 
@@ -561,7 +518,7 @@ abstract class Model
      * O parametro inArray determina se a referencia de um unico objeto devera ser retornada em como um ARRAY ou como um OBJETO
      * @param bool $inArray
      */
-    public function loadReferences(bool $inArray=true)
+    public function loadReferences(bool $inArray=false)
     {
         ModelReference::Load($this,$inArray);
         // deb($this);

@@ -118,14 +118,14 @@ class Diretorios {
 	 * @throws Exception
 	 * @return boolean 
 	 */
-	static function mkdir(string $pathname, bool $recursive = true,int $mode=0777, bool $throwException=true) {
+	static function mkdir(string $pathname, bool $recursive = true,int $mode=0755, bool $throwException=true) {
 	    
 	    if(trim($pathname)!=''){
 	        if (! file_exists ( $pathname )) {
-	            $return = mkdir ( $pathname, $mode, $recursive );
+	            $return = mkdir( $pathname, $mode, $recursive );
 	            if ($return===false) {
-	                if($throwException){
-	                    throw new Exception ( "Não foi possível criar o diretório '$pathname' ('".error_get_last()."')." );
+	                if($throwException){	                    
+	                    throw new Exception ( "Não foi possível criar o diretório '$pathname' (".implode(chr(10), error_get_last()).")." );
 	                }else{
 	                    return false;
 	                }	                

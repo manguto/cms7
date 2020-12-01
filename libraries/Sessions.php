@@ -5,7 +5,7 @@ class Sessions
 {
 
     // define que as variaveis salvas precisam ser serializadas
-    const serialize = false;
+    const serialize = true;
 
     // quantidade de níveis da localizacao deste arquivo ate a pasta principal da aplicacao
     const levels = 4;
@@ -117,14 +117,14 @@ class Sessions
         //deb($APP_BASENAME);
         if ($multipleSessionsData == true) {
             unset($_SESSION);
-            Alert::setSuccess('Sessão reinicializada (completamente) com sucesso!');            
+            Alert::Success('Sessão reinicializada (completamente) com sucesso!');            
         } else {
             $APP_BASENAME = self::GET_APP_BASENAME();
             if (isset($_SESSION[$APP_BASENAME])) {
                 unset($_SESSION[$APP_BASENAME]);                
-                Alert::setSuccess("Sessão da aplicação '$APP_BASENAME' reinicializada com sucesso!");
+                Alert::Success("Sessão da aplicação '$APP_BASENAME' reinicializada com sucesso!");
             } else {
-                Alert::setWarning("Não foi encontrada uma sessão para a aplicação '$APP_BASENAME'. Procedimento desnecessário!");
+                Alert::Warning("Não foi encontrada uma sessão para a aplicação '$APP_BASENAME'. Procedimento desnecessário!");
             }
         }
         return true;

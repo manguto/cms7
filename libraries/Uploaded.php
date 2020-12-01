@@ -15,17 +15,18 @@ class Uploaded
 
     private $path = false;
 
-    private $random_name = false;
+    private $masc_name = false;
 
-    private $random_name_prefix = '';
+    private $masc_name_model = 'temp_{$uniqid}_{$filename}';
+
+    const masc_name_parameters = [
+        '{$uniqid}' => 'Conjunto de caracteres únicos.',
+        '{$basename}' => 'Nome do original do arquivo adaptado.'
+    ];
 
     private $file_size_max;
 
     private $logs = [];
-
-    const LOG_TYPE_SUCCESS = 'success';
-
-    const LOG_TYPE_ERROR = 'error';
 
     const units = [
         'KB' => 1000, // kilo bytes
@@ -78,12 +79,16 @@ class Uploaded
     //
     public function __construct(string $fieldName, string $path = __DIR__)
     {
+        $this->setLog('info', 'Inicializando...');
         $this->fieldName = $fieldName;
         $this->path = $path;
-        $this->setContent();
-        $this->setContentExtraParameters();
-        $this->setContentFilenames();
-        $this->setLog(self::LOG_TYPE_SUCCESS, 'Objeto construído (inicializado)!');
+
+        if ($this->setContent()) {
+            $this->setContentExtraParameters();
+            $this->setContentFilenames();
+        } else {
+            throw new Exception($this->getLog('error'));
+        }
     }
 
     // ####################################################################################################
@@ -94,19 +99,12 @@ class Uploaded
      * @param string $message
      * @throws Exception
      */
-    private function setLog(string $LOG_TYPE, string $message)
+    private function setLog(string $type, string $message)
     {
-        switch ($LOG_TYPE) {
-            case self::LOG_TYPE_SUCCESS:
-                $this->logs[][self::LOG_TYPE_SUCCESS] = trim($message);
-                break;
-            case self::LOG_TYPE_ERROR:
-                $this->logs[][self::LOG_TYPE_ERROR] = trim($message);
-                break;
-            default:
-                throw new Exception("Não foi possível registrar o evento solicitado. Tipo de registro desconhecido ('$LOG_TYPE').");
-                break;
-        }
+        $this->logs[] = [
+            'type' => $type,
+            'message' => trim($message)
+        ];
     }
 
     // ####################################################################################################
@@ -118,33 +116,21 @@ class Uploaded
      * @throws Exception
      * @return string
      */
-    public function getLog(string $LOG_TYPE = ''): string
+    public function getLog(string $type = ''): string
     {
         $return = [];
-        foreach ($this->logs as $i=>$log){
-            foreach ($log as $type=>$msg){
-                if($LOG_TYPE==$type){
-                    $return[] = $msg;
-                }
+        $logs = $this->logs;
+        asort($logs);
+
+        foreach ($this->logs as $i) {
+            $type_temp = $i['type'];
+            $message = $i['message'];
+            if ($type_temp == $type || $type == '') {
+                $return[] = "$message";
             }
         }
+
         return implode(chr(10), $return);
-        
-        /* switch ($LOG_TYPE) {
-            
-            case self::LOG_TYPE_SUCCESS:
-                return implode(chr(10), $this->logs[self::LOG_TYPE_SUCCESS]);
-                break;
-            case self::LOG_TYPE_ERROR:
-                return implode(chr(10), $this->logs[self::LOG_TYPE_ERROR]);
-                break;
-            case '':
-                
-                break;
-            default:
-                throw new Exception("Não foi possível obter os registros dos eventos solicitados. Tipo de registro desconhecido ('$LOG_TYPE').");
-                break;
-        } */
     }
 
     // ####################################################################################################
@@ -156,50 +142,15 @@ class Uploaded
     public function getSavedFilenames(): array
     {
         $return = [];
-
+        $this->setLog('info', "Obtenção dos nomes dos arquivos salvos...");
         foreach ($this->uploaded_file_array as $file) {
             if ($file['saved'] === true) {
                 $return[] = $file['full_filename'];
             }
         }
-        $this->setLog(self::LOG_TYPE_SUCCESS, "Obtenção da lista de arquivos salvos (quant.: " . sizeof($return) . ").");
+        $this->setLog('success', "Arquivos salvos com sucesso: " . sizeof($return) . ".");
         return $return;
     }
-
-    // ####################################################################################################
-
-    /**
-     * define um estado atual do objeto
-     *
-     * @param string $status
-     * @throws Exception
-     */
-    /*
-     * private function setStatus(string $status, string $msg = '')
-     * {
-     * if (! in_array($status, self::status)) {
-     * throw new Exception("Estado não permitido ('$status').");
-     * }
-     * $this->status[] = [
-     * 'title' => $status,
-     * 'msg' => $msg
-     * ];
-     * }
-     */
-
-    // ####################################################################################################
-
-    /**
-     * definicao de parametros extraordinários para os diversos procedimentos necessarios
-     */
-    /*
-     * public function setExtraParameters()
-     * {
-     * foreach ($this->uploaded_file_array as &$file) {
-     * $this->setFullFilename($file);
-     * }
-     * }
-     */
 
     // ####################################################################################################
 
@@ -224,19 +175,21 @@ class Uploaded
             }
         }
         $this->file_size_max = intval($file_size_max);
-        $this->setLog(self::LOG_TYPE_SUCCESS, "Definição de tamanho máximo para o arquivo enviado realizada ($file_size_max).");
+        $this->setLog('success', "Definição de tamanho máximo para o arquivo enviado realizada ($file_size_max).");
     }
 
     /**
      * define uma nomenclatura aleatoria para o nova arquivo para o salvamento
+     * OBS.: a mascara pode possuir os termos dinamicos definidos pela contante 'masc_file_model'
      *
-     * @param string $prefix
+     * @param string $filename_masc
      */
-    public function setRandomName(string $prefix = 'file_')
+    public function setRandomName(string $filename_masc = 'file_{$uniqid}_{$filename}')
     {
-        $this->random_name = true;
-        $this->random_name_prefix = $prefix;
-        $this->setLog(self::LOG_TYPE_SUCCESS, "Definição de nomenclatura aleatória realizada (prefixo: $prefix).");
+        $this->masc_name = true;
+        $this->masc_name_model = $filename_masc;
+        $this->setLog('success', "Definição de nomenclatura aleatória realizada (modelo: $filename_masc).");
+        $this->setContentFilenames();
     }
 
     /**
@@ -253,9 +206,11 @@ class Uploaded
                     $this->uploaded_file_array[$index][$parameterName] = $parameterValue;
                 }
             }
-            $this->setLog(self::LOG_TYPE_SUCCESS, "Arquivos obtidos com sucesso (quant.: " . sizeof($this->uploaded_file_array) . ").");
+            $this->setLog('success', "Arquivos obtidos com sucesso (quant.: " . sizeof($this->uploaded_file_array) . ").");
+            return true;
         } else {
-            $this->setLog(self::LOG_TYPE_ERROR, "Não foi encontrado nenhum arquivo para a chave '{$this->fieldName}'.");
+            $this->setLog('error', "Não foi encontrado nenhum arquivo para a chave informada: '{$this->fieldName}'.");
+            return false;
         }
     }
 
@@ -265,9 +220,12 @@ class Uploaded
      */
     private function setContentExtraParameters()
     {
+        $this->setLog('info', "Definição de parametros extraordinário iniciada...");
         foreach ($this->uploaded_file_array as &$file) {
             foreach (self::extra_parameters as $k => $v) {
-                $file[$k] = $v;
+                if (! isset($file[$k])) {
+                    $file[$k] = $v;
+                }
             }
         }
     }
@@ -282,20 +240,20 @@ class Uploaded
     private function checkFilesSizes(): bool
     {
         $return = true;
-
+        $this->setLog('info', "Verificação de tamanho máximo de arquivos iniciada...");
         if (isset($this->file_size_max)) {
             foreach ($this->uploaded_file_array as $file) {
                 $fsize = floatval($file['size']);
                 $fname = $file['name'];
                 if ($fsize > $this->file_size_max) {
-                    $this->setLog(self::LOG_TYPE_ERROR, "O arquivo '$fname' ($fsize bytes) é maior do que o limite permitido ({$this->file_size_max} bytes).");
+                    $this->setLog('error', "O arquivo '$fname' ($fsize bytes) é maior do que o limite permitido ({$this->file_size_max} bytes).");
                     $return = false;
                 } else {
-                    $this->setLog(self::LOG_TYPE_SUCCESS, "Tamanho do arquivo '$fname' dentro do permitido ($fsize bytes).");
+                    $this->setLog('success', "Tamanho do arquivo '$fname' dentro do permitido ($fsize bytes).");
                 }
             }
         } else {
-            $this->setLog(self::LOG_TYPE_SUCCESS, "Tamanho máximo não definido. Nenhum procedimento realizado!");
+            $this->setLog('success', "Tamanho máximo não definido. Nenhum procedimento realizado!");
         }
         return $return;
     }
@@ -313,15 +271,31 @@ class Uploaded
         { // parametros principais
             $name = $file['name'];
             $tmp_name = $file['tmp_name'];
+            $basename = File::getBaseName($name, false); // normalizado
+            $extension = File::getExtension($name);
+            $uniqid = uniqid();
         }
-        if ($this->random_name === true) {
-            $file['filename'] = uniqid($this->random_name_prefix) . '.' . File::getExtension($name);
+        if ($this->masc_name === true) {
+            $fileModelName = $this->masc_name_model;
+            // debc($fileModelName);
+            // verifica se algumas dos parametros dinamicos foi utilizado
+            foreach (array_keys(self::masc_name_parameters) as $key) {
+                {
+                    $replace = Strings::Slugify($key);
+                    $replace = $$replace ?? '_';
+                }
+                $fileModelName = str_replace($key, $replace, $fileModelName);
+            }
         } else {
-            $file['filename'] = $name;
+            $fileModelName = $basename;
         }
-
-        //deb($tmp_name, 0); deb($file['filename']);
-        $this->setLog(self::LOG_TYPE_SUCCESS, "Nome do arquivo '$tmp_name' gerado com sucesso: '{$file['filename']}'.");
+        {
+            // debc($fileModelName);
+            $filename = $fileModelName . '.' . $extension;
+            $filename = Strings::Slugify($filename);
+        }
+        $file['filename'] = $filename;
+        $this->setLog('success', "Novo nome para o arquivo realizado! '$tmp_name' => '{$file['filename']}'.");
         return true;
     }
 
@@ -334,15 +308,17 @@ class Uploaded
      */
     private function setContentFilenames()
     {
+        $this->setLog('info', "Definição de nome completo iniciada...");
+        $return = true;
         foreach ($this->uploaded_file_array as &$file) {
             if ($this->setFilename($file)) {
                 $file['full_filename'] = $this->path . DIRECTORY_SEPARATOR . $file['filename'];
-                $this->setLog(self::LOG_TYPE_SUCCESS, "Nome completo do arquivo '{$file['name']}' definido: " . $file['full_filename']);
-                return true;
+                $this->setLog('success', "Nome completo do arquivo '{$file['name']}' definido: " . $file['full_filename']);
             } else {
-                return false;
+                $return = false;
             }
         }
+        return $return;
     }
 
     // ####################################################################################################
@@ -358,17 +334,22 @@ class Uploaded
             $name = $file['name'];
             $full_filename = $file['full_filename'];
         }
+        $this->setLog('info', "Salvamento do arquivo '$name' iniciada...");
 
         // Check if file already exists and try to save it!
         if (file_exists($full_filename)) {
-            $this->setLog(self::LOG_TYPE_ERROR, "Não foi possível salvar o arquivo. Já existe um arquivo com o mesmo nome no diretório informado ('$full_filename').");
+            $this->setLog('error', "Não foi possível salvar o arquivo. Já existe um arquivo com o mesmo nome no diretório informado ('$full_filename').");
             return false;
         } else {
-            if (move_uploaded_file($file["tmp_name"], $full_filename)) {
-                $this->setLog(self::LOG_TYPE_SUCCESS, "Arquivo '{$full_filename}' salvo com sucesso.");
+            
+            
+            if (File::copy($file["tmp_name"], $full_filename,false)) {
+                $file['saved'] = true;
+                $this->setLog('success', "Arquivo '{$full_filename}' salvo com sucesso.");
                 return true;
             } else {
-                $this->setLog(self::LOG_TYPE_ERROR, "Não foi possível salva o arquivo solicitado ($name). Error: " . $file["error"]);
+                $file['saved'] = false;
+                $this->setLog('error', "Não foi possível salva o arquivo solicitado ($name => $full_filename). Error: " . $file["error"]);
                 return false;
             }
         }
@@ -383,6 +364,7 @@ class Uploaded
      */
     public function check(): bool
     {
+        $this->setLog('info', "Verificação geral iniciada...");
         $return = true;
         { // verificacoes gerais!
 
@@ -390,14 +372,14 @@ class Uploaded
                 foreach ($this->uploaded_file_array as $file) {
                     $error_id = intval($file['error']);
                     if ($error_id != 0) {
-                        $this->setLog(self::LOG_TYPE_SUCCESS, self::error_description[$error_id] ?? "Erro #$error_id ");
+                        $this->setLog('success', self::getErrorMessage($error_id));
                         $return = false;
                     }
                 }
             }
 
             { // file size max
-                if ($this->checkFilesSizes()) {
+                if (! $this->checkFilesSizes()) {
                     $return = false;
                 }
             }
@@ -407,34 +389,66 @@ class Uploaded
 
     // ####################################################################################################
     /**
+     * obtem a descricao do erro com base no codigo informado
+     *
+     * @param int $error_id
+     * @return string
+     */
+    private static function getErrorMessage(int $error_id)
+    {
+        return self::error_description[$error_id] ?? "Erro #$error_id";
+    }
+
+    // ####################################################################################################
+    /**
      * realiza o salvamento dos arquivos enviados em questao
      *
      * @param string $path
      * @param boolean $file_size_max
-     * @param bool $randomName
-     * @param string $randomNamePrefix
+     * @param bool $mascName
+     * @param string $mascNamePrefix
      * @return boolean
      */
     public function save(): bool
     {
-        { // verificacao geral
-            if (! $this->check()) {
-                return false;
-            }
-        }
+        $this->setLog('info', "Salvamento geral iniciado...");
         $return = true;
-        { // salvamento propriamente dito
-            foreach ($this->uploaded_file_array as &$file) {
+
+        if (! $this->check()) {
+            return false;
+        } else {
+            $uploaded_file_array = $this->uploaded_file_array;
+            foreach ($uploaded_file_array as &$file) {
                 if (! $this->saveFile($file)) {
                     $return = false;
                 }
             }
+            $this->uploaded_file_array = $uploaded_file_array;
         }
+
         return $return;
     }
 
     // ####################################################################################################
     // ############################################################################################# STATIC
+    // ####################################################################################################
+    /**
+     * verifica se o campo informado possui algum arquivo enviado (uploaded)
+     * @param string $fieldname
+     * @return boolean
+     */
+    static function CheckUploadedFiles(string $fieldname)
+    {
+        { // all uploaded files info
+            $UFI = self::GetUploadedFilesInfo();
+        }
+        if (isset($UFI[$fieldname]) && sizeof($UFI[$fieldname]) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // ####################################################################################################
 
     /**
@@ -446,9 +460,24 @@ class Uploaded
     {
         $return = [];
         foreach ($_FILES as $name => $files_info) {
-            foreach ($files_info as $file_info_key => $files_info_value) {
-                foreach ($files_info_value as $key => $file_info_value) {
-                    $return[$name][$key][$file_info_key] = $file_info_value;
+            // deb($files_info,0);
+            // quantidade de arquivos encontrados para o parametro atual
+            $q = sizeof($files_info['name']);
+
+            //percorre array de dados
+            for ($i = 0; $i < $q; $i ++) {
+                $error = intval($files_info['error'][$i]);
+                if ($error == 0) {
+                    $return[$name][$i]['error'] = $error;
+                    $return[$name][$i]['name'] = $files_info['name'][$i];
+                    $return[$name][$i]['type'] = $files_info['type'][$i];
+                    $return[$name][$i]['tmp_name'] = $files_info['tmp_name'][$i];
+                    $return[$name][$i]['size'] = $files_info['size'][$i];
+                } else if ($error == 4) {
+                    // nenhum arquivo enviado
+                    continue;
+                } else {
+                    throw new Exception(self::getErrorMessage($error));
                 }
             }
         }
