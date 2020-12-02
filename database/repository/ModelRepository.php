@@ -3,7 +3,7 @@ namespace manguto\cms7\database\repository;
 
 use manguto\cms7\libraries\Exception;
 use manguto\cms7\model\Model;
-use application\core\Access;
+use manguto\cms7\application\core\Access;
 
 trait ModelRepository
 {

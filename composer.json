@@ -9,10 +9,11 @@
 	],
 	"require" : {
 		"php" : "^7.0.0",
-		"phpmailer/phpmailer" : "~6.1"		
+		"phpmailer/phpmailer" : "~6.1"
 	},
 	"autoload" : {
 		"psr-4" : {
+			"manguto\\cms7\\application\\" : "application/",
 			"manguto\\cms7\\database\\" : "database/",
 			"manguto\\cms7\\libraries\\" : "libraries/",
 			"manguto\\cms7\\model\\" : "model/"
